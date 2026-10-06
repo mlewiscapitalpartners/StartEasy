@@ -40,16 +40,13 @@
   ::-webkit-scrollbar{width:8px;height:8px}
   ::-webkit-scrollbar-track{background:var(--forest)}
   ::-webkit-scrollbar-thumb{background:var(--orange-2);border-radius:4px}
-  .glow{box-shadow:0 0 30px rgba(232,115,15,.18)}
   .modal-fade{animation:modalFade .25s ease both}
   @keyframes modalFade{from{opacity:0}to{opacity:1}}
   .modal-card{animation:modalCard .35s cubic-bezier(.22,.61,.36,1) both}
   @keyframes modalCard{from{opacity:0;transform:translateY(30px) scale(.98)}to{opacity:1;transform:none}}
-  .paper{box-shadow:0 10px 40px -10px rgba(10,31,18,.15),0 2px 8px rgba(10,31,18,.04)}
   @media (max-width:768px){
     .fadein,.fadein-s{animation:none !important;opacity:1 !important;transform:none !important}
     .pulse-soft{animation:none !important;opacity:1 !important}
-    .backdrop-blur-md,.backdrop-blur,.backdrop-blur-sm{backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
   }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important}
@@ -217,7 +214,7 @@
 const { useState, useMemo, useEffect, useCallback, useRef } = React;
 
 /* ============================================================
-   PAYMENT CONFIG — StartEasy
+   PAYMENT CONFIG
    ============================================================ */
 const ADMIN_WHATSAPP = '260768526191';
 const VERIFY_BASE_URL = "https://starteasy.zm/verify";
@@ -352,7 +349,7 @@ const PAYMENT_METHODS = {
 };
 
 /* ============================================================
-   PRODUCT / PRICING CONFIG
+   PRICING
    ============================================================ */
 const PRICING = {
   nameReport:  { zm:'K50',  usd:'$5',   label:'Name Readiness Report' },
@@ -759,17 +756,12 @@ const PROVIDERS = [
 ];
 
 /* ============================================================
-   NAME READINESS SCREENING
-   — similarity reference corpus (used only for similarity scoring,
-     NOT as a fake registry. Live registry search is embedded
-     directly from PACRA's own portal.)
+   NAME SCREENING
    ============================================================ */
 const PROTECTED_WORDS = ['bank','banking','insurance','assurance','trust','microfinance','pension','securities','stock exchange','lottery','gaming','casino','university','national','government','ministry','municipal','council','chartered','royal','sacco','cooperative','co-operative','revenue','customs','judicial','parliament','state'];
 const CAUTION_WORDS = ['zambia','africa','international','group','holdings','fund','agency','commission','authority','bureau','institute','college','academy','hospital','clinic','pharmacy','exchange','capital','finance','financial','global','federal'];
 const GENERIC_WORDS = ['business','enterprise','enterprises','company','services','service','trading','traders','investments','investment','holdings','group','general','dealers','suppliers','ventures','solutions','consultants','consulting'];
 
-// Small reference corpus used purely for the similarity check.
-// These are not used to claim registration status — the live embed handles that.
 const REFERENCE_CORPUS = [
   'Zambezi Trading Limited','Kafue Enterprises Limited','Lusaka Fresh Foods Limited',
   'Copperbelt Logistics Limited','Chikondi Investments Limited','Mwansa Holdings Limited',
@@ -779,6 +771,28 @@ const REFERENCE_CORPUS = [
   'Premier Auto Services Limited','Lindo Construction Limited','Savannah Foods Limited',
   'Kalindula Transport Limited','Muchinga Mining Services Limited'
 ];
+
+/* ============================================================
+   COMMON NAME PATTERNS — saturation estimate only, not registry data
+   ============================================================ */
+const COMMON_PATTERNS = [
+  'zambia','lusaka','ndola','kitwe','livingstone','kabwe','solwezi','chipata','kasama',
+  'mongu','choma','mansa','kafue','zambezi','luangwa','copperbelt','muchinga','kalahari',
+  'trading','investments','holdings','enterprises','services','supplies',
+  'general dealers','logistics','agro','mining','construction','properties','consultants',
+  'solutions','ventures','group'
+];
+
+function commonPatternRisk(name){
+  const lower = String(name || '').toLowerCase();
+  if (!lower.trim()) return { level: 'unknown', hits: 0, matched: [] };
+  const matched = [];
+  COMMON_PATTERNS.forEach(p => { if (lower.includes(p)) matched.push(p); });
+  const hits = matched.length;
+  if (hits === 0) return { level: 'low', hits, matched };
+  if (hits === 1) return { level: 'medium', hits, matched };
+  return { level: 'high', hits, matched };
+}
 
 function bigrams(s){const t=s.replace(/[^a-z0-9]/g,'');const out=[];for(let i=0;i<t.length-1;i++)out.push(t.slice(i,i+2));return out;}
 function similarity(a,b){const A=bigrams(a),B=bigrams(b);if(!A.length||!B.length)return 0;const m={};A.forEach(g=>m[g]=(m[g]||0)+1);let inter=0;B.forEach(g=>{if(m[g]){m[g]--;inter++;}});return(2*inter)/(A.length+B.length);}
@@ -815,7 +829,7 @@ function analyseName(raw){
 }
 
 /* ============================================================
-   PRESENTATION HELPERS
+   HELPERS
    ============================================================ */
 const uid = (p='id')=>p+'_'+Math.random().toString(36).slice(2,9);
 const fmtDate = (d)=>{ if(!d) return '—'; const x=new Date(d); if(isNaN(x)) return '—'; return x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); };
@@ -1403,28 +1417,29 @@ function WhatHappensNext({ items, light }){
    LOGO MARK
    ============================================================ */
 function StartEasyMark({ size=36 }){
-  const uid = Math.random().toString(36).slice(2,7);
+  const gid = 'g'+Math.random().toString(36).slice(2,7);
+  const aid = 'a'+Math.random().toString(36).slice(2,7);
   return (
     <span className="rounded-full overflow-hidden flex-shrink-0" style={{width:size,height:size,boxShadow:'0 4px 12px -4px rgba(10,31,18,.5)'}}>
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{display:'block',width:'100%',height:'100%'}}>
         <defs>
-          <radialGradient id={`g${uid}`} cx="30%" cy="25%" r="90%">
+          <radialGradient id={gid} cx="30%" cy="25%" r="90%">
             <stop offset="0%" stopColor="#4CB050"/>
             <stop offset="45%" stopColor="#1E7B3C"/>
             <stop offset="100%" stopColor="#E8730F"/>
           </radialGradient>
-          <linearGradient id={`a${uid}`} x1="0" y1="1" x2="1" y2="0">
+          <linearGradient id={aid} x1="0" y1="1" x2="1" y2="0">
             <stop offset="0%" stopColor="#FFC107"/>
             <stop offset="100%" stopColor="#F5A623"/>
           </linearGradient>
         </defs>
-        <circle cx="50" cy="50" r="50" fill={`url(#g${uid})`}/>
+        <circle cx="50" cy="50" r="50" fill={`url(#${gid})`}/>
         <rect x="24" y="52" width="7" height="22" rx="1.2" fill="#FFFFFF" opacity="0.96"/>
         <rect x="35" y="44" width="7" height="30" rx="1.2" fill="#FFFFFF" opacity="0.96"/>
         <rect x="46" y="36" width="7" height="38" rx="1.2" fill="#C8E6C9" opacity="0.95"/>
         <rect x="57" y="30" width="7" height="44" rx="1.2" fill="#C8E6C9" opacity="0.95"/>
         <path d="M18 77 Q50 85 82 73" stroke="#FFFFFF" strokeWidth="2.4" fill="none" strokeLinecap="round" opacity="0.85"/>
-        <path d="M26 70 Q48 62 66 28" stroke={`url(#a${uid})`} strokeWidth="6.5" fill="none" strokeLinecap="round"/>
+        <path d="M26 70 Q48 62 66 28" stroke={`url(#${aid})`} strokeWidth="6.5" fill="none" strokeLinecap="round"/>
         <polygon points="70,13 84,29 62,35" fill="#F5A623"/>
       </svg>
     </span>
@@ -1644,10 +1659,10 @@ function FloatingAssistant(){
 }
 
 /* ============================================================
-   PACRA LIVE EMBEDDED SEARCH
+   PACRA EMBEDDED SEARCH
    ============================================================ */
 function PacraEmbeddedSearch({ onUseName }){
-  const [embedState, setEmbedState] = useState('loading'); // loading | ok | blocked
+  const [embedState, setEmbedState] = useState('loading');
   const [manualName, setManualName] = useState('');
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [reloadKey, setReloadKey] = useState(0);
@@ -1688,28 +1703,10 @@ function PacraEmbeddedSearch({ onUseName }){
           you will see a direct-open option below.
         </p>
         <div style={{display:'flex',flexWrap:'wrap',gap:10,position:'relative',zIndex:2}}>
-          <button
-            type="button"
-            onClick={openPortal}
-            style={{
-              background:'linear-gradient(135deg,#E8730F,#F5A623)', color:'#fff',
-              border:'none', borderRadius:8, padding:'12px 20px',
-              fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit',
-              display:'inline-flex', alignItems:'center', gap:8,
-            }}
-          >
+          <button type="button" onClick={openPortal} style={{background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,padding:'12px 20px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8}}>
             <i className="fas fa-external-link-alt"></i> Open PACRA search in a new tab
           </button>
-          <button
-            type="button"
-            onClick={retry}
-            style={{
-              background:'transparent', color:'rgba(255,255,255,.75)',
-              border:'1px solid rgba(255,255,255,.25)', borderRadius:8, padding:'12px 18px',
-              fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit',
-              display:'inline-flex', alignItems:'center', gap:8,
-            }}
-          >
+          <button type="button" onClick={retry} style={{background:'transparent',color:'rgba(255,255,255,.75)',border:'1px solid rgba(255,255,255,.25)',borderRadius:8,padding:'12px 18px',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8}}>
             <i className="fas fa-sync-alt"></i> Reload embed
           </button>
         </div>
@@ -1718,13 +1715,9 @@ function PacraEmbeddedSearch({ onUseName }){
       <div className="bg-white border border-[#0A1F12]/10 rounded-sm overflow-hidden mt-4">
         <div className="px-4 py-3 border-b border-[#0A1F12]/8 flex items-center justify-between gap-3" style={{background:'#FBFDFB'}}>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full" style={{
-              background: embedState === 'ok' ? '#1E7B3C' : embedState === 'blocked' ? '#B8564F' : '#F5A623'
-            }}/>
+            <span className="w-2 h-2 rounded-full" style={{background: embedState === 'ok' ? '#1E7B3C' : embedState === 'blocked' ? '#B8564F' : '#F5A623'}}/>
             <span className="text-[11px] tracking-[0.12em] uppercase font-bold text-[#0A1F12]/55">
-              {embedState === 'ok' ? 'Live — connected to PACRA' :
-               embedState === 'blocked' ? 'Embed blocked by PACRA' :
-               'Connecting to PACRA…'}
+              {embedState === 'ok' ? 'Live — connected to PACRA' : embedState === 'blocked' ? 'Embed blocked by PACRA' : 'Connecting to PACRA…'}
             </span>
           </div>
           <span className="text-[10.5px] text-[#0A1F12]/40 font-mono">search.pacra.org.zm</span>
@@ -1771,21 +1764,11 @@ function PacraEmbeddedSearch({ onUseName }){
                   </div>
                 )}
                 <div style={{flex:1,minWidth:220}}>
-                  <button
-                    type="button"
-                    onClick={openPortal}
-                    style={{
-                      background:'linear-gradient(135deg,#E8730F,#F5A623)', color:'#fff',
-                      border:'none', borderRadius:8, padding:'12px 20px',
-                      fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit',
-                      display:'inline-flex', alignItems:'center', gap:8, marginBottom:12,
-                    }}
-                  >
+                  <button type="button" onClick={openPortal} style={{background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,padding:'12px 20px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8,marginBottom:12}}>
                     <i className="fas fa-external-link-alt"></i> Open search.pacra.org.zm now
                   </button>
                   <p style={{fontSize:12,color:'rgba(10,31,18,.6)',lineHeight:1.6}}>
-                    Once you have checked the name on PACRA's portal, come back here and use the readiness review below.
-                    You can paste the name into the review fields with one click.
+                    Once you have checked the name on PACRA's portal, come back here and report what you found in the review below.
                   </p>
                 </div>
               </div>
@@ -1797,8 +1780,7 @@ function PacraEmbeddedSearch({ onUseName }){
       <div className="bg-white border border-[#0A1F12]/8 rounded-sm p-6 mt-4">
         <span className="micro text-[#0A1F12]/50 block mb-3">Hand off to the readiness review</span>
         <p style={{fontSize:12.5,color:'rgba(10,31,18,.6)',lineHeight:1.65,marginBottom:14}}>
-          Paste the name you want to submit. We will load it into the readiness review below, where it is scored for
-          protected terminology, generic wording and other avoidable defects before you submit.
+          Paste a name here to load it directly into the readiness review fields below.
         </p>
         <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
           <input
@@ -1809,18 +1791,7 @@ function PacraEmbeddedSearch({ onUseName }){
             placeholder="e.g. Zambezi Fresh Foods Limited"
             style={{flex:1,minWidth:220,padding:'11px 14px',border:'1px solid rgba(10,31,18,.15)',borderRadius:8,fontSize:14,fontFamily:'inherit',background:'#fff',color:'#0A1F12'}}
           />
-          <button
-            type="button"
-            disabled={!manualName.trim()}
-            onClick={()=>{ if(manualName.trim() && onUseName){ onUseName(manualName.trim()); setManualName(''); } }}
-            style={{
-              background:'linear-gradient(135deg,#E8730F,#F5A623)', color:'#fff',
-              border:'none', borderRadius:8, padding:'11px 20px',
-              fontSize:13, fontWeight:700, cursor: manualName.trim() ? 'pointer' : 'not-allowed',
-              fontFamily:'inherit', opacity: manualName.trim() ? 1 : 0.5,
-              display:'inline-flex', alignItems:'center', gap:8,
-            }}
-          >
+          <button type="button" disabled={!manualName.trim()} onClick={()=>{ if(manualName.trim() && onUseName){ onUseName(manualName.trim()); setManualName(''); } }} style={{background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,padding:'11px 20px',fontSize:13,fontWeight:700,cursor: manualName.trim() ? 'pointer' : 'not-allowed',fontFamily:'inherit',opacity: manualName.trim() ? 1 : 0.5,display:'inline-flex',alignItems:'center',gap:8}}>
             <i className="fas fa-arrow-down"></i> Load into readiness review
           </button>
         </div>
@@ -1830,13 +1801,13 @@ function PacraEmbeddedSearch({ onUseName }){
 }
 
 /* ============================================================
-   VIEW: HOME
+   HOME
    ============================================================ */
 function Home({ go }){
   const orientation = [
     { n:'01', t:'I want to start a business', d:'Structure, registration, tax and licensing — mapped end-to-end into a personalised action plan.', cta:'Start the journey', r:'orientation', icon:'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5' },
     { n:'02', t:'I have a business and need help staying compliant', d:'Annual returns, tax filings, NAPSA contributions, licence renewals — all on one calendar.', cta:'Open Compliance Passport', r:'passport', icon:'M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11' },
-    { n:'03', t:'I need a name checked before I submit', d:'Search the live PACRA register, then score the name for readiness — all in one place.', cta:'Check a name', r:'name-check', icon:'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
+    { n:'03', t:'I need a name checked before I submit', d:'Search the live PACRA register, report what you find, get a registry status per name.', cta:'Check a name', r:'name-check', icon:'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
     { n:'04', t:'I am stuck and need expert help', d:'Speak to the Administrative Services Desk. Human support from K450 per matter.', cta:'Open the Desk', r:'desk', icon:'M18 20V10M12 20V4M6 20v-6' }
   ];
   const steps = [
@@ -1913,7 +1884,7 @@ function Home({ go }){
 
       <section className="bg-[#0A1F12] text-white">
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-16 lg:py-24">
-          <SectionHead light eyebrow="How it works" title={'Four steps, from "is this name free?" to "compliant".'} className="mb-16 max-w-3xl"/>
+          <SectionHead light eyebrow="How it works" title="Four steps, from search to compliant." className="mb-16 max-w-3xl"/>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 rounded-sm overflow-hidden">
             {steps.map(s=>(
               <div key={s.n} className="bg-[#0A1F12] p-8 lg:p-10 hover:bg-[#123A1F] transition-colors duration-300">
@@ -1986,10 +1957,10 @@ function Home({ go }){
             </button>
             <button onClick={()=>go('name-check')} className="bg-white p-8 lg:p-14 rounded-sm border border-[#0A1F12]/5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group text-left" style={{cursor:'pointer',fontFamily:'inherit'}}>
               <div className="w-12 h-12 rounded-full bg-[#1E7B3C]/10 flex items-center justify-center mb-8 group-hover:bg-[#1E7B3C]/20 transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E7B3C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
-              <span className="micro text-[#0A1F12]/50 block mb-4">Live PACRA registry</span>
-              <h3 className="serif text-[clamp(1.8rem,3vw,2.4rem)] leading-tight text-[#0A1F12] mb-5">Search the official register, live.</h3>
-              <p className="text-[15px] leading-relaxed text-[#0A1F12]/55 mb-8 max-w-md">Real results from PACRA's own portal, embedded right here. No simulation, no fake data.</p>
-              <span className="flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase text-[#1E7B3C] font-bold">Search the register <Arrow className="group-hover:translate-x-1 transition-transform"/></span>
+              <span className="micro text-[#0A1F12]/50 block mb-4">Name Check with live registry</span>
+              <h3 className="serif text-[clamp(1.8rem,3vw,2.4rem)] leading-tight text-[#0A1F12] mb-5">Search. Report. Get a registry status.</h3>
+              <p className="text-[15px] leading-relaxed text-[#0A1F12]/55 mb-8 max-w-md">Search PACRA live, report what you found, and get a Taken / Likely taken / Likely available verdict per name.</p>
+              <span className="flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase text-[#1E7B3C] font-bold">Check a name <Arrow className="group-hover:translate-x-1 transition-transform"/></span>
             </button>
           </div>
         </div>
@@ -2550,17 +2521,33 @@ function GuidedJourney({ go, journeyId, openPayment }){
 }
 
 /* ============================================================
-   VIEW: NAME CHECK (Live PACRA embed + readiness review)
+   VIEW: NAME CHECK — Live PACRA embed + readiness with registry status
    ============================================================ */
 function NameCheck({ go, openPayment }){
   const [names, setNames] = useState(['','','']);
+  const [registryReports, setRegistryReports] = useState({ 0:'unsearched', 1:'unsearched', 2:'unsearched' });
   const [results, setResults] = useState(null);
   const [qc, setQc] = useState({});
+
+  const setReport = (idx, val)=> setRegistryReports({ ...registryReports, [idx]: val });
+
+  const registryStatusFor = (name, idx) => {
+    const report = registryReports[idx] || 'unsearched';
+    const risk = commonPatternRisk(name);
+    if (report === 'taken') return { label:'Taken', tone:'bad', toneColor:'#B8564F', bg:'rgba(184,86,79,.12)', reason:'You reported this name appeared on PACRA.' };
+    if (report === 'not-found') {
+      if (risk.level === 'high') return { label:'Likely available', tone:'ok', toneColor:'#1E7B3C', bg:'rgba(30,123,60,.12)', reason:'No PACRA result found, but the name uses common patterns — consider adding a more distinctive element.' };
+      return { label:'Likely available', tone:'ok', toneColor:'#1E7B3C', bg:'rgba(30,123,60,.12)', reason:'You reported no PACRA result. Confirm with three candidate names.' };
+    }
+    if (risk.level === 'high') return { label:'Likely taken', tone:'warn', toneColor:'#E8730F', bg:'rgba(232,115,15,.12)', reason:'This name uses heavily saturated patterns. Search PACRA before relying on it.' };
+    if (risk.level === 'medium') return { label:'Unverified — moderate risk', tone:'warn', toneColor:'#E8730F', bg:'rgba(232,115,15,.12)', reason:'Some common patterns. Search PACRA to confirm.' };
+    return { label:'Unverified', tone:'neutral', toneColor:'#5E7A67', bg:'rgba(94,122,103,.12)', reason:'Search PACRA to confirm availability.' };
+  };
 
   const runCheck = ()=>{
     const entered = names.filter(n=>n.trim());
     if(!entered.length){ return; }
-    const analysed = entered.map(n=>analyseName(n));
+    const analysed = entered.map((n,i)=>({ ...analyseName(n), idx:i }));
     const order = analysed.slice().sort((a,b)=>b.score - a.score);
     setResults(order);
   };
@@ -2587,21 +2574,21 @@ function NameCheck({ go, openPayment }){
 
   const scoreColor = (s)=> s>=80 ? '#1E7B3C' : s>=60 ? '#E8730F' : '#B8564F';
   const scoreBg = (s)=> s>=80 ? 'rgba(30,123,60,.12)' : s>=60 ? 'rgba(232,115,15,.12)' : 'rgba(184,86,79,.12)';
-  const scoreLabel = (s)=> s>=80 ? 'High readiness' : s>=60 ? 'Medium readiness' : s>=40 ? 'Low readiness' : 'High risk';
+  const scoreLabel = (s)=> s>=80 ? 'High drafting quality' : s>=60 ? 'Medium drafting quality' : s>=40 ? 'Low drafting quality' : 'High drafting risk';
 
   return (
     <div className="fadein bg-[#F5FAF6]">
       <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
-        <SectionHead eyebrow="Name Check" title="Search the register. Then score the name." sub="Two tools in one place. First, search the live PACRA register through our embedded view of the official portal. Then run the readiness review to catch protected terminology, generic wording and other avoidable defects before submission." className="mb-12 max-w-3xl"/>
+        <SectionHead eyebrow="Name Check" title="Search. Report. Score." sub="Three steps to a confident submission: (1) search the live PACRA register above, (2) tell us what PACRA returned for each name, (3) run the readiness review. The review combines your PACRA findings with a common-pattern saturation estimate to give you a Registry Status alongside the drafting score." className="mb-12 max-w-3xl"/>
 
         <div className="mb-14">
           <PacraEmbeddedSearch onUseName={useNameInReview}/>
         </div>
 
         <div id="readiness-review-anchor" className="mb-8" style={{scrollMarginTop:'96px'}}>
-          <span className="micro text-[#0A1F12]/50 block mb-3">Step 2</span>
+          <span className="micro text-[#0A1F12]/50 block mb-3">Step 2 &amp; 3 — Report and score</span>
           <h2 className="serif text-[clamp(1.6rem,3.5vw,2.2rem)] leading-tight text-[#0A1F12] mb-4">Name readiness review</h2>
-          <p className="text-[14.5px] leading-relaxed text-[#0A1F12]/55 max-w-3xl">Now score the names you intend to submit. This checks for protected terms, generic wording, spelling issues and linguistic similarity — and recommends a submission order.</p>
+          <p className="text-[14.5px] leading-relaxed text-[#0A1F12]/55 max-w-3xl">Enter each proposed name, report what PACRA returned when you searched it, then run the review. You get two indicators per name: <strong>Drafting quality</strong> (protected terms, generic wording, spelling) and <strong>Registry status</strong> (availability estimate based on your PACRA report and common-pattern saturation).</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
@@ -2612,12 +2599,53 @@ function NameCheck({ go, openPayment }){
                 <span className="text-[10.5px] tracking-[0.14em] uppercase font-bold text-[#1E7B3C] bg-[#1E7B3C]/10 px-2.5 py-1 rounded-full">PACRA Desk</span>
               </div>
               <div className="p-6 space-y-5">
-                <Field label="Preferred name (1st choice)"><TextInput value={names[0]} onChange={v=>setNames([v,names[1],names[2]])} placeholder="e.g. Zambezi Fresh Foods Limited"/></Field>
-                <Field label="Alternative name (2nd choice)"><TextInput value={names[1]} onChange={v=>setNames([names[0],v,names[2]])} placeholder="e.g. Northern Harvest Trading Limited"/></Field>
-                <Field label="Alternative name (3rd choice)" hint="Submit three names, always in order of preference"><TextInput value={names[2]} onChange={v=>setNames([names[0],names[1],v])} placeholder="e.g. Kanyama Star Enterprises Limited"/></Field>
+                {[0,1,2].map(idx=>{
+                  const val = names[idx] || '';
+                  return (
+                    <div key={idx}>
+                      <Field label={`Proposed name (${idx+1}${idx===0?' — preferred':idx===1?' — alternative':' — alternative'})`}>
+                        <TextInput value={val} onChange={v=>{ const n=[...names]; n[idx]=v; setNames(n); }} placeholder={idx===0?'e.g. Zambezi Fresh Foods Limited':idx===1?'e.g. Northern Harvest Trading Limited':'e.g. Kanyama Star Enterprises Limited'}/>
+                      </Field>
+                      {val.trim() && (
+                        <div style={{marginTop:10,padding:'10px 12px',background:'#FBFDFB',border:'1px solid rgba(10,31,18,.08)',borderRadius:8}}>
+                          <p style={{fontSize:11,letterSpacing:'.1em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.5)',marginBottom:8}}>
+                            When you searched PACRA for this name, what did you find?
+                          </p>
+                          <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                            {[
+                              { v:'unsearched', t:'Not searched yet', icon:'fa-question-circle' },
+                              { v:'not-found',  t:'No result found',   icon:'fa-check-circle' },
+                              { v:'taken',      t:'It came up — taken', icon:'fa-times-circle' }
+                            ].map(o=>{
+                              const on = (registryReports[idx]||'unsearched') === o.v;
+                              return (
+                                <button
+                                  key={o.v}
+                                  type="button"
+                                  onClick={()=>setReport(idx, o.v)}
+                                  style={{
+                                    display:'inline-flex', alignItems:'center', gap:7,
+                                    padding:'7px 12px', borderRadius:99,
+                                    fontSize:11.5, fontWeight:700, cursor:'pointer', fontFamily:'inherit',
+                                    border: on ? '1.5px solid #E8730F' : '1px solid rgba(10,31,18,.15)',
+                                    background: on ? 'rgba(232,115,15,.1)' : '#fff',
+                                    color: on ? '#B85808' : 'rgba(10,31,18,.6)'
+                                  }}
+                                >
+                                  <i className={`fas ${o.icon}`} style={{fontSize:11}}></i>
+                                  {o.t}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
                 <div className="flex flex-wrap gap-3 pt-2">
                   <Btn variant="primary" onClick={runCheck} disabled={!names.filter(n=>n.trim()).length}>Run readiness review</Btn>
-                  <Btn variant="ghost" onClick={()=>{setNames(['','','']);setResults(null);}}>Clear</Btn>
+                  <Btn variant="ghost" onClick={()=>{ setNames(['','','']); setRegistryReports({0:'unsearched',1:'unsearched',2:'unsearched'}); setResults(null); }}>Clear</Btn>
                 </div>
               </div>
             </div>
@@ -2657,68 +2685,105 @@ function NameCheck({ go, openPayment }){
                   <i className="fas fa-search" style={{fontSize:22,color:'#E8730F'}}></i>
                 </div>
                 <h3 className="serif text-[22px] text-[#0A1F12] mb-3">No review run yet</h3>
-                <p className="text-[13px] text-[#0A1F12]/55 leading-relaxed max-w-md mx-auto">Enter up to three proposed names and run the review. Each name is scored for readiness and the issues are explained in plain language.</p>
+                <p className="text-[13px] text-[#0A1F12]/55 leading-relaxed max-w-md mx-auto">Enter up to three names, report what PACRA returned for each, and run the review. You will get a drafting score and a registry status for each.</p>
               </div>
             ) : (
               <div className="space-y-4">
-                {results.map((r,i)=>(
-                  <div key={i} className="bg-white rounded-sm border border-[#0A1F12]/8 overflow-hidden" style={{borderLeftWidth:4,borderLeftColor:scoreColor(r.score)}}>
-                    <div className="p-6">
-                      <div className="flex items-start justify-between gap-4 mb-4">
-                        <div className="flex-1 min-w-0">
-                          <span className="text-[10.5px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/40 mb-1 block">Proposed name {i+1}</span>
-                          <h4 className="serif text-[19px] text-[#0A1F12] leading-tight truncate">{r.name}</h4>
+                {results.map((r,i)=>{
+                  const reg = registryStatusFor(r.name, r.idx);
+                  const sat = commonPatternRisk(r.name);
+                  return (
+                    <div key={i} className="bg-white rounded-sm border border-[#0A1F12]/8 overflow-hidden" style={{borderLeftWidth:4,borderLeftColor:scoreColor(r.score)}}>
+                      <div className="p-6">
+                        <div className="flex items-start justify-between gap-4 mb-4">
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10.5px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/40 mb-1 block">Proposed name {r.idx+1}</span>
+                            <h4 className="serif text-[19px] text-[#0A1F12] leading-tight truncate">{r.name}</h4>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <div className="serif text-[36px] leading-none font-bold" style={{color:scoreColor(r.score)}}>{r.score}</div>
+                            <span className="inline-block text-[10px] tracking-[0.1em] uppercase font-bold px-2 py-1 rounded-full mt-2" style={{background:scoreBg(r.score),color:scoreColor(r.score)}}>{scoreLabel(r.score)}</span>
+                          </div>
                         </div>
-                        <div className="text-right shrink-0">
-                          <div className="serif text-[36px] leading-none font-bold" style={{color:scoreColor(r.score)}}>{r.score}</div>
-                          <span className="inline-block text-[10px] tracking-[0.1em] uppercase font-bold px-2 py-1 rounded-full mt-2" style={{background:scoreBg(r.score),color:scoreColor(r.score)}}>{scoreLabel(r.score)}</span>
+
+                        <div style={{display:'flex',alignItems:'center',gap:12,padding:'12px 14px',background:reg.bg,borderRadius:10,marginBottom:14,border:`1px solid ${reg.toneColor}30`}}>
+                          <div style={{width:34,height:34,borderRadius:8,background:reg.toneColor,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                            <i className={`fas ${reg.tone==='bad'?'fa-times':reg.tone==='ok'?'fa-check':reg.tone==='warn'?'fa-exclamation-triangle':'fa-question'}`} style={{color:'#fff',fontSize:14}}></i>
+                          </div>
+                          <div style={{flex:1,minWidth:0}}>
+                            <p style={{fontSize:11,letterSpacing:'.1em',textTransform:'uppercase',fontWeight:800,color:reg.toneColor,marginBottom:2}}>Registry Status</p>
+                            <p style={{fontSize:14,fontWeight:700,color:'#0A1F12',marginBottom:2}}>{reg.label}</p>
+                            <p style={{fontSize:12,color:'rgba(10,31,18,.6)',lineHeight:1.5}}>{reg.reason}</p>
+                          </div>
                         </div>
+
+                        <div className="h-1.5 rounded-full overflow-hidden mb-4" style={{background:'rgba(10,31,18,.08)'}}>
+                          <div className="h-full rounded-full" style={{width:`${r.score}%`,background:scoreColor(r.score)}}/>
+                        </div>
+
+                        {sat.matched.length > 0 && (
+                          <div style={{marginBottom:12,padding:'10px 12px',background:'rgba(10,31,18,.03)',borderRadius:8,fontSize:11.5,color:'rgba(10,31,18,.6)',lineHeight:1.55}}>
+                            <strong style={{color:'#0A1F12'}}>Common patterns detected:</strong>{' '}
+                            {sat.matched.map((m,mi)=>(
+                              <span key={mi} style={{display:'inline-block',padding:'2px 7px',margin:'2px 3px 2px 0',borderRadius:4,background:'rgba(232,115,15,.12)',color:'#8A6828',fontWeight:600,fontSize:10.5}}>{m}</span>
+                            ))}
+                            <div style={{marginTop:6}}>Names using these words are heavily represented in the register. The more distinctive your name, the faster clearance tends to be.</div>
+                          </div>
+                        )}
+
+                        {(r.issues||[]).length > 0 && (
+                          <div className="space-y-2 mb-3">
+                            {r.issues.map((iss,ii)=>(
+                              <div key={ii} className={`flex gap-3 text-[12px] leading-relaxed p-3 rounded-sm ${iss[0]==='critical'?'bg-[#B8564F]/8 text-[#7C2318]':'bg-[#F5A623]/10 text-[#7A5C10]'}`}>
+                                <span className="shrink-0">{iss[0]==='critical' ? '⛔' : '⚠️'}</span>
+                                <span>{iss[1]}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {(r.notes||[]).length > 0 && (
+                          <div className="pt-3 mt-3 border-t border-[#0A1F12]/6">
+                            {r.notes.map((n,ni)=><div key={ni} className="text-[12px] text-[#0A1F12]/55 leading-relaxed mb-1.5">• {n}</div>)}
+                          </div>
+                        )}
+                        {(r.issues||[]).length === 0 && (r.notes||[]).length === 0 && (
+                          <div className="flex gap-3 text-[12px] leading-relaxed p-3 rounded-sm bg-[#1E7B3C]/8 text-[#0F5C2A]">
+                            <span>✓</span><span>No obvious drafting defects detected at this stage.</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="h-1.5 rounded-full overflow-hidden mb-4" style={{background:'rgba(10,31,18,.08)'}}>
-                        <div className="h-full rounded-full" style={{width:`${r.score}%`,background:scoreColor(r.score)}}/>
-                      </div>
-                      {(r.issues||[]).length > 0 && (
-                        <div className="space-y-2 mb-3">
-                          {r.issues.map((iss,ii)=>(
-                            <div key={ii} className={`flex gap-3 text-[12px] leading-relaxed p-3 rounded-sm ${iss[0]==='critical'?'bg-[#B8564F]/8 text-[#7C2318]':'bg-[#F5A623]/10 text-[#7A5C10]'}`}>
-                              <span className="shrink-0">{iss[0]==='critical' ? '⛔' : '⚠️'}</span>
-                              <span>{iss[1]}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {(r.notes||[]).length > 0 && (
-                        <div className="pt-3 mt-3 border-t border-[#0A1F12]/6">
-                          {r.notes.map((n,ni)=><div key={ni} className="text-[12px] text-[#0A1F12]/55 leading-relaxed mb-1.5">• {n}</div>)}
-                        </div>
-                      )}
-                      {(r.issues||[]).length === 0 && (r.notes||[]).length === 0 && (
-                        <div className="flex gap-3 text-[12px] leading-relaxed p-3 rounded-sm bg-[#1E7B3C]/8 text-[#0F5C2A]">
-                          <span>✓</span><span>No obvious defects detected at this stage.</span>
-                        </div>
-                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 <div className="bg-gradient-to-br from-[#0A1F12] to-[#123A1F] rounded-sm p-6 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-40 h-40 bg-[#E8730F]/10 rounded-full blur-[60px] pointer-events-none"/>
                   <div className="relative">
                     <span className="micro text-[#F5A623] block mb-4">Recommended submission order</span>
                     <div className="space-y-2.5 mb-5">
-                      {results.map((r,i)=>(
-                        <div key={i} className="flex items-center justify-between gap-3">
-                          <span className="text-[13px] text-white/80 truncate"><strong className="text-[#F5A623]">{i+1}.</strong> {r.name}</span>
-                          <span className="text-[10.5px] tracking-[0.1em] uppercase font-bold shrink-0" style={{color:scoreColor(r.score)}}>{scoreLabel(r.score)}</span>
-                        </div>
-                      ))}
+                      {results.map((r,i)=>{
+                        const reg = registryStatusFor(r.name, r.idx);
+                        return (
+                          <div key={i} className="flex items-center justify-between gap-3 flex-wrap">
+                            <span className="text-[13px] text-white/80 truncate"><strong className="text-[#F5A623]">{i+1}.</strong> {r.name}</span>
+                            <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                              <span style={{fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',fontWeight:800,padding:'3px 8px',borderRadius:99,background:'rgba(255,255,255,.1)',color:'#fff'}}>
+                                Draft {r.score}
+                              </span>
+                              <span style={{fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',fontWeight:800,padding:'3px 8px',borderRadius:99,background:reg.bg,color:reg.toneColor}}>
+                                {reg.label}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                    <p className="text-[11.5px] leading-relaxed text-white/45 mb-5">This is guidance only. Name clearance is granted at the discretion of the registry and StartEasy does not guarantee approval. Always submit through the official PACRA channel.</p>
+                    <p className="text-[11.5px] leading-relaxed text-white/45 mb-5">This is guidance only. Name clearance is granted at the discretion of the registry. StartEasy does not guarantee approval. Always confirm on the official PACRA portal before submitting.</p>
                     <button onClick={()=>openPayment({
                       amount:'K50',
                       currency:'ZMW',
                       purpose:'Name Readiness Report — Formal',
-                      purposeDetail:'A formal PDF report with detailed screening and recommended submission order. Delivered within 2 business days.',
+                      purposeDetail:'A formal PDF report with detailed screening, saturation analysis and recommended submission order. Delivered within 2 business days.',
                       applicant:{ firstName:'', lastName:'', email:'', phone:'', country:'Zambia', company:'' },
                       receiptPrefix:'SE-NMR'
                     })} className="inline-flex items-center gap-2.5 font-bold rounded-sm text-[13px] px-5 py-3" style={{background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',cursor:'pointer',fontFamily:'inherit'}}>
