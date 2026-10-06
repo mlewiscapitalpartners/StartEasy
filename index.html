@@ -35,26 +35,20 @@
   .fadein{animation:fadein .5s cubic-bezier(.22,.61,.36,1) both}
   @keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   .fadein-s{animation:fadein .3s ease both}
-  .slide-up{animation:slideUp .45s ease both}
-  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
   .pulse-soft{animation:pulseSoft 2s infinite ease-in-out}
   @keyframes pulseSoft{0%,100%{opacity:1}50%{opacity:.55}}
-  .bar-grow{animation:barGrow 1s cubic-bezier(.22,.61,.36,1) both}
-  @keyframes barGrow{from{width:0 !important}}
   ::-webkit-scrollbar{width:8px;height:8px}
   ::-webkit-scrollbar-track{background:var(--forest)}
   ::-webkit-scrollbar-thumb{background:var(--orange-2);border-radius:4px}
   .glow{box-shadow:0 0 30px rgba(232,115,15,.18)}
-  .glow-green{box-shadow:0 0 30px rgba(46,156,74,.18)}
   .modal-fade{animation:modalFade .25s ease both}
   @keyframes modalFade{from{opacity:0}to{opacity:1}}
   .modal-card{animation:modalCard .35s cubic-bezier(.22,.61,.36,1) both}
   @keyframes modalCard{from{opacity:0;transform:translateY(30px) scale(.98)}to{opacity:1;transform:none}}
   .paper{box-shadow:0 10px 40px -10px rgba(10,31,18,.15),0 2px 8px rgba(10,31,18,.04)}
   @media (max-width:768px){
-    .fadein,.fadein-s,.slide-up{animation:none !important;opacity:1 !important;transform:none !important}
+    .fadein,.fadein-s{animation:none !important;opacity:1 !important;transform:none !important}
     .pulse-soft{animation:none !important;opacity:1 !important}
-    .bar-grow{animation-duration:.4s !important}
     .backdrop-blur-md,.backdrop-blur,.backdrop-blur-sm{backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
   }
   @media (prefers-reduced-motion:reduce){
@@ -62,56 +56,12 @@
   }
   @media (min-width:1024px){html{scroll-behavior:smooth}}
 
-  /* ===== REGISTRY SEARCH ===== */
+  /* ===== PACRA EMBED ===== */
   .registry-search-wrap{background:linear-gradient(135deg,#0A1F12 0%,#123A1F 100%);border-radius:14px;padding:22px;margin-bottom:20px;position:relative;overflow:hidden}
   .registry-search-wrap::after{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(245,166,35,.18),transparent 65%);pointer-events:none}
   .registry-search-wrap .rsw-label{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange-2);font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px}
   .registry-search-wrap .rsw-title{font-family:'Playfair Display',Georgia,serif;font-size:22px;color:#fff;margin-bottom:6px;line-height:1.2}
   .registry-search-wrap .rsw-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:16px;max-width:640px}
-  .registry-search-bar{display:flex;gap:8px;background:#fff;border-radius:10px;padding:5px;position:relative;z-index:2}
-  .registry-search-bar input{flex:1;border:none;padding:11px 14px;font-size:14px;background:transparent;color:var(--forest);outline:none}
-  .registry-search-bar input::placeholder{color:rgba(10,31,18,.35)}
-  .registry-search-bar button{background:linear-gradient(135deg,#E8730F,#F5A623);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;transition:all .2s ease}
-  .registry-search-bar button:hover{box-shadow:0 4px 14px rgba(232,115,15,.4)}
-  .registry-search-bar button:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
-  .registry-quick-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;position:relative;z-index:2}
-  .registry-quick-chip{font-size:11.5px;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.18);padding:6px 12px;border-radius:99px;background:transparent;cursor:pointer;font-family:inherit;transition:all .2s ease}
-  .registry-quick-chip:hover{border-color:var(--orange-2);color:var(--orange-2)}
-
-  .registry-status-card{border-radius:12px;padding:18px 20px;margin-bottom:14px;position:relative;overflow:hidden}
-  .registry-status-card.status-available{background:linear-gradient(135deg,#E7F7EC 0%,#F0FBF4 100%);border:1.5px solid #28A745}
-  .registry-status-card.status-caution{background:linear-gradient(135deg,#FFF4E0 0%,#FFF9EE 100%);border:1.5px solid #E8730F}
-  .registry-status-card.status-unavailable{background:linear-gradient(135deg,#FDECEA 0%,#FEF4F3 100%);border:1.5px solid #B8564F}
-  .registry-status-card .rsc-head{display:flex;align-items:flex-start;gap:14px}
-  .registry-status-card .rsc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .registry-status-card.status-available .rsc-icon{background:#28A745}
-  .registry-status-card.status-caution .rsc-icon{background:#E8730F}
-  .registry-status-card.status-unavailable .rsc-icon{background:#B8564F}
-  .registry-status-card .rsc-icon i{color:#fff;font-size:20px}
-  .registry-status-card .rsc-title{font-family:'Playfair Display',Georgia,serif;font-size:19px;line-height:1.2;margin-bottom:5px;font-weight:700}
-  .registry-status-card.status-available .rsc-title{color:#0F5C2A}
-  .registry-status-card.status-caution .rsc-title{color:#7A5C10}
-  .registry-status-card.status-unavailable .rsc-title{color:#7C2318}
-  .registry-status-card .rsc-body{font-size:13px;line-height:1.6;color:rgba(10,31,18,.7)}
-  .registry-status-card .rsc-body strong{color:#0A1F12;font-weight:700}
-
-  .registry-hit{border:1px solid rgba(10,31,18,.1);border-radius:10px;padding:14px 16px;margin-bottom:8px;background:#fff;display:flex;align-items:flex-start;gap:12px;transition:all .2s ease}
-  .registry-hit:hover{border-color:rgba(10,31,18,.22);box-shadow:0 4px 12px rgba(10,31,18,.05)}
-  .registry-hit.hit-exact{border-left:3px solid #B8564F}
-  .registry-hit.hit-close{border-left:3px solid #E8730F}
-  .registry-hit.hit-far{border-left:3px solid #F5A623}
-  .registry-hit .rh-body{flex:1;min-width:0}
-  .registry-hit .rh-name{font-size:14.5px;font-weight:700;color:var(--forest);margin-bottom:6px;line-height:1.3}
-  .registry-hit .rh-meta{display:flex;flex-wrap:wrap;gap-x:14px;gap-y:5px;font-size:11.5px;color:rgba(10,31,18,.55)}
-  .registry-hit .rh-meta strong{color:var(--forest);font-weight:600;font-family:'SFMono-Regular',Consolas,monospace}
-  .registry-hit .rh-sim{flex-shrink:0;text-align:right;font-family:'Playfair Display',Georgia,serif}
-  .registry-hit .rh-sim b{font-size:20px;font-weight:800;line-height:1;display:block}
-  .registry-hit .rh-sim span{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(10,31,18,.4);font-weight:700;font-family:'Inter',sans-serif;margin-top:3px;display:block}
-  .registry-hit .rh-status{display:inline-block;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;padding:2px 7px;border-radius:4px;margin-top:6px}
-  .registry-hit .rh-status.st-Active{background:#1E7B3C18;color:#1E7B3C}
-  .registry-hit .rh-status.st-StruckOff{background:#B8564F18;color:#B8564F}
-  .registry-hit .rh-status.st-Dormant{background:#F5A62318;color:#8A6828}
-  .registry-hit .rh-use{margin-top:10px;font-size:11.5px;color:#E8730F;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;padding:0;text-decoration:underline}
 
   /* ===== PAYMENT COMPONENTS ===== */
   .pay-amount-banner{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-2) 100%);color:#fff;border-radius:14px;padding:22px 24px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;position:relative;overflow:hidden}
@@ -271,6 +221,7 @@ const { useState, useMemo, useEffect, useCallback, useRef } = React;
    ============================================================ */
 const ADMIN_WHATSAPP = '260768526191';
 const VERIFY_BASE_URL = "https://starteasy.zm/verify";
+const PACRA_PORTAL_URL = 'https://search.pacra.org.zm/';
 
 function isMobileDevice() {
   if (typeof navigator === 'undefined') return false;
@@ -808,138 +759,26 @@ const PROVIDERS = [
 ];
 
 /* ============================================================
-   PACRA SIMULATED REGISTRY
-   Used for the pre-submission name search.
-   ============================================================ */
-const PACRA_REGISTRY = [
-  { name:'Zambezi Trading Limited', regNo:'120150004821', year:2015, status:'Active', entity:'Private Limited Company' },
-  { name:'Kafue Enterprises Limited', regNo:'120170012044', year:2017, status:'Active', entity:'Private Limited Company' },
-  { name:'Lusaka Fresh Foods Limited', regNo:'120180019977', year:2018, status:'Active', entity:'Private Limited Company' },
-  { name:'Copperbelt Logistics Limited', regNo:'120140003391', year:2014, status:'Active', entity:'Private Limited Company' },
-  { name:'Chikondi Investments Limited', regNo:'120160008812', year:2016, status:'Active', entity:'Private Limited Company' },
-  { name:'Mwansa Holdings Limited', regNo:'120190022004', year:2019, status:'Active', entity:'Private Limited Company' },
-  { name:'Northgate Services Limited', regNo:'120130001556', year:2013, status:'Active', entity:'Private Limited Company' },
-  { name:'Sunbird Supplies Limited', regNo:'120160009944', year:2016, status:'Active', entity:'Private Limited Company' },
-  { name:'Kalambo Agro Limited', regNo:'120200033118', year:2020, status:'Active', entity:'Private Limited Company' },
-  { name:'Zamtrade Investments Limited', regNo:'120110000220', year:2011, status:'Active', entity:'Private Limited Company' },
-  { name:'Riverside Hardware Limited', regNo:'120170013990', year:2017, status:'Active', entity:'Private Limited Company' },
-  { name:'Golden Harvest Milling Limited', regNo:'120150006712', year:2015, status:'Active', entity:'Private Limited Company' },
-  { name:'Bwafwano Enterprises', regNo:'120190024117', year:2019, status:'Active', entity:'Business Name' },
-  { name:'Chisomo General Dealers', regNo:'120180018844', year:2018, status:'Active', entity:'Business Name' },
-  { name:'Tamara Beauty Solutions', regNo:'120210037220', year:2021, status:'Active', entity:'Business Name' },
-  { name:'Premier Auto Services Limited', regNo:'120120000997', year:2012, status:'Active', entity:'Private Limited Company' },
-  { name:'Lindo Construction Limited', regNo:'120140002204', year:2014, status:'Active', entity:'Private Limited Company' },
-  { name:'Savannah Foods Limited', regNo:'120190021100', year:2019, status:'Active', entity:'Private Limited Company' },
-  { name:'Kalindula Transport Limited', regNo:'120160007712', year:2016, status:'Active', entity:'Private Limited Company' },
-  { name:'Muchinga Mining Services Limited', regNo:'120130000881', year:2013, status:'Active', entity:'Private Limited Company' },
-  { name:'Zambezi Mining Limited', regNo:'120100000112', year:2010, status:'Active', entity:'Private Limited Company' },
-  { name:'Lusaka Cotton Ginners Limited', regNo:'120090000007', year:2009, status:'Active', entity:'Private Limited Company' },
-  { name:'Luangwa Safaris Limited', regNo:'120110000338', year:2011, status:'Active', entity:'Private Limited Company' },
-  { name:'Kafue Fresh Produce Limited', regNo:'120200030224', year:2020, status:'Active', entity:'Private Limited Company' },
-  { name:'Copperbelt Steel Limited', regNo:'120060000004', year:2006, status:'Active', entity:'Private Limited Company' },
-  { name:'Kariba Power Services Limited', regNo:'120150005508', year:2015, status:'Active', entity:'Private Limited Company' },
-  { name:'Kasumbalesa Clearing Agency Limited', regNo:'120140004112', year:2014, status:'Active', entity:'Private Limited Company' },
-  { name:'Zambia Pearl Hotels Limited', regNo:'120170014008', year:2017, status:'Active', entity:'Private Limited Company' },
-  { name:'Libala Medical Centre Limited', regNo:'120110000441', year:2011, status:'Active', entity:'Private Limited Company' },
-  { name:'Ndola Fresh Bakery Limited', regNo:'120180018990', year:2018, status:'Active', entity:'Private Limited Company' },
-  { name:'Solwezi Mining Suppliers Limited', regNo:'120130002203', year:2013, status:'Active', entity:'Private Limited Company' },
-  { name:'Macha Agro Cooperative Society', regNo:'COOP-2019-0044', year:2019, status:'Active', entity:'Cooperative' },
-  { name:'Chipata Small Traders Cooperative', regNo:'COOP-2018-0117', year:2018, status:'Active', entity:'Cooperative' },
-  { name:'Lusaka Dairy Farmers Cooperative', regNo:'COOP-2016-0088', year:2016, status:'Active', entity:'Cooperative' },
-  { name:'Southern Province Coffee Cooperative', regNo:'COOP-2020-0201', year:2020, status:'Active', entity:'Cooperative' },
-  { name:'Kasama Rice Growers Cooperative', regNo:'COOP-2017-0155', year:2017, status:'Active', entity:'Cooperative' },
-  { name:'Choma Livestock Cooperative', regNo:'COOP-2019-0233', year:2019, status:'Active', entity:'Cooperative' },
-  { name:'Zambezi Sunrise Enterprises', regNo:'120210038112', year:2021, status:'Active', entity:'Business Name' },
-  { name:'Kanyama Star Enterprises', regNo:'120190025117', year:2019, status:'Active', entity:'Business Name' },
-  { name:'Mandevu Auto Repairs', regNo:'120180018226', year:2018, status:'Active', entity:'Business Name' },
-  { name:'Chawama Tailoring Services', regNo:'120200030338', year:2020, status:'Active', entity:'Business Name' },
-  { name:'Kalingalinga Barbershop', regNo:'120210037441', year:2021, status:'Active', entity:'Business Name' },
-  { name:'Emmasdale Hardware Stores', regNo:'120170014220', year:2017, status:'Active', entity:'Business Name' },
-  { name:'Matero Fresh Produce', regNo:'120190022117', year:2019, status:'Active', entity:'Business Name' },
-  { name:'Kabulonga Veterinary Clinic Limited', regNo:'120140004417', year:2014, status:'Active', entity:'Private Limited Company' },
-  { name:'Woodlands Dental Practice Limited', regNo:'120160008118', year:2016, status:'Active', entity:'Private Limited Company' },
-  { name:'Chelston Eye Clinic Limited', regNo:'120180019224', year:2018, status:'Active', entity:'Private Limited Company' },
-  { name:'Kalingalinga Pharmacy Limited', regNo:'120200031118', year:2020, status:'Active', entity:'Private Limited Company' },
-  { name:'Olympia Business Park Limited', regNo:'120150005117', year:2015, status:'Active', entity:'Private Limited Company' },
-  { name:'Meanwood Properties Limited', regNo:'120100000338', year:2010, status:'Active', entity:'Private Limited Company' },
-  { name:'Ibex Hill Office Suites Limited', regNo:'120130001812', year:2013, status:'Active', entity:'Private Limited Company' },
-  { name:'Kabulonga Residential Estates Limited', regNo:'120120000881', year:2012, status:'Active', entity:'Private Limited Company' },
-  { name:'Chudleigh Farms Limited', regNo:'120090000007', year:2009, status:'Active', entity:'Private Limited Company' },
-  { name:'Chisamba Agro Processors Limited', regNo:'120160007224', year:2016, status:'Active', entity:'Private Limited Company' },
-  { name:'Mkushi Tobacco Processors Limited', regNo:'120110000441', year:2011, status:'Active', entity:'Private Limited Company' },
-  { name:'Mumbwa Cotton Limited', regNo:'120080000004', year:2008, status:'Active', entity:'Private Limited Company' },
-  { name:'Livingstone Waterfront Lodges Limited', regNo:'120170014117', year:2017, status:'Active', entity:'Private Limited Company' },
-  { name:'Kafue River Adventures Limited', regNo:'120200030118', year:2020, status:'Active', entity:'Private Limited Company' },
-  { name:'South Luangwa Photo Safaris Limited', regNo:'120150006224', year:2015, status:'Active', entity:'Private Limited Company' },
-  { name:'Lower Zambezi River Camps Limited', regNo:'120180019117', year:2018, status:'Active', entity:'Private Limited Company' },
-  { name:'Kitwe Trucking Limited', regNo:'120130002008', year:2013, status:'Active', entity:'Private Limited Company' },
-  { name:'Ndola Bulk Haulage Limited', regNo:'120150005117', year:2015, status:'Active', entity:'Private Limited Company' },
-  { name:'Chingola Passenger Transport Limited', regNo:'120110000708', year:2011, status:'Active', entity:'Private Limited Company' },
-  { name:'Mufulira Cargo Services Limited', regNo:'120090000004', year:2009, status:'Struck Off', entity:'Private Limited Company' },
-  { name:'Lusaka City Cabs Limited', regNo:'120170014224', year:2017, status:'Active', entity:'Private Limited Company' },
-  { name:'Copperbelt Bus Services Limited', regNo:'120080000004', year:2008, status:'Dormant', entity:'Private Limited Company' },
-  { name:'Chilanga Cement Suppliers Limited', regNo:'120140004008', year:2014, status:'Active', entity:'Private Limited Company' },
-  { name:'Lusaka Quarries Limited', regNo:'120120000712', year:2012, status:'Active', entity:'Private Limited Company' },
-  { name:'Kitwe Builders Merchants Limited', regNo:'120160007117', year:2016, status:'Active', entity:'Private Limited Company' },
-  { name:'Livingstone Hardware Limited', regNo:'120190022118', year:2019, status:'Active', entity:'Private Limited Company' },
-  { name:'Kabwe Construction Limited', regNo:'120150005518', year:2015, status:'Active', entity:'Private Limited Company' },
-  { name:'Zambia Broadband Limited', regNo:'120140004117', year:2014, status:'Active', entity:'Private Limited Company' },
-  { name:'Lusaka Fibre Networks Limited', regNo:'120170014224', year:2017, status:'Active', entity:'Private Limited Company' },
-  { name:'Copperbelt Data Centres Limited', regNo:'120190022118', year:2019, status:'Active', entity:'Private Limited Company' },
-  { name:'Zambia Cloud Services Limited', regNo:'120200030337', year:2020, status:'Active', entity:'Private Limited Company' },
-  { name:'Mwaba Holdings Limited', regNo:'120150006117', year:2015, status:'Active', entity:'Private Limited Company' },
-  { name:'Mwaba Capital Limited', regNo:'120190024117', year:2019, status:'Active', entity:'Private Limited Company' },
-  { name:'Lewis Investments Limited', regNo:'120170013224', year:2017, status:'Active', entity:'Private Limited Company' },
-  { name:'Katungu Enterprises Limited', regNo:'120160008224', year:2016, status:'Active', entity:'Private Limited Company' },
-  { name:'Phiri Brothers Limited', regNo:'120150005718', year:2015, status:'Active', entity:'Private Limited Company' },
-  { name:'Banda Trading Limited', regNo:'120140004718', year:2014, status:'Active', entity:'Private Limited Company' },
-  { name:'Tembo Holdings Limited', regNo:'120130002117', year:2013, status:'Active', entity:'Private Limited Company' },
-  { name:'Sakala Investments Limited', regNo:'120120000818', year:2012, status:'Active', entity:'Private Limited Company' },
-  { name:'Mulenga Properties Limited', regNo:'120110000918', year:2011, status:'Active', entity:'Private Limited Company' },
-  { name:'Chanda Logistics Limited', regNo:'120100000118', year:2010, status:'Active', entity:'Private Limited Company' },
-  { name:'Lungu Pharma Limited', regNo:'120090000118', year:2009, status:'Active', entity:'Private Limited Company' },
-  { name:'Zulu Textiles Limited', regNo:'120080000118', year:2008, status:'Active', entity:'Private Limited Company' },
-  { name:'Musonda Motors Limited', regNo:'120070000118', year:2007, status:'Active', entity:'Private Limited Company' },
-  { name:'Sibeso Restaurants Limited', regNo:'120060000118', year:2006, status:'Active', entity:'Private Limited Company' },
-  { name:'Chileshe Printers Limited', regNo:'120050000118', year:2005, status:'Active', entity:'Private Limited Company' },
-  { name:'Mutale Insurance Brokers Limited', regNo:'120040000118', year:2004, status:'Active', entity:'Private Limited Company' },
-  { name:'Kaunda Auto Spares Limited', regNo:'120030000118', year:2003, status:'Active', entity:'Private Limited Company' },
-  { name:'Mbewe Foods Limited', regNo:'120020000118', year:2002, status:'Active', entity:'Private Limited Company' },
-  { name:'Nkole Mining Limited', regNo:'120010000118', year:2001, status:'Struck Off', entity:'Private Limited Company' }
-];
-
-function searchPacraRegistry(query){
-  const q = String(query||'').trim();
-  if(!q) return { query:q, exact:null, similar:[], status:'empty', similarityTop:0 };
-  const lower = q.toLowerCase();
-
-  const exact = PACRA_REGISTRY.find(r => r.name.toLowerCase() === lower);
-
-  const scored = PACRA_REGISTRY
-    .map(r => ({ ...r, sim: similarity(lower, r.name.toLowerCase()) }))
-    .filter(r => r.name.toLowerCase() !== lower && r.sim >= 0.45)
-    .sort((a,b) => b.sim - a.sim)
-    .slice(0, 6);
-
-  const top = scored.length ? scored[0].sim : 0;
-
-  let status;
-  if(exact) status = 'unavailable';
-  else if(top >= 0.85) status = 'unavailable';
-  else if(top >= 0.65) status = 'caution';
-  else if(scored.length > 0) status = 'available-with-similar';
-  else status = 'available';
-
-  return { query:q, exact, similar:scored, status, similarityTop: top };
-}
-
-/* ============================================================
    NAME READINESS SCREENING
+   — similarity reference corpus (used only for similarity scoring,
+     NOT as a fake registry. Live registry search is embedded
+     directly from PACRA's own portal.)
    ============================================================ */
 const PROTECTED_WORDS = ['bank','banking','insurance','assurance','trust','microfinance','pension','securities','stock exchange','lottery','gaming','casino','university','national','government','ministry','municipal','council','chartered','royal','sacco','cooperative','co-operative','revenue','customs','judicial','parliament','state'];
 const CAUTION_WORDS = ['zambia','africa','international','group','holdings','fund','agency','commission','authority','bureau','institute','college','academy','hospital','clinic','pharmacy','exchange','capital','finance','financial','global','federal'];
 const GENERIC_WORDS = ['business','enterprise','enterprises','company','services','service','trading','traders','investments','investment','holdings','group','general','dealers','suppliers','ventures','solutions','consultants','consulting'];
-const SAMPLE_NAMES = PACRA_REGISTRY.map(r => r.name);
+
+// Small reference corpus used purely for the similarity check.
+// These are not used to claim registration status — the live embed handles that.
+const REFERENCE_CORPUS = [
+  'Zambezi Trading Limited','Kafue Enterprises Limited','Lusaka Fresh Foods Limited',
+  'Copperbelt Logistics Limited','Chikondi Investments Limited','Mwansa Holdings Limited',
+  'Northgate Services Limited','Sunbird Supplies Limited','Kalambo Agro Limited',
+  'Zamtrade Investments Limited','Riverside Hardware Limited','Golden Harvest Milling Limited',
+  'Bwafwano Enterprises','Chisomo General Dealers','Tamara Beauty Solutions',
+  'Premier Auto Services Limited','Lindo Construction Limited','Savannah Foods Limited',
+  'Kalindula Transport Limited','Muchinga Mining Services Limited'
+];
 
 function bigrams(s){const t=s.replace(/[^a-z0-9]/g,'');const out=[];for(let i=0;i<t.length-1;i++)out.push(t.slice(i,i+2));return out;}
 function similarity(a,b){const A=bigrams(a),B=bigrams(b);if(!A.length||!B.length)return 0;const m={};A.forEach(g=>m[g]=(m[g]||0)+1);let inter=0;B.forEach(g=>{if(m[g]){m[g]--;inter++;}});return(2*inter)/(A.length+B.length);}
@@ -961,10 +800,10 @@ function analyseName(raw){
   if(tokens.length===1&&GENERIC_WORDS.includes(tokens[0])){score-=30;issues.push(['critical','A single generic word is very unlikely to be accepted.']);}
   else if(tokens.length&&tokens.every(t=>GENERIC_WORDS.includes(t))){score-=18;issues.push(['warn','Every word is generic — add a distinctive element.']);}
   let best=0,bestName='';
-  SAMPLE_NAMES.forEach(s=>{const sim=similarity(lower,s.toLowerCase());if(sim>best){best=sim;bestName=s;}});
-  if(best>0.84){score-=34;issues.push(['critical',`Very close to an existing registered name (${bestName}).`]);}
-  else if(best>0.70){score-=17;issues.push(['warn',`Noticeably similar to an existing entity (${bestName}).`]);}
-  else if(best>0.58){score-=7;notes.push(`Some overlap with an existing entity (${bestName}) — acceptable, but worth reviewing.`);}
+  REFERENCE_CORPUS.forEach(s=>{const sim=similarity(lower,s.toLowerCase());if(sim>best){best=sim;bestName=s;}});
+  if(best>0.84){score-=24;notes.push(`Linguistically similar to a well-known Zambian corporate name (${bestName}). Confirm against the PACRA register before submitting.`);}
+  else if(best>0.70){score-=12;notes.push(`Noticeable linguistic overlap with a common Zambian corporate name (${bestName}). Worth checking the registry.`);}
+  else if(best>0.58){score-=5;notes.push(`Some overlap with a common Zambian corporate name (${bestName}). Acceptable, but worth reviewing.`);}
   if(!/(limited|ltd|plc|incorporated|inc|enterprises|trading|services|solutions)\b/i.test(name)&&tokens.length<3){notes.push('If registering a company, the registry will normally expect “Limited” or “Ltd”.');}
   score=Math.max(0,Math.min(100,Math.round(score)));
   let band,cls;
@@ -1560,46 +1399,32 @@ function WhatHappensNext({ items, light }){
   );
 }
 
-function DecisionBadge({ decision, size='lg' }){
-  const cfg = {
-    approve: { label:'READY', bg:'#1E7B3C', fg:'#fff', icon:'M1 9L8 16L21 2' },
-    conditional: { label:'CONDITIONS APPLY', bg:'#F5A623', fg:'#0A1F12', icon:'M12 2L2 20h20L12 2zM12 8v6M12 17v.5' },
-    decline: { label:'NOT YET READY', bg:'#B8564F', fg:'#FFFFFF', icon:'M6 6l12 12M18 6L6 18' }
-  }[decision] || { label:'PENDING', bg:'#071224', fg:'#fff', icon:'M12 2v20' };
-  const isLg = size === 'lg';
-  return (
-    <div className={`inline-flex items-center gap-3 rounded-sm ${isLg?'px-5 py-3':'px-3.5 py-2'}`} style={{background:cfg.bg,color:cfg.fg}}>
-      <svg width={isLg?22:16} height={isLg?22:16} viewBox="0 0 24 24" fill="none" stroke={cfg.fg} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d={cfg.icon}/></svg>
-      <span className={`font-bold tracking-[0.08em] ${isLg?'text-[14px]':'text-[11px]'}`}>{cfg.label}</span>
-    </div>
-  );
-}
-
 /* ============================================================
    LOGO MARK
    ============================================================ */
 function StartEasyMark({ size=36 }){
+  const uid = Math.random().toString(36).slice(2,7);
   return (
     <span className="rounded-full overflow-hidden flex-shrink-0" style={{width:size,height:size,boxShadow:'0 4px 12px -4px rgba(10,31,18,.5)'}}>
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{display:'block',width:'100%',height:'100%'}}>
         <defs>
-          <radialGradient id={`g${size}`} cx="30%" cy="25%" r="90%">
+          <radialGradient id={`g${uid}`} cx="30%" cy="25%" r="90%">
             <stop offset="0%" stopColor="#4CB050"/>
             <stop offset="45%" stopColor="#1E7B3C"/>
             <stop offset="100%" stopColor="#E8730F"/>
           </radialGradient>
-          <linearGradient id={`a${size}`} x1="0" y1="1" x2="1" y2="0">
+          <linearGradient id={`a${uid}`} x1="0" y1="1" x2="1" y2="0">
             <stop offset="0%" stopColor="#FFC107"/>
             <stop offset="100%" stopColor="#F5A623"/>
           </linearGradient>
         </defs>
-        <circle cx="50" cy="50" r="50" fill={`url(#g${size})`}/>
+        <circle cx="50" cy="50" r="50" fill={`url(#g${uid})`}/>
         <rect x="24" y="52" width="7" height="22" rx="1.2" fill="#FFFFFF" opacity="0.96"/>
         <rect x="35" y="44" width="7" height="30" rx="1.2" fill="#FFFFFF" opacity="0.96"/>
         <rect x="46" y="36" width="7" height="38" rx="1.2" fill="#C8E6C9" opacity="0.95"/>
         <rect x="57" y="30" width="7" height="44" rx="1.2" fill="#C8E6C9" opacity="0.95"/>
         <path d="M18 77 Q50 85 82 73" stroke="#FFFFFF" strokeWidth="2.4" fill="none" strokeLinecap="round" opacity="0.85"/>
-        <path d="M26 70 Q48 62 66 28" stroke={`url(#a${size})`} strokeWidth="6.5" fill="none" strokeLinecap="round"/>
+        <path d="M26 70 Q48 62 66 28" stroke={`url(#a${uid})`} strokeWidth="6.5" fill="none" strokeLinecap="round"/>
         <polygon points="70,13 84,29 62,35" fill="#F5A623"/>
       </svg>
     </span>
@@ -1624,7 +1449,7 @@ const NAV_LINKS = [
   ['about','About']
 ];
 
-function Nav({ route, go, engagementActive }){
+function Nav({ route, go }){
   const [open, setOpen] = useState(false);
   const nav = (r)=>{ setOpen(false); go(r); };
   return (
@@ -1647,12 +1472,6 @@ function Nav({ route, go, engagementActive }){
             ))}
           </nav>
           <div className="flex items-center gap-3">
-            {engagementActive && (
-              <span className="hidden md:inline-flex items-center gap-2 text-[10.5px] tracking-[0.12em] uppercase font-bold text-[#F5A623] border border-[#F5A623]/30 rounded-full px-3 py-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#F5A623] pulse-soft"/>
-                Active engagement
-              </span>
-            )}
             <Btn size="sm" variant="primary" onClick={()=>nav('orientation')} className="hidden sm:inline-flex">Get started <Arrow/></Btn>
             <button onClick={()=>setOpen(!open)} className="xl:hidden w-9 h-9 flex flex-col items-center justify-center gap-[5px]">
               <span className={`block w-5 h-[2px] bg-white transition-transform rounded-full ${open?'rotate-45 translate-y-[3.5px]':''}`}/>
@@ -1825,182 +1644,187 @@ function FloatingAssistant(){
 }
 
 /* ============================================================
-   PACRA REGISTRY SEARCH COMPONENT
+   PACRA LIVE EMBEDDED SEARCH
    ============================================================ */
-const REGISTRY_QUICK_TRIES = ['Zambezi Trading','Lusaka Fresh Foods','Mwaba Holdings','Kabulonga Veterinary','Sunbird Supplies','Chikondi Investments'];
+function PacraEmbeddedSearch({ onUseName }){
+  const [embedState, setEmbedState] = useState('loading'); // loading | ok | blocked
+  const [manualName, setManualName] = useState('');
+  const [qrDataUrl, setQrDataUrl] = useState('');
+  const [reloadKey, setReloadKey] = useState(0);
 
-function PacraRegistrySearch({ onUseName }){
-  const [query, setQuery] = useState('');
-  const [result, setResult] = useState(null);
-  const [searching, setSearching] = useState(false);
+  useEffect(()=>{
+    setEmbedState('loading');
+    let loaded = false;
+    const iframe = document.getElementById('pacra-embed-frame');
+    const onLoad = ()=>{ loaded = true; setEmbedState('ok'); };
+    if(iframe) iframe.addEventListener('load', onLoad);
+    const timer = setTimeout(()=>{ if(!loaded) setEmbedState('blocked'); }, 6000);
+    return ()=>{
+      clearTimeout(timer);
+      if(iframe) iframe.removeEventListener('load', onLoad);
+    };
+  },[reloadKey]);
 
-  const runSearch = (q)=>{
-    const val = (q !== undefined ? q : query).trim();
-    if(!val){ setResult(null); return; }
-    setSearching(true);
-    setTimeout(()=>{
-      const r = searchPacraRegistry(val);
-      setResult(r);
-      setSearching(false);
-    }, 380);
-  };
+  useEffect(()=>{
+    if(embedState !== 'blocked') return;
+    if(!window.QRCode) return;
+    const canvas = document.createElement('canvas');
+    window.QRCode.toCanvas(canvas, PACRA_PORTAL_URL, { width:180, margin:1, color:{ dark:'#0A1F12', light:'#FFFFFF' } }, (err)=>{
+      if(!err) setQrDataUrl(canvas.toDataURL('image/png'));
+    });
+  },[embedState]);
 
-  const handleQuick = (name)=>{
-    setQuery(name);
-    runSearch(name);
-  };
-
-  const statusCopy = (r)=>{
-    switch(r.status){
-      case 'unavailable':
-        return {
-          title: 'This name appears to be taken.',
-          body: r.exact
-            ? `“${r.exact.name}” is already on the PACRA register (Reg. No ${r.exact.regNo}, registered ${r.exact.year}, status: ${r.exact.status}). Submitting this exact name for clearance would almost certainly be reverted. Choose a distinctive alternative.`
-            : `A very similar name is already registered — see the closest match below. Names at this level of similarity are usually rejected at clearance stage. Choose a distinctive alternative.`
-        };
-      case 'caution':
-        return {
-          title: 'Similar names exist — proceed with caution.',
-          body: `One or more existing entities share a substantial portion of this name. PACRA may consider the name confusingly similar. Consider changing the distinctive word before submitting, and be ready to justify the choice if you proceed.`
-        };
-      case 'available-with-similar':
-        return {
-          title: 'No exact match — some similar names exist.',
-          body: `No exact match was found. However, similar entities are on the register — usually in adjacent sectors or with different distinctive elements. Lower-risk, but worth reviewing before you submit.`
-        };
-      case 'available':
-        return {
-          title: 'No match found — likely available.',
-          body: `No exact match and no close similarity was found. This name appears clear at this level. Final clearance is still at the discretion of PACRA — but this is a strong sign.`
-        };
-      default:
-        return { title:'', body:'' };
-    }
-  };
+  const openPortal = ()=> window.open(PACRA_PORTAL_URL, '_blank', 'noopener,noreferrer');
+  const retry = ()=>{ setEmbedState('loading'); setReloadKey(k=>k+1); };
 
   return (
     <div>
       <div className="registry-search-wrap">
-        <div className="rsw-label"><i className="fas fa-search"></i> PACRA Registry Search · Free</div>
-        <h3 className="rsw-title">Check a proposed name before you submit.</h3>
-        <p className="rsw-sub">Type the name you are considering. We compare it against the PACRA register and flag any exact match, close variants or similar entities, so you avoid an avoidable reversion.</p>
-        <div className="registry-search-bar">
-          <input
-            type="text"
-            value={query}
-            onChange={e=>setQuery(e.target.value)}
-            onKeyDown={e=>{ if(e.key==='Enter'){ e.preventDefault(); runSearch(); } }}
-            placeholder="e.g. Zambezi Fresh Foods Limited"
-            aria-label="Proposed business name"
-          />
-          <button type="button" onClick={()=>runSearch()} disabled={!query.trim() || searching}>
-            {searching ? <><i className="fas fa-spinner fa-spin"></i> Searching…</> : <><i className="fas fa-search"></i> Search registry</>}
+        <div className="rsw-label"><i className="fas fa-globe"></i> PACRA Live Register · Official Portal</div>
+        <h3 className="rsw-title">Search the official PACRA register — right here.</h3>
+        <p className="rsw-sub">
+          This is PACRA's own public search portal, embedded. Every result comes live from the registry —
+          nothing simulated, nothing cached by StartEasy. If the portal cannot be embedded for security reasons,
+          you will see a direct-open option below.
+        </p>
+        <div style={{display:'flex',flexWrap:'wrap',gap:10,position:'relative',zIndex:2}}>
+          <button
+            type="button"
+            onClick={openPortal}
+            style={{
+              background:'linear-gradient(135deg,#E8730F,#F5A623)', color:'#fff',
+              border:'none', borderRadius:8, padding:'12px 20px',
+              fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit',
+              display:'inline-flex', alignItems:'center', gap:8,
+            }}
+          >
+            <i className="fas fa-external-link-alt"></i> Open PACRA search in a new tab
           </button>
-        </div>
-        <div className="registry-quick-chips">
-          <span style={{fontSize:11.5,color:'rgba(255,255,255,.4)',alignSelf:'center',marginRight:6}}>Try:</span>
-          {REGISTRY_QUICK_TRIES.map(n=>(
-            <button key={n} type="button" className="registry-quick-chip" onClick={()=>handleQuick(n)}>{n}</button>
-          ))}
+          <button
+            type="button"
+            onClick={retry}
+            style={{
+              background:'transparent', color:'rgba(255,255,255,.75)',
+              border:'1px solid rgba(255,255,255,.25)', borderRadius:8, padding:'12px 18px',
+              fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit',
+              display:'inline-flex', alignItems:'center', gap:8,
+            }}
+          >
+            <i className="fas fa-sync-alt"></i> Reload embed
+          </button>
         </div>
       </div>
 
-      {result && (
-        <div className="fadein-s">
-          {(()=>{
-            const copy = statusCopy(result);
-            const cls = result.status === 'available' || result.status === 'available-with-similar'
-              ? 'status-available'
-              : result.status === 'caution' ? 'status-caution' : 'status-unavailable';
-            const icon = result.status === 'available' || result.status === 'available-with-similar'
-              ? 'fa-check'
-              : result.status === 'caution' ? 'fa-exclamation-triangle' : 'fa-times';
-            return (
-              <div className={`registry-status-card ${cls}`}>
-                <div className="rsc-head">
-                  <div className="rsc-icon"><i className={`fas ${icon}`}></i></div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="rsc-title">{copy.title}</h4>
-                    <p className="rsc-body">{copy.body}</p>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
+      <div className="bg-white border border-[#0A1F12]/10 rounded-sm overflow-hidden mt-4">
+        <div className="px-4 py-3 border-b border-[#0A1F12]/8 flex items-center justify-between gap-3" style={{background:'#FBFDFB'}}>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full" style={{
+              background: embedState === 'ok' ? '#1E7B3C' : embedState === 'blocked' ? '#B8564F' : '#F5A623'
+            }}/>
+            <span className="text-[11px] tracking-[0.12em] uppercase font-bold text-[#0A1F12]/55">
+              {embedState === 'ok' ? 'Live — connected to PACRA' :
+               embedState === 'blocked' ? 'Embed blocked by PACRA' :
+               'Connecting to PACRA…'}
+            </span>
+          </div>
+          <span className="text-[10.5px] text-[#0A1F12]/40 font-mono">search.pacra.org.zm</span>
+        </div>
 
-          {result.exact && (
-            <>
-              <div className="text-[11px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/45 mb-2 mt-3">Exact match on the register</div>
-              <RegistryHit hit={result.exact} kind="exact" onUseName={onUseName}/>
-            </>
-          )}
-
-          {result.similar.length > 0 && (
-            <>
-              <div className="text-[11px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/45 mb-2 mt-3">
-                Similar registered entities ({result.similar.length})
-              </div>
-              {result.similar.map((hit, i)=>(
-                <RegistryHit key={i} hit={hit} kind={hit.sim >= 0.85 ? 'close' : hit.sim >= 0.65 ? 'close' : 'far'} onUseName={onUseName} showSim/>
-              ))}
-            </>
-          )}
-
-          {result.status === 'available' && result.similar.length === 0 && (
-            <div className="bg-white border border-[#0A1F12]/8 rounded-sm p-5 mt-3">
-              <p className="text-[12.5px] text-[#0A1F12]/55 leading-relaxed">
-                The register returned no similar names at the standard similarity threshold. That is a strong positive signal — but always submit more than one name for clearance, and never rely on the search alone.
+        <div style={{position:'relative',width:'100%',minHeight:560,background:'#F5FAF6'}}>
+          <iframe
+            id="pacra-embed-frame"
+            key={reloadKey}
+            src={PACRA_PORTAL_URL}
+            title="PACRA public register search"
+            style={{width:'100%',height:560,border:0,display:'block'}}
+            referrerPolicy="no-referrer-when-downgrade"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+          />
+          {embedState === 'loading' && (
+            <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(245,250,246,.92)',flexDirection:'column',gap:12,pointerEvents:'none'}}>
+              <i className="fas fa-spinner fa-spin" style={{fontSize:26,color:'#E8730F'}}></i>
+              <p style={{fontSize:12.5,color:'rgba(10,31,18,.55)',textAlign:'center',maxWidth:320,lineHeight:1.6,padding:'0 16px'}}>
+                Contacting the PACRA register. This can take a few seconds.
               </p>
             </div>
           )}
-
-          <div style={{marginTop:14,display:'flex',flexWrap:'wrap',gap:8}}>
-            <button
-              type="button"
-              onClick={()=>onUseName && onUseName(result.query)}
-              style={{background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,padding:'10px 18px',fontSize:12.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8}}
-            >
-              <i className="fas fa-arrow-down"></i> Use this name in the readiness review
-            </button>
-            <button
-              type="button"
-              onClick={()=>{ setQuery(''); setResult(null); }}
-              style={{background:'none',border:'1px solid rgba(10,31,18,.15)',color:'rgba(10,31,18,.65)',borderRadius:8,padding:'10px 18px',fontSize:12.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}
-            >
-              Clear
-            </button>
-          </div>
-
-          <p style={{fontSize:11,color:'rgba(10,31,18,.4)',marginTop:12,lineHeight:1.6,fontStyle:'italic'}}>
-            This search compares your name against the StartEasy register mirror. It is a screening aid, not an official PACRA clearance. Final clearance is at the discretion of the registry.
-          </p>
         </div>
-      )}
-    </div>
-  );
-}
-
-function RegistryHit({ hit, kind, showSim, onUseName }){
-  const color = kind === 'exact' ? '#B8564F' : kind === 'close' ? '#E8730F' : '#F5A623';
-  const statusCls = hit.status === 'Active' ? 'st-Active' : hit.status === 'Struck Off' ? 'st-StruckOff' : 'st-Dormant';
-  return (
-    <div className={`registry-hit hit-${kind}`}>
-      <div className="rh-body">
-        <div className="rh-name">{hit.name}</div>
-        <div className="rh-meta">
-          <span>Reg. No <strong>{hit.regNo}</strong></span>
-          <span>Registered <strong>{hit.year}</strong></span>
-          <span>{hit.entity}</span>
-        </div>
-        <div className={`rh-status ${statusCls}`}>{hit.status}</div>
       </div>
-      {showSim && (
-        <div className="rh-sim" style={{color}}>
-          <b>{Math.round(hit.sim * 100)}%</b>
-          <span>similarity</span>
+
+      {embedState === 'blocked' && (
+        <div className="fadein-s mt-4" style={{background:'linear-gradient(135deg,#FFF4E0 0%,#FFF9EE 100%)',border:'1.5px solid #E8730F',borderRadius:12,padding:'18px 20px'}}>
+          <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
+            <div style={{width:44,height:44,borderRadius:12,background:'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+              <i className="fas fa-exclamation-triangle" style={{color:'#fff',fontSize:20}}></i>
+            </div>
+            <div style={{flex:1,minWidth:0}}>
+              <h4 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:19,lineHeight:1.2,marginBottom:5,fontWeight:700,color:'#7A5C10'}}>PACRA has blocked direct embedding.</h4>
+              <p style={{fontSize:13,lineHeight:1.6,color:'rgba(10,31,18,.7)'}}>
+                For security reasons the registry only allows its search portal to be opened directly — not framed inside other websites.
+                That is normal and expected. You can still search the live register in one click.
+              </p>
+              <div style={{display:'flex',flexWrap:'wrap',gap:20,alignItems:'flex-start',marginTop:14}}>
+                {qrDataUrl && (
+                  <div style={{background:'#fff',padding:8,borderRadius:8,border:'1px solid rgba(10,31,18,.1)'}}>
+                    <img src={qrDataUrl} alt="QR code to PACRA portal" style={{display:'block',width:130,height:130}}/>
+                    <p style={{fontSize:10,color:'rgba(10,31,18,.5)',textAlign:'center',marginTop:6,fontWeight:600}}>Scan with your phone</p>
+                  </div>
+                )}
+                <div style={{flex:1,minWidth:220}}>
+                  <button
+                    type="button"
+                    onClick={openPortal}
+                    style={{
+                      background:'linear-gradient(135deg,#E8730F,#F5A623)', color:'#fff',
+                      border:'none', borderRadius:8, padding:'12px 20px',
+                      fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit',
+                      display:'inline-flex', alignItems:'center', gap:8, marginBottom:12,
+                    }}
+                  >
+                    <i className="fas fa-external-link-alt"></i> Open search.pacra.org.zm now
+                  </button>
+                  <p style={{fontSize:12,color:'rgba(10,31,18,.6)',lineHeight:1.6}}>
+                    Once you have checked the name on PACRA's portal, come back here and use the readiness review below.
+                    You can paste the name into the review fields with one click.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
+
+      <div className="bg-white border border-[#0A1F12]/8 rounded-sm p-6 mt-4">
+        <span className="micro text-[#0A1F12]/50 block mb-3">Hand off to the readiness review</span>
+        <p style={{fontSize:12.5,color:'rgba(10,31,18,.6)',lineHeight:1.65,marginBottom:14}}>
+          Paste the name you want to submit. We will load it into the readiness review below, where it is scored for
+          protected terminology, generic wording and other avoidable defects before you submit.
+        </p>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          <input
+            type="text"
+            value={manualName}
+            onChange={(e)=>setManualName(e.target.value)}
+            onKeyDown={(e)=>{ if(e.key==='Enter' && manualName.trim() && onUseName){ onUseName(manualName.trim()); setManualName(''); } }}
+            placeholder="e.g. Zambezi Fresh Foods Limited"
+            style={{flex:1,minWidth:220,padding:'11px 14px',border:'1px solid rgba(10,31,18,.15)',borderRadius:8,fontSize:14,fontFamily:'inherit',background:'#fff',color:'#0A1F12'}}
+          />
+          <button
+            type="button"
+            disabled={!manualName.trim()}
+            onClick={()=>{ if(manualName.trim() && onUseName){ onUseName(manualName.trim()); setManualName(''); } }}
+            style={{
+              background:'linear-gradient(135deg,#E8730F,#F5A623)', color:'#fff',
+              border:'none', borderRadius:8, padding:'11px 20px',
+              fontSize:13, fontWeight:700, cursor: manualName.trim() ? 'pointer' : 'not-allowed',
+              fontFamily:'inherit', opacity: manualName.trim() ? 1 : 0.5,
+              display:'inline-flex', alignItems:'center', gap:8,
+            }}
+          >
+            <i className="fas fa-arrow-down"></i> Load into readiness review
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -2008,16 +1832,16 @@ function RegistryHit({ hit, kind, showSim, onUseName }){
 /* ============================================================
    VIEW: HOME
    ============================================================ */
-function Home({ go, openPayment }){
+function Home({ go }){
   const orientation = [
     { n:'01', t:'I want to start a business', d:'Structure, registration, tax and licensing — mapped end-to-end into a personalised action plan.', cta:'Start the journey', r:'orientation', icon:'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5' },
     { n:'02', t:'I have a business and need help staying compliant', d:'Annual returns, tax filings, NAPSA contributions, licence renewals — all on one calendar.', cta:'Open Compliance Passport', r:'passport', icon:'M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11' },
-    { n:'03', t:'I need a name checked before I submit', d:'Free readiness screening on up to three proposed names. Formal report available.', cta:'Run Name Check', r:'name-check', icon:'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
+    { n:'03', t:'I need a name checked before I submit', d:'Search the live PACRA register, then score the name for readiness — all in one place.', cta:'Check a name', r:'name-check', icon:'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
     { n:'04', t:'I am stuck and need expert help', d:'Speak to the Administrative Services Desk. Human support from K450 per matter.', cta:'Open the Desk', r:'desk', icon:'M18 20V10M12 20V4M6 20v-6' }
   ];
   const steps = [
-    { n:'01', t:'Tell us what you need', d:'Answer a few questions in plain language. We map your objective to the actual regulatory requirements.' },
-    { n:'02', t:'Get your action plan', d:'A personalised, step-by-step plan with documents, checklists, timelines and common reversion causes.' },
+    { n:'01', t:'Search the register', d:'Check the live PACRA register first — see whether your proposed name or a confusingly similar one is already taken.' },
+    { n:'02', t:'Get your action plan', d:'Answer a few questions. Receive a personalised, step-by-step plan with documents, checklists and timelines.' },
     { n:'03', t:'Prepare & check', d:'Tick off steps, run readiness checks, and catch avoidable errors before submission.' },
     { n:'04', t:'Submit, track & maintain', d:'Submit through official channels, track the outcome, and keep renewals on your compliance calendar.' }
   ];
@@ -2089,7 +1913,7 @@ function Home({ go, openPayment }){
 
       <section className="bg-[#0A1F12] text-white">
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-16 lg:py-24">
-          <SectionHead light eyebrow="How it works" title={'Four steps, from "what do I need" to "compliant".'} className="mb-16 max-w-3xl"/>
+          <SectionHead light eyebrow="How it works" title={'Four steps, from "is this name free?" to "compliant".'} className="mb-16 max-w-3xl"/>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 rounded-sm overflow-hidden">
             {steps.map(s=>(
               <div key={s.n} className="bg-[#0A1F12] p-8 lg:p-10 hover:bg-[#123A1F] transition-colors duration-300">
@@ -2130,14 +1954,14 @@ function Home({ go, openPayment }){
                 <h2 className="serif text-[clamp(1.8rem,4vw,2.8rem)] leading-tight text-white mb-5">Right information. Right documents. Right process. Right submission.</h2>
                 <p className="text-[15px] leading-relaxed text-white/55 max-w-2xl mb-8">We do not promise that a regulator will never reject or revert an application — that would be impossible. What we do is reduce avoidable errors, omissions and administrative delays <strong className="text-white">before</strong> submission.</p>
                 <div className="flex flex-wrap gap-3">
-                  <Btn size="lg" variant="primary" onClick={()=>go('orientation')}>Prepare right <Arrow/></Btn>
+                  <Btn size="lg" variant="primary" onClick={()=>go('name-check')}>Check a name <Arrow/></Btn>
                   <Btn size="lg" variant="ghostLight" onClick={()=>go('playbook')}>See the playbook</Btn>
                 </div>
               </div>
               <div className="bg-white/[0.04] border border-[#F5A623]/30 rounded-sm p-6 lg:p-8">
                 <span className="micro text-[#F5A623] block mb-6">What StartEasy does</span>
                 <div className="space-y-4">
-                  {['Search the registry before submitting','Identify the correct process','Prepare and review your pack','Submit through official channels','Interpret reversion notices','Track and follow up'].map((f,i)=>(
+                  {['Search the live PACRA register','Identify the correct process','Prepare and review your pack','Submit through official channels','Interpret reversion notices','Track and follow up'].map((f,i)=>(
                     <div key={i} className="flex items-start gap-3 text-[13px] text-white/70">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F5A623" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0"><path d="M20 6L9 17l-5-5"/></svg>
                       {f}
@@ -2162,10 +1986,10 @@ function Home({ go, openPayment }){
             </button>
             <button onClick={()=>go('name-check')} className="bg-white p-8 lg:p-14 rounded-sm border border-[#0A1F12]/5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group text-left" style={{cursor:'pointer',fontFamily:'inherit'}}>
               <div className="w-12 h-12 rounded-full bg-[#1E7B3C]/10 flex items-center justify-center mb-8 group-hover:bg-[#1E7B3C]/20 transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E7B3C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
-              <span className="micro text-[#0A1F12]/50 block mb-4">PACRA registry search</span>
-              <h3 className="serif text-[clamp(1.8rem,3vw,2.4rem)] leading-tight text-[#0A1F12] mb-5">Check a name before you submit.</h3>
-              <p className="text-[15px] leading-relaxed text-[#0A1F12]/55 mb-8 max-w-md">See whether a proposed name — or a confusingly similar one — is already on the register.</p>
-              <span className="flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase text-[#1E7B3C] font-bold">Search the registry <Arrow className="group-hover:translate-x-1 transition-transform"/></span>
+              <span className="micro text-[#0A1F12]/50 block mb-4">Live PACRA registry</span>
+              <h3 className="serif text-[clamp(1.8rem,3vw,2.4rem)] leading-tight text-[#0A1F12] mb-5">Search the official register, live.</h3>
+              <p className="text-[15px] leading-relaxed text-[#0A1F12]/55 mb-8 max-w-md">Real results from PACRA's own portal, embedded right here. No simulation, no fake data.</p>
+              <span className="flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase text-[#1E7B3C] font-bold">Search the register <Arrow className="group-hover:translate-x-1 transition-transform"/></span>
             </button>
           </div>
         </div>
@@ -2660,7 +2484,7 @@ function GuidedJourney({ go, journeyId, openPayment }){
                     </p>
                   </div>
                   {[
-                    'I have searched the PACRA registry for my proposed name(s).',
+                    'I have searched the live PACRA register for my proposed name(s).',
                     'I have identified all the people who must sign.',
                     'Names on my documents match identification exactly.',
                     'I have certified copies where certification is required.',
@@ -2726,7 +2550,7 @@ function GuidedJourney({ go, journeyId, openPayment }){
 }
 
 /* ============================================================
-   VIEW: NAME CHECK  (with PACRA registry search + readiness)
+   VIEW: NAME CHECK (Live PACRA embed + readiness review)
    ============================================================ */
 function NameCheck({ go, openPayment }){
   const [names, setNames] = useState(['','','']);
@@ -2743,7 +2567,6 @@ function NameCheck({ go, openPayment }){
 
   const useNameInReview = (name)=>{
     setNames([name, names[1]||'', names[2]||'']);
-    // scroll to the readiness panel
     setTimeout(()=>{
       const el = document.getElementById('readiness-review-anchor');
       if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
@@ -2752,7 +2575,7 @@ function NameCheck({ go, openPayment }){
 
   const qcList = [
     'The entity type has been decided and recorded.',
-    'I have searched the PACRA registry for all proposed names.',
+    'I have searched the live PACRA register for all proposed names.',
     'All proposed names are in order of preference and at least three are prepared.',
     'I have identified every person who must sign.',
     'Names on all documents match identification documents exactly.',
@@ -2769,17 +2592,16 @@ function NameCheck({ go, openPayment }){
   return (
     <div className="fadein bg-[#F5FAF6]">
       <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
-        <SectionHead eyebrow="Name Check" title="Search the register. Then score the name." sub="Two tools in one place. First, check whether a proposed name — or a confusingly similar one — is already on the PACRA register. Then run the readiness review to catch any other issues before submission." className="mb-12 max-w-3xl"/>
+        <SectionHead eyebrow="Name Check" title="Search the register. Then score the name." sub="Two tools in one place. First, search the live PACRA register through our embedded view of the official portal. Then run the readiness review to catch protected terminology, generic wording and other avoidable defects before submission." className="mb-12 max-w-3xl"/>
 
-        {/* ===== PACRA REGISTRY SEARCH ===== */}
         <div className="mb-14">
-          <PacraRegistrySearch onUseName={useNameInReview}/>
+          <PacraEmbeddedSearch onUseName={useNameInReview}/>
         </div>
 
-        <div id="readiness-review-anchor" className="mb-8 scroll-mt-24">
+        <div id="readiness-review-anchor" className="mb-8" style={{scrollMarginTop:'96px'}}>
           <span className="micro text-[#0A1F12]/50 block mb-3">Step 2</span>
           <h2 className="serif text-[clamp(1.6rem,3.5vw,2.2rem)] leading-tight text-[#0A1F12] mb-4">Name readiness review</h2>
-          <p className="text-[14.5px] leading-relaxed text-[#0A1F12]/55 max-w-3xl">Now score the names you intend to submit. This checks for protected terms, generic wording, spelling issues and similarity — and recommends a submission order.</p>
+          <p className="text-[14.5px] leading-relaxed text-[#0A1F12]/55 max-w-3xl">Now score the names you intend to submit. This checks for protected terms, generic wording, spelling issues and linguistic similarity — and recommends a submission order.</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
@@ -2896,7 +2718,7 @@ function NameCheck({ go, openPayment }){
                       amount:'K50',
                       currency:'ZMW',
                       purpose:'Name Readiness Report — Formal',
-                      purposeDetail:'A formal PDF report with detailed screening, similarity analysis and recommended submission order. Delivered within 2 business days.',
+                      purposeDetail:'A formal PDF report with detailed screening and recommended submission order. Delivered within 2 business days.',
                       applicant:{ firstName:'', lastName:'', email:'', phone:'', country:'Zambia', company:'' },
                       receiptPrefix:'SE-NMR'
                     })} className="inline-flex items-center gap-2.5 font-bold rounded-sm text-[13px] px-5 py-3" style={{background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',cursor:'pointer',fontFamily:'inherit'}}>
@@ -3069,7 +2891,7 @@ function AdminDesk({ go, openPayment }){
                 <div>
                   <span className="text-[11px] tracking-[0.14em] uppercase font-bold text-[#1E7B3C] block mb-3">Can</span>
                   <ul className="space-y-2">
-                    {['Search the register for a proposed name','Identify the correct process','Prepare and review your pack','Submit through official channels','Interpret reversion notices','Track and follow up'].map((x,i)=>(
+                    {['Search the live PACRA register','Identify the correct process','Prepare and review your pack','Submit through official channels','Interpret reversion notices','Track and follow up'].map((x,i)=>(
                       <li key={i} className="text-[12px] text-[#0A1F12]/65 leading-relaxed">• {x}</li>
                     ))}
                   </ul>
@@ -3569,7 +3391,7 @@ function Playbook({ tab }){
                   </div>
                   <div className="space-y-3">
                     {procs.map(([key,p])=>(
-                      <details key={key} className="bg-white rounded-sm border border-[#0A1F12]/8 overflow-hidden group">
+                      <details key={key} className="bg-white rounded-sm border border-[#0A1F12]/8 overflow-hidden">
                         <summary className="px-5 lg:px-6 py-4 cursor-pointer flex items-center gap-4 hover:bg-[#FBFDFB]">
                           <span className="text-[11px] font-mono text-[#0A1F12]/40 shrink-0">{p.code}</span>
                           <span className="text-[14px] font-semibold text-[#0A1F12] flex-1">{p.title}</span>
@@ -3716,7 +3538,7 @@ function ReversionLibrary(){
 function Pricing(){
   const ladder = [
     ['Directory','Yes','Information only','Free'],
-    ['PACRA Registry Search','Yes','Screening aid','Free'],
+    ['Live PACRA registry search','Yes','Embedded official portal','Free'],
     ['DIY Journey','Yes','Digital guidance','Free / very low cost'],
     ['Guided Journey','Yes','Automated + limited review','From K150 / $15'],
     ['Assisted Journey','Mostly','Human support','From K450 / $45'],
@@ -3838,7 +3660,6 @@ function App(){
   const [routeArg, setRouteArg] = useState(null);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [paymentConfig, setPaymentConfig] = useState(null);
-  const [engagement, setEngagement] = useState(null);
 
   useEffect(()=>{
     const raw = (location.hash || '').replace(/^#\/?/, '');
@@ -3888,13 +3709,13 @@ function App(){
       case 'playbook': return <Playbook tab={routeArg}/>;
       case 'pricing': return <Pricing/>;
       case 'about': return <About go={go}/>;
-      default: return <Home go={go} openPayment={openPayment}/>;
+      default: return <Home go={go}/>;
     }
   };
 
   return (
     <div className="min-h-screen bg-[#F5FAF6] flex flex-col">
-      <Nav route={route} go={go} engagementActive={!!engagement}/>
+      <Nav route={route} go={go}/>
       <main className="flex-1">{view()}</main>
       <Footer go={go}/>
       <FloatingAssistant/>
@@ -3905,11 +3726,10 @@ function App(){
           amount={paymentConfig.amount}
           currency={paymentConfig.currency}
           purpose={paymentConfig.purpose}
-          personDetail={paymentConfig.purposeDetail}
           purposeDetail={paymentConfig.purposeDetail}
           applicant={paymentConfig.applicant}
           receiptPrefix={paymentConfig.receiptPrefix}
-          onConfirmed={(data)=>{ console.log('[StartEasy] Payment recorded:', data); setEngagement({ at: new Date().toISOString(), purpose: data.purpose }); }}
+          onConfirmed={(data)=>{ console.log('[StartEasy] Payment recorded:', data); }}
         />
       )}
     </div>
