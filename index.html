@@ -799,12 +799,9 @@ function analyseName(raw){
 /* ============================================================
    PRESENTATION HELPERS
    ============================================================ */
-const $ = (s,r=document)=>(r||document).querySelector(s);
-const $$ = (s,r=document)=>Array.from((r||document).querySelectorAll(s));
 const uid = (p='id')=>p+'_'+Math.random().toString(36).slice(2,9);
 const fmtDate = (d)=>{ if(!d) return '—'; const x=new Date(d); if(isNaN(x)) return '—'; return x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); };
 const pct = (a,b)=> b===0?0:Math.round((a/b)*100);
-const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
 
 function numberToWords(num){
   const ones=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
@@ -1020,7 +1017,6 @@ function PaymentFlow({ amount, currency, purpose, purposeDetail, applicant, rece
       recipientAccount: m.recipientAccount,
       status: 'pending'
     };
-    // Persist locally
     try{
       const stored = JSON.parse(localStorage.getItem('se_receipts') || '[]');
       stored.push(data);
@@ -1072,11 +1068,8 @@ function PaymentFlow({ amount, currency, purpose, purposeDetail, applicant, rece
     try{
       const stored = JSON.parse(localStorage.getItem('se_receipts') || '[]');
       const found = stored.find(r => r.receiptNo === checkRef.trim().toUpperCase());
-      if(found){
-        setCheckResult('PENDING — awaiting verification by our team.');
-      } else {
-        setCheckResult('Receipt not found on this device. Contact engagements@starteasy.zm with your receipt number.');
-      }
+      if(found){ setCheckResult('PENDING — awaiting verification by our team.'); }
+      else { setCheckResult('Receipt not found on this device. Contact engagements@starteasy.zm with your receipt number.'); }
     }catch(e){ setCheckResult('Could not check right now. Please try again later.'); }
   };
 
@@ -1118,7 +1111,7 @@ function PaymentFlow({ amount, currency, purpose, purposeDetail, applicant, rece
               <h6><i className="fas fa-search"></i> Check receipt status later</h6>
               <div className="receipt-check-row">
                 <input type="text" value={checkRef} onChange={e=>setCheckRef(e.target.value)} placeholder="Enter your Receipt No (e.g. SE-2026-00001)" />
-                <button type="button" className="btn btn-primary btn-sm" onClick={lookupReceipt}>Check</button>
+                <button type="button" onClick={lookupReceipt} style={{padding:'10px 18px',background:'#1E7B3C',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>Check</button>
               </div>
               {checkResult && <div className="receipt-check-result show">{checkResult}</div>}
             </div>
@@ -1561,7 +1554,7 @@ function Footer({ go }){
 }
 
 /* ============================================================
-   HERO SLIDER (logo / visual carousel)
+   HERO SLIDER
    ============================================================ */
 const HERO_SLIDES = [
   { title:'Right the first time.', sub:'Regulatory & administrative work, prepared to the standard the regulator expects.' },
@@ -1653,7 +1646,7 @@ function FloatingAssistant(){
 }
 
 /* ============================================================
-   VIEW: HOME
+   VIEW: HOME  (fixed nested-quote bug)
    ============================================================ */
 function Home({ go, openPayment }){
   const orientation = [
@@ -1736,7 +1729,7 @@ function Home({ go, openPayment }){
 
       <section className="bg-[#0A1F12] text-white">
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-16 lg:py-24">
-          <SectionHead light eyebrow="How it works" title="Four steps, from "what do I need" to "compliant"." className="mb-16 max-w-3xl"/>
+          <SectionHead light eyebrow="How it works" title={'Four steps, from "what do I need" to "compliant".'} className="mb-16 max-w-3xl"/>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 rounded-sm overflow-hidden">
             {steps.map(s=>(
               <div key={s.n} className="bg-[#0A1F12] p-8 lg:p-10 hover:bg-[#123A1F] transition-colors duration-300">
@@ -1880,7 +1873,7 @@ const ORI_QUESTIONS = [
   ], cols:2 }
 ];
 
-function OrientationWizard({ go, onComplete }){
+function OrientationWizard({ go }){
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [done, setDone] = useState(false);
@@ -2011,14 +2004,14 @@ function OrientationWizard({ go, onComplete }){
 }
 
 /* ============================================================
-   GUIDED JOURNEY (multi-step + paid assessment)
+   GUIDED JOURNEY
    ============================================================ */
-function GuidedJourney({ go, journeyId, openPayment, onEngagement }){
+function GuidedJourney({ go, journeyId, openPayment }){
   const [step, setStep] = useState(0);
   const [f, setF] = useState({
     company:'', country:'Zambia', sector:'', contactName:'', contactEmail:'', contactPhone:'',
     entity:'', employees:'', premises:'', turnover:'', trade:'none',
-    timeline:'', documents: [], consent: false
+    documents: [], consent: false
   });
   const set = (k,v)=>setF(p=>({...p,[k]:v}));
   const j = journeyId ? getJourney(journeyId) : getJourney('start-business');
@@ -2030,23 +2023,20 @@ function GuidedJourney({ go, journeyId, openPayment, onEngagement }){
 
   const step1Ok = f.contactName && f.contactEmail;
   const step2Ok = f.entity && f.employees && f.premises && f.sector;
-  const step3Ok = true; // readiness self-assessment optional
 
   const [planReady, setPlanReady] = useState(false);
+  const [planProcesses, setPlanProcesses] = useState([]);
+  const [planDone, setPlanDone] = useState({});
 
   const buildPlan = ()=>{
     const answers = {
       entity: f.entity, employees: f.employees, premises: f.premises, sector: f.sector,
       turnover: f.turnover || 'under', trade: f.trade || 'none'
     };
-    const processes = (j.processes||[])
+    return (j.processes||[])
       .filter(p => { try { return p.when(answers); } catch(e){ return true; } })
       .map(p => PROCESSES[p.ref]).filter(Boolean);
-    return processes;
   };
-
-  const [planProcesses, setPlanProcesses] = useState([]);
-  const [planDone, setPlanDone] = useState({});
 
   const handleSubmit = ()=>{
     setPlanProcesses(buildPlan());
@@ -2075,7 +2065,6 @@ function GuidedJourney({ go, journeyId, openPayment, onEngagement }){
   };
 
   if(step === 3 && planReady){
-    const submissionFee = getSubmissionFee(f.country);
     const openUpgrade = (tier)=>{
       const price = tier === 'guided' ? PRICING.guided : tier === 'assisted' ? PRICING.assisted : PRICING.managed;
       const amount = f.country === 'Zambia' ? price.zm : price.usd + ' USD';
@@ -2092,7 +2081,7 @@ function GuidedJourney({ go, journeyId, openPayment, onEngagement }){
     return (
       <div className="fadein bg-[#F5FAF6]">
         <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
-          <div className="tiny muted mb-3 flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase text-[#0A1F12]/40 font-bold">
+          <div className="text-[11px] tracking-[0.14em] uppercase text-[#0A1F12]/40 font-bold mb-3 flex items-center gap-2">
             <button onClick={()=>go('orientation')} style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',color:'inherit',fontSize:'inherit',letterSpacing:'inherit',fontWeight:'inherit',textTransform:'inherit'}}>Orientation</button>
             <span>›</span>
             <span>Action Plan</span>
@@ -2483,7 +2472,7 @@ function NameCheck({ go, openPayment }){
                           <span className="inline-block text-[10px] tracking-[0.1em] uppercase font-bold px-2 py-1 rounded-full mt-2" style={{background:scoreBg(r.score),color:scoreColor(r.score)}}>{scoreLabel(r.score)}</span>
                         </div>
                       </div>
-                      <div className="h-1.5 rounded-full overflow-hidden mb-4" style={{background:'#0A1F12',opacity:.08}}>
+                      <div className="h-1.5 rounded-full overflow-hidden mb-4" style={{background:'rgba(10,31,18,.08)'}}>
                         <div className="h-full rounded-full" style={{width:`${r.score}%`,background:scoreColor(r.score)}}/>
                       </div>
                       {(r.issues||[]).length > 0 && (
@@ -2556,7 +2545,7 @@ const TIERS = [
   { key:'partner', name:'Partner Desk', tagline:'For firms serving SMEs', priceZm:'Custom', priceUsd:'Custom', desc:'An outsourced regulatory administration desk for accountants, law firms, consultants and cooperatives.', feats:['Client regulatory profiles','Process library','Compliance calendar','Client tracking','Staff accounts','White-label reporting'], who:'Professional firms' }
 ];
 
-function AdminDesk({ go, openPayment, onTicket }){
+function AdminDesk({ go, openPayment }){
   const [tickets, setTickets] = useState(()=>{ try{ return JSON.parse(localStorage.getItem('se_tickets')||'[]'); }catch(e){ return []; } });
   const [form, setForm] = useState({ name:'', email:'', phone:'', tier:'Assisted', desk:'pacra', subject:'', detail:'' });
 
@@ -2575,13 +2564,12 @@ function AdminDesk({ go, openPayment, onTicket }){
       createdAt: new Date().toISOString()
     };
     saveTickets([tk, ...tickets]);
-    if(onTicket) onTicket(tk);
     setForm({ ...form, subject:'', detail:'' });
   };
 
   const openTierPurchase = (tier)=>{
     if(tier.key === 'diy'){ go('orientation'); return; }
-    if(tier.key === 'partner'){ 
+    if(tier.key === 'partner'){
       openPayment({
         amount:'Custom',
         currency:'USD',
@@ -2685,7 +2673,7 @@ function AdminDesk({ go, openPayment, onTicket }){
                       <span className={`text-[10px] tracking-[0.1em] uppercase font-bold px-2 py-1 rounded-full shrink-0 ${t.status==='Resolved'?'bg-[#1E7B3C]/15 text-[#1E7B3C]':'bg-[#F5A623]/20 text-[#8A6828]'}`}>{t.status}</span>
                     </div>
                     <div className="text-[11.5px] text-[#0A1F12]/45 mb-2">
-                      {DESKS[t.desk]?.name || t.desk} · {t.tier} · Ref {t.ref} · logged {fmtDate(t.createdAt)}
+                      {(DESKS[t.desk]?.name) || t.desk} · {t.tier} · Ref {t.ref} · logged {fmtDate(t.createdAt)}
                     </div>
                     {t.detail && <p className="text-[12px] text-[#0A1F12]/60 leading-relaxed">{t.detail}</p>}
                   </div>
@@ -2709,7 +2697,7 @@ function AdminDesk({ go, openPayment, onTicket }){
                 <div>
                   <span className="text-[11px] tracking-[0.14em] uppercase font-bold text-[#B8564F] block mb-3">Cannot</span>
                   <ul className="space-y-2">
-                    {['Guarantee approval','Act as a government authority','Give legal advice','Give tax or accounting advice','Influence a regulator\'s decision'].map((x,i)=>(
+                    {['Guarantee approval','Act as a government authority','Give legal advice','Give tax or accounting advice',"Influence a regulator's decision"].map((x,i)=>(
                       <li key={i} className="text-[12px] text-[#0A1F12]/65 leading-relaxed">• {x}</li>
                     ))}
                   </ul>
@@ -2726,7 +2714,7 @@ function AdminDesk({ go, openPayment, onTicket }){
 /* ============================================================
    VIEW: COMPLIANCE PASSPORT
    ============================================================ */
-function CompliancePassport({ go }){
+function CompliancePassport(){
   const [biz, setBiz] = useState(()=>{ try{ return JSON.parse(localStorage.getItem('se_business')||'null'); }catch(e){ return null; } });
   const [form, setForm] = useState({
     name:'', entity:'Private Limited Company', regNo:'', tpin:'', napsa:'',
@@ -2803,7 +2791,7 @@ function CompliancePassport({ go }){
     ]}
   ];
 
-  const totalScore = Math.min(100, 
+  const totalScore = Math.min(100,
     (biz.regNo?25:0) + (biz.tpin?25:0) + (biz.napsa?20:0) + (biz.licence?20:0) + (renewals.length>0?10:0)
   );
 
@@ -3171,8 +3159,8 @@ function Playbook({ tab }){
       <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
         <SectionHead eyebrow="Operations · Internal" title="StartEasy Regulatory Playbook." sub="For every major regulatory process StartEasy maintains a documented Process Standard. Over time this accumulated process knowledge becomes intellectual capital — much harder for a casual competitor to replicate." className="mb-8 max-w-3xl"/>
         <div className="flex flex-wrap gap-3 mb-10">
-          <a href="#playbook" onClick={e=>e.preventDefault()} className={`text-[12.5px] font-bold px-4 py-2.5 rounded-full transition-all ${!isRev?'bg-[#0A1F12] text-white':'bg-white border border-[#0A1F12]/12 text-[#0A1F12]/70 hover:border-[#E8730F]'}`} style={{textDecoration:'none'}}>Process standards</a>
-          <a href="#playbook/reversions" onClick={e=>e.preventDefault()} className={`text-[12.5px] font-bold px-4 py-2.5 rounded-full transition-all ${isRev?'bg-[#0A1F12] text-white':'bg-white border border-[#0A1F12]/12 text-[#0A1F12]/70 hover:border-[#E8730F]'}`} style={{textDecoration:'none'}}>Reversion library</a>
+          <a href="#playbook" onClick={e=>{e.preventDefault(); window.location.hash='#/playbook';}} className={`text-[12.5px] font-bold px-4 py-2.5 rounded-full transition-all ${!isRev?'bg-[#0A1F12] text-white':'bg-white border border-[#0A1F12]/12 text-[#0A1F12]/70 hover:border-[#E8730F]'}`} style={{textDecoration:'none'}}>Process standards</a>
+          <a href="#playbook/reversions" onClick={e=>{e.preventDefault(); window.location.hash='#/playbook/reversions';}} className={`text-[12.5px] font-bold px-4 py-2.5 rounded-full transition-all ${isRev?'bg-[#0A1F12] text-white':'bg-white border border-[#0A1F12]/12 text-[#0A1F12]/70 hover:border-[#E8730F]'}`} style={{textDecoration:'none'}}>Reversion library</a>
         </div>
 
         {!isRev ? (
@@ -3272,7 +3260,7 @@ function ReversionLibrary(){
     Object.values(PROCESSES).forEach((p,pi)=>{
       (p.reversions||[]).forEach((r,ri)=>{
         out.push({
-          regulator: DESKS[p.desk]?.name || p.desk,
+          regulator: (DESKS[p.desk]?.name) || p.desk,
           process: p.code + ' · ' + p.title,
           issue: r[0],
           frequency: r[1],
@@ -3345,7 +3333,7 @@ function ReversionLibrary(){
 /* ============================================================
    VIEW: PRICING
    ============================================================ */
-function Pricing({ go, openPayment }){
+function Pricing(){
   const ladder = [
     ['Directory','Yes','Information only','Free'],
     ['DIY Journey','Yes','Digital guidance','Free / very low cost'],
@@ -3383,7 +3371,7 @@ function Pricing({ go, openPayment }){
             </table>
           </div>
         </div>
-        <div className="notice notice-warn p-4 rounded-sm max-w-3xl" style={{background:'#FFF4E5',borderLeft:'3px solid #FFC107',fontSize:12.5,color:'#7A5C10',lineHeight:1.6}}>
+        <div className="p-4 rounded-sm max-w-3xl" style={{background:'#FFF4E5',borderLeft:'3px solid #FFC107',fontSize:12.5,color:'#7A5C10',lineHeight:1.6}}>
           <strong>Pricing note.</strong> The figures shown are indicative bands for demonstration only. Actual pricing must be researched against the Zambian market before being set. Requirements, fees and timelines charged by authorities change — always confirm current requirements with the relevant authority.
         </div>
       </section>
@@ -3434,7 +3422,7 @@ function About({ go }){
                   ['Lawyer','Legal advice and legal documents.'],
                   ['Accountant / tax professional','Professional accounting, tax advice and assurance.'],
                   ['HR professional','Specialist employment and HR matters.'],
-                  ['The regulator','Official decision and approval. This is never StartEasy\'s decision.']
+                  ["The regulator","Official decision and approval. This is never StartEasy's decision."]
                 ].map((r,i)=>(
                   <tr key={i} className="border-b border-[#0A1F12]/6 last:border-0">
                     <td className="py-3 px-4 text-[13px] font-semibold text-[#0A1F12]">{r[0]}</td>
@@ -3506,22 +3494,18 @@ function App(){
     setTimeout(()=>setPaymentConfig(null), 300);
   },[]);
 
-  const handleEngagementCommenced = useCallback((record)=>{
-    setEngagement(record);
-  },[]);
-
   const view = ()=>{
     switch(route){
       case 'orientation': return <OrientationWizard go={go}/>;
-      case 'journey': return <GuidedJourney go={go} journeyId={routeArg} openPayment={openPayment} onEngagement={handleEngagementCommenced}/>;
+      case 'journey': return <GuidedJourney go={go} journeyId={routeArg} openPayment={openPayment}/>;
       case 'name-check': return <NameCheck go={go} openPayment={openPayment}/>;
       case 'desk': return <AdminDesk go={go} openPayment={openPayment}/>;
-      case 'passport': return <CompliancePassport go={go}/>;
+      case 'passport': return <CompliancePassport/>;
       case 'tracker': return <Tracker/>;
       case 'directory': return <Directory go={go}/>;
       case 'providers': return <Providers go={go} openPayment={openPayment}/>;
       case 'playbook': return <Playbook tab={routeArg}/>;
-      case 'pricing': return <Pricing go={go} openPayment={openPayment}/>;
+      case 'pricing': return <Pricing/>;
       case 'about': return <About go={go}/>;
       default: return <Home go={go} openPayment={openPayment}/>;
     }
@@ -3543,7 +3527,7 @@ function App(){
           purposeDetail={paymentConfig.purposeDetail}
           applicant={paymentConfig.applicant}
           receiptPrefix={paymentConfig.receiptPrefix}
-          onConfirmed={(data)=>{ console.log('[StartEasy] Payment recorded:', data); }}
+          onConfirmed={(data)=>{ console.log('[StartEasy] Payment recorded:', data); setEngagement({ at: new Date().toISOString(), purpose: data.purpose }); }}
         />
       )}
     </div>
