@@ -286,46 +286,32 @@ function analyseName(name){
 function label(s){if(s>=80)return'Strong';if(s>=60)return'Moderate';if(s>=40)return'Weak';return'Needs work'}
 function color(s){if(s>=80)return'#1E7B3C';if(s>=60)return'#E8730F';return'#B8564F'}
 
-/* ---- Descriptor validation helper ---- */
+/* ---- Helpers ---- */
+function escapeRegex(str){return str.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function findEmbeddedLibraryWords(descriptor,industry){
+  if(!descriptor||!industry)return[];
+  const descLower=descriptor.toLowerCase();
+  return industry.descriptors.filter(lib=>{
+    const libLower=lib.toLowerCase();
+    return new RegExp(`\\b${escapeRegex(libLower)}\\b`,'i').test(descLower);
+  });
+}
 function validateCustomDescriptor(text,industry){
   const t=(text||'').trim();
   if(!t) return {state:'empty'};
   if(t.length<3) return {state:'too-short',message:'The descriptor is very short. Use at least 3 characters.'};
   if(/^\d+$/.test(t)) return {state:'numeric',message:'A descriptor made only of numbers is not usable. Add real words.'};
-  const lower=t.toLowerCase();
-  // Check if the custom text contains or is related to any industry descriptor
-  const industryMatch = industry ? industry.descriptors.some(d=>lower.includes(d.toLowerCase())) : false;
-  // Detect industry keywords that signal a valid descriptive phrase
-  const industryKeywordBank = {
-    education:['institute','academy','school','college','university','training','learning','skills','education'],
-    financial:['financial','capital','investment','finance','wealth','asset','credit','fintech','bank','insurance'],
-    consulting:['consulting','advisory','management','strategy','professional'],
-    technology:['technology','digital','systems','software','solutions','innovations','labs','data','networks','platforms','cloud'],
-    health:['health','medical','clinic','wellness','diagnostics','care','pharmacy'],
-    marketing:['marketing','advertising','communications','creative','media','branding','digital'],
-    research:['research','scientific','technical','analytics','laboratory','engineering'],
-    trading:['trading','enterprises','merchants','supplies','distributors','retail','wholesale'],
-    construction:['construction','contractors','engineering','infrastructure','projects','builders'],
-    agriculture:['agriculture','agribusiness','farms','farming','agro','foods','produce','livestock'],
-    logistics:['logistics','transport','freight','haulage','couriers','supply chain','warehousing','cargo'],
-    realestate:['properties','property','realty','estates','developments'],
-    tourism:['tourism','hospitality','lodge','hotel','safari','travel','tours','resort']
-  };
-  const keywords=industry?industryKeywordBank[industry.key]||[]:[];
-  const keywordMatch=keywords.some(k=>lower.includes(k));
-  if(industryMatch||keywordMatch){
-    return {state:'valid',message:`Matches your chosen industry — the platform recognises this as a valid descriptive word.`};
+  const embedded=findEmbeddedLibraryWords(t,industry);
+  if(embedded.length>0){
+    return {state:'valid',message:`Matches your industry — contains "${embedded[0]}", a recognised library word. You may proceed.`,embedded};
   }
-  // Any multi-word phrase with real words — allow it (user knows best)
   const words=t.split(/\s+/).filter(Boolean);
   if(words.length>=2){
     return {state:'valid',message:'Accepted — you may proceed. Multi-word descriptive phrases are allowed when they clearly describe the business.'};
   }
-  // Single word not in industry list — still allow, but flag lightly
   return {state:'valid',message:'Accepted — you may proceed. Confirm this word is not already reserved by another business.'};
 }
 
-/* ---------- Shared UI ---------- */
 function Btn({children,onClick,variant='primary',size='md',className='',type='button',disabled}){
   const base='inline-flex items-center justify-center gap-2.5 transition-all duration-300 tracking-wide disabled:opacity-30 disabled:cursor-not-allowed rounded-sm font-semibold';
   const sizes={sm:'text-[12px] px-4 py-2.5',md:'text-[13px] px-6 py-3.5',lg:'text-[13.5px] px-8 py-4'};
@@ -779,7 +765,6 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   useEffect(()=>{if(industry&&!descriptor&&!customDescriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0])}},[industry]);
   useEffect(()=>{if(industry&&!structure&&scope!=='names'){setStructure('ltd')}},[industry,scope]);
 
-  // Effective descriptor: custom word (if provided) takes priority
   const effectiveDescriptor=useMemo(()=>customDescriptor.trim()||descriptor,[customDescriptor,descriptor]);
 
   const stepsArr=useMemo(()=>{
@@ -796,16 +781,38 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const structureData=structure?STRUCTURES.find(x=>x.key===structure):null;
   const analysis=useMemo(()=>analyseName(distinctive),[distinctive]);
 
+  /* ---------- IMPROVED NAMES GENERATOR ---------- */
   const names=useMemo(()=>{
     if(!distinctive.trim()||!effectiveDescriptor||!industryData)return[];
     const distinct=distinctive.trim().toUpperCase();
-    const desc=effectiveDescriptor.toUpperCase();
+    const desc=effectiveDescriptor.toUpperCase().trim();
+    const descLower=desc.toLowerCase();
     const ending=structureData&&structureData.endings.length?structureData.endings[0]:'LIMITED';
     const out=[`${distinct} ${desc} ${ending}`.trim()];
-    const alts=industryData.descriptors.filter(d=>d.toUpperCase()!==desc).slice(0,2);
-    alts.forEach(a=>out.push(`${distinct} ${a.toUpperCase()} ${ending}`.trim()));
+
+    // 1. Find library words embedded inside the custom descriptor (word-boundary aware)
+    const embedded=industryData.descriptors.filter(lib=>{
+      const libLower=lib.toLowerCase();
+      return new RegExp(`\\b${escapeRegex(libLower)}\\b`,'i').test(descLower);
+    });
+
+    // 2. Assemble two alternates — embedded library words first, then library order
+    const used=new Set([desc]);
+    const candidates=[];
+    embedded.forEach(lib=>{
+      const u=lib.toUpperCase();
+      if(!used.has(u)){candidates.push(lib);used.add(u)}
+    });
+    for(const lib of industryData.descriptors){
+      if(candidates.length>=2)break;
+      const u=lib.toUpperCase();
+      if(!used.has(u)){candidates.push(lib);used.add(u)}
+    }
+    candidates.slice(0,2).forEach(c=>out.push(`${distinct} ${c.toUpperCase()} ${ending}`.trim()));
     return out.filter(Boolean);
   },[distinctive,effectiveDescriptor,industryData,structureData]);
+
+  const embeddedLibraryWords=useMemo(()=>findEmbeddedLibraryWords(effectiveDescriptor,industryData),[effectiveDescriptor,industryData]);
 
   const readiness=useMemo(()=>{
     let t=0;
@@ -832,7 +839,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     if(current==='secondary')return true;
     if(current==='industry')return!!industry;
     if(current==='structure')return!!structure;
-    if(current==='descriptor')return !!effectiveDescriptor && effectiveDescriptor.length>=3; // FIX — checks custom too
+    if(current==='descriptor')return !!effectiveDescriptor && effectiveDescriptor.length>=3;
     if(current==='distinctive')return distinctive.trim().length>=3;
     return true;
   };
@@ -913,7 +920,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
             </button>
           </div>}
         </div>
-        <WizardSidebar scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness}/>
+        <WizardSidebar scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness} embeddedLibraryWords={embeddedLibraryWords}/>
       </div>
     </section>
 
@@ -1029,13 +1036,13 @@ function WIndustry({industry,setIndustry}){
   </div>;
 }
 
-/* ---------- DESCRIPTOR STEP — original layout, fixed validation ---------- */
 function WDescriptor({industry,descriptor,setDescriptor,customDescriptor,setCustomDescriptor}){
   const ind=INDUSTRIES.find(i=>i.key===industry);
   if(!ind)return null;
   const trimmed=customDescriptor.trim();
   const validation=validateCustomDescriptor(trimmed,ind);
   const finalDescriptor=trimmed||descriptor;
+  const embedded=trimmed?findEmbeddedLibraryWords(trimmed,ind):[];
   return <div>
     <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 7 · Descriptive word library</div>
     <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Choose your preferred descriptive word.</h2>
@@ -1069,6 +1076,11 @@ function WDescriptor({industry,descriptor,setDescriptor,customDescriptor,setCust
       </div>}
 
       {trimmed&&<div style={{marginTop:10,fontSize:11.5,color:'rgba(10,31,18,.55)',fontStyle:'italic'}}>You are using a custom descriptor: <strong style={{fontFamily:'Consolas,monospace',color:'#0A1F12',fontStyle:'normal'}}>{trimmed.toUpperCase()}</strong></div>}
+
+      {trimmed&&embedded.length>0&&<div style={{marginTop:10,padding:'10px 14px',background:'rgba(232,115,15,.06)',border:'1px solid rgba(232,115,15,.25)',borderRadius:8,fontSize:12,color:'#8A6828',lineHeight:1.55}}>
+        <i className="fas fa-lightbulb" style={{color:'#E8730F',marginRight:6}}></i>
+        Your custom phrase also contains a StartEasy library word — <strong>{embedded[0]}</strong>. Proposal 2 will offer that short form as an alternative.
+      </div>}
     </div>
 
     <div style={{maxWidth:640,marginBottom:20}}>
@@ -1151,11 +1163,12 @@ function WReport({scope,idea,primaryActivity,secondaryActivities,industryData,st
   </div>;
 }
 
-function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryData,structureData,distinctive,descriptor,names,analysis,readiness}){
+function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryData,structureData,distinctive,descriptor,names,analysis,readiness,embeddedLibraryWords}){
   const pct=readiness;
   const ringColor=color(readiness);
   const circ=2*Math.PI*45;
   const dash=circ*(1-pct/100);
+  const embedded=embeddedLibraryWords||[];
   return <aside style={{position:'sticky',top:110,height:'fit-content'}}>
     <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:24,textAlign:'center',marginBottom:20}}>
       <div style={{width:110,height:110,position:'relative',margin:'0 auto 16px'}}>
@@ -1191,6 +1204,10 @@ function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryD
           <span style={{fontFamily:'Consolas,monospace',fontSize:12.5,fontWeight:700,lineHeight:1.45,color:i===0?'#fff':'rgba(255,255,255,.85)'}}>{n}</span>
         </li>)}
       </ol>
+      {embedded.length>0&&<div style={{marginTop:14,paddingTop:12,borderTop:'1px solid rgba(255,255,255,.15)',fontSize:11.5,lineHeight:1.55,color:'rgba(255,255,255,.7)'}}>
+        <i className="fas fa-lightbulb" style={{color:'#F5A623',marginRight:6}}></i>
+        The word <strong style={{color:'#F5A623'}}>{embedded[0]}</strong> inside your custom descriptor is also a StartEasy library word — so proposal 2 offers that short form as an alternative.
+      </div>}
     </div>}
     <div style={{background:'rgba(232,115,15,.06)',border:'1px solid rgba(232,115,15,.2)',borderRadius:12,padding:18}}>
       <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Need help?</div>
@@ -1206,9 +1223,6 @@ function SideRow({label,value,done,color:c}){
   </div>;
 }
 
-/* ============================================================
-   NAV / FOOTER
-   ============================================================ */
 const NAV=[['home','Home'],['wizard','Structure & Name'],['desks','Desks'],['services','Services'],['engagement','How it works'],['pricing','Pricing'],['about','About']];
 function Nav({route,go}){
   const [open,setOpen]=useState(false);
