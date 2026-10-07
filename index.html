@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>StartEasy — Business Compliance & Regulatory Administration · Zambia</title>
+<title>StartEasy — Business Structure &amp; Name Advisory</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +32,6 @@ input:focus,select:focus,textarea:focus{outline:none}
 @keyframes mc{from{opacity:0;transform:translateY(30px) scale(.98)}to{opacity:1;transform:none}}
 @media (max-width:768px){.fadein{animation:none!important;opacity:1!important;transform:none!important}.pulse{animation:none!important}}
 @media (min-width:1024px){html{scroll-behavior:smooth}}
-/* tile */
 .gtile{background:#fff;border:2px solid rgba(10,31,18,.1);border-radius:12px;padding:20px;text-align:left;cursor:pointer;font-family:inherit;transition:all .22s;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
 .gtile:hover{border-color:#E8730F;transform:translateY(-3px);box-shadow:0 10px 25px rgba(0,0,0,.07)}
 .gtile.sel{border-color:#E8730F;background:linear-gradient(135deg,rgba(232,115,15,.06),rgba(245,166,35,.03));box-shadow:0 0 0 4px rgba(232,115,15,.12)}
@@ -40,7 +39,6 @@ input:focus,select:focus,textarea:focus{outline:none}
 .gtile.sel .ico{background:#E8730F;color:#fff}
 .gtile h3{font-family:'Playfair Display',Georgia,serif;font-size:17px;font-weight:700;color:#0A1F12;line-height:1.25;margin:0}
 .gtile p{font-size:12.5px;color:rgba(10,31,18,.55);line-height:1.5;margin:0}
-/* svc */
 .svc{background:#fff;border:1px solid rgba(10,31,18,.08);border-radius:12px;padding:0;cursor:pointer;font-family:inherit;text-align:left;transition:all .25s;display:flex;flex-direction:column;position:relative;overflow:hidden;height:100%}
 .svc:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.08);border-color:rgba(232,115,15,.4)}
 .svc .bar{height:3px;background:var(--accent,#E8730F)}
@@ -52,27 +50,24 @@ input:focus,select:focus,textarea:focus{outline:none}
 .svc .lbl{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(10,31,18,.4);font-weight:800;margin-bottom:3px}
 .svc .fee{font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:800;color:#E8730F;line-height:1}
 .svc .when{font-size:10.5px;color:rgba(10,31,18,.4);margin-top:3px}
-/* feebox */
 .feebox{background:linear-gradient(135deg,#FFF9E6,#FFFCF0);border:1px solid #F0E0A0;border-radius:10px;padding:18px 20px}
 .feebox .row{display:flex;justify-content:space-between;gap:14px;padding:8px 0;align-items:baseline;font-size:13px}
 .feebox .row+.row{border-top:1px dashed #E0D08A}
 .feebox .l{color:#666;font-weight:600}
 .feebox .v{font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:800;color:#0A1F12;white-space:nowrap}
-/* wizard step chips */
 .step{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:#fff;border:1.5px solid rgba(10,31,18,.1);border-radius:99px;font-size:12px;font-weight:600;color:rgba(10,31,18,.5);font-family:inherit;transition:all .25s;flex-shrink:0}
 .step.done{background:rgba(30,123,60,.1);color:#1E7B3C;border-color:rgba(30,123,60,.3);cursor:pointer}
 .step.active{background:#0A1F12;color:#fff;border-color:#0A1F12}
 .step .n{width:20px;height:20px;border-radius:50%;background:rgba(10,31,18,.08);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
 .step.active .n{background:rgba(255,255,255,.2)}
 .step.done .n{background:rgba(30,123,60,.2);color:#1E7B3C}
-/* input */
 .inp{width:100%;background:#fff;border:2px solid rgba(10,31,18,.12);border-radius:12px;padding:16px 20px;font-size:14.5px;color:#0A1F12;font-family:inherit;transition:all .2s;line-height:1.5}
 .inp:focus{border-color:#E8730F;box-shadow:0 0 0 4px rgba(232,115,15,.08)}
-/* chip */
+.inp-select{width:100%;background:#fff;border:2px solid rgba(10,31,18,.12);border-radius:12px;padding:16px 44px 16px 20px;font-size:14.5px;color:#0A1F12;font-family:inherit;transition:all .2s;line-height:1.5;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%235E7A67' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 20px center}
+.inp-select:focus{border-color:#E8730F;box-shadow:0 0 0 4px rgba(232,115,15,.08)}
 .dchip{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;background:#fff;border:1.5px solid rgba(10,31,18,.12);border-radius:99px;font-size:12.5px;font-weight:600;color:rgba(10,31,18,.75);cursor:pointer;font-family:inherit;transition:all .2s}
 .dchip:hover{border-color:#E8730F;color:#E8730F}
 .dchip.on{background:#E8730F;color:#fff;border-color:#E8730F}
-/* structure tile */
 .stile{background:#fff;border:2px solid rgba(10,31,18,.1);border-radius:12px;padding:18px 20px;text-align:left;cursor:pointer;font-family:inherit;transition:all .22s;position:relative}
 .stile:hover{border-color:#E8730F}
 .stile.sel{border-color:#E8730F;background:linear-gradient(135deg,rgba(232,115,15,.05),rgba(245,166,35,.02))}
@@ -81,14 +76,12 @@ input:focus,select:focus,textarea:focus{outline:none}
 .stile p{font-size:12.5px;color:rgba(10,31,18,.6);line-height:1.55;margin:0 0 10px}
 .stile .ends{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .stile .ends span{font-family:Consolas,monospace;font-size:10.5px;font-weight:700;color:rgba(10,31,18,.5);background:rgba(10,31,18,.05);padding:3px 8px;border-radius:4px}
-/* industry tile */
 .iti{background:#fff;border:2px solid rgba(10,31,18,.1);border-radius:12px;padding:16px 18px;text-align:left;cursor:pointer;font-family:inherit;transition:all .22s;position:relative}
 .iti:hover{border-color:#E8730F;transform:translateY(-2px)}
 .iti.sel{border-color:#E8730F;background:linear-gradient(135deg,rgba(232,115,15,.05),rgba(245,166,35,.02))}
 .iti .isic{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;margin-bottom:6px}
 .iti h4{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:700;color:#0A1F12;line-height:1.3;margin:0 0 6px}
 .iti p{font-size:11.5px;color:rgba(10,31,18,.55);line-height:1.5;margin:0}
-/* report */
 .rpt{background:#fff;border:1px solid #D0D0D0;border-radius:8px;padding:32px 38px;font-size:12.5px;line-height:1.6;color:#222}
 .rpt .rh{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:18px;border-bottom:3px solid #0A1F12;margin-bottom:20px;flex-wrap:wrap}
 .rpt .rh .brand{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:800;color:#0A1F12;letter-spacing:1px}
@@ -113,7 +106,6 @@ input:focus,select:focus,textarea:focus{outline:none}
 .rpt .flag.ok{background:#EAF7EE;border-left:3px solid #1E7B3C;color:#0F5C2A}
 .rpt .flag .ic{flex-shrink:0;font-size:14px;margin-top:1px}
 .rpt .foot{margin-top:22px;padding-top:16px;border-top:2px solid #0A1F12;font-size:10.5px;color:#666;line-height:1.6}
-/* engagement letter */
 .el{background:#fff;border:1px solid #D0D0D0;border-radius:8px;padding:34px 42px;font-size:13px;line-height:1.65;color:#222}
 .el .eh{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:18px;border-bottom:3px solid #0A1F12;margin-bottom:22px;flex-wrap:wrap}
 .el .eh .brand{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:800;color:#0A1F12;letter-spacing:1px}
@@ -133,11 +125,9 @@ input:focus,select:focus,textarea:focus{outline:none}
 .el .sign .line{border-bottom:1px solid #333;height:36px;margin-bottom:8px}
 .el .sign .lbl{font-size:10.5px;color:#666;font-weight:600}
 .el .ft{margin-top:22px;padding-top:16px;border-top:2px solid #0A1F12;font-size:10.5px;color:#666;line-height:1.6}
-/* modal */
 .mb{background:#F5FAF6;border-radius:8px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.3)}
 .mbh{background:#0A1F12;padding:18px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(245,166,35,.15)}
 .mbb{padding:26px 30px}
-/* pay */
 .paygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .pmc{background:#fff;border:2px solid rgba(10,31,18,.12);border-radius:12px;padding:16px 12px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;position:relative;transition:all .22s}
 .pmc:hover{border-color:#F5A623;transform:translateY(-2px)}
@@ -180,7 +170,7 @@ function waUrl(msg,p){const phone=p||ADMIN_WHATSAPP;const e=encodeURIComponent(m
    SERVICE FEE BANDS
    ============================================================ */
 const SF={
-  micro:{zm:'K45',usd:'$4.50',label:'Service Fee · Micro'},
+  micro:{zm:'K25',usd:'$1.49',label:'Service Fee · Micro'},
   basic:{zm:'K250',usd:'$25',label:'Service Fee · Basic'},
   standard:{zm:'K400',usd:'$40',label:'Service Fee · Standard'},
   complex:{zm:'K750',usd:'$75',label:'Service Fee · Complex'},
@@ -220,23 +210,68 @@ const PAYMENT_METHODS={
 };
 
 /* ============================================================
-   INDUSTRIES — Directory
+   PRIMARY ACTIVITIES — dropdown options
+   ============================================================ */
+const PRIMARY_ACTIVITIES=[
+  'Advertising','Marketing','Management consulting','Financial advisory','Accounting','Research','Technology','Construction','Agriculture','Trading','Logistics','Manufacturing','Education','Professional services','Media & communications','Healthcare','Hospitality & tourism','Real estate','Energy','Retail','Wholesale & distribution','Transport','Agro-processing','Engineering','Software development','Legal services','Architecture','Insurance','Investment management','Other'
+];
+
+/* ============================================================
+   SECONDARY ACTIVITIES — multi-select options
+   ============================================================ */
+const SECONDARY_ACTIVITIES=[
+  'Advertising','Branding','Consulting','Research','Training','Distribution','Retail','Wholesale','Import','Export','Manufacturing','Assembly','Maintenance','Repair','Installation','Design','Publishing','Media production','Software licensing','Data analytics','IT support','Cloud services','Logistics','Warehousing','Transport','Courier services','Catering','Event management','Hospitality services','Real estate services','Property management','Financial services','Insurance services','Accounting services','Tax services','Legal services','HR services','Payroll services','Marketing services','PR & communications','Customer support','Other'
+];
+
+/* ============================================================
+   INDUSTRIES — Directory (ISIC classification)
    ============================================================ */
 const INDUSTRIES=[
-  {key:'consulting',isic:'M',label:'Consulting & Professional Advisory',icon:'fa-user-tie',color:'#2E9C4A',blurb:'Professional advice, consulting, strategy and management.',descriptors:['Consulting','Advisory','Associates','Professionals','Management','Strategy','Solutions','Services','Corporate','Business'],examples:['JIRANIHOOD CONSULTING LIMITED','JIRANIHOOD ADVISORY LIMITED','JIRANIHOOD MANAGEMENT LIMITED','JIRANIHOOD BUSINESS SOLUTIONS LIMITED']},
-  {key:'financial',isic:'K',label:'Financial Services',icon:'fa-piggy-bank',color:'#B8564F',blurb:'Financial, capital, investment, advisory services.',descriptors:['Financial','Finance','Capital','Investment','Advisory','Wealth','Asset','Credit','Fintech'],examples:['JIRANIHOOD CAPITAL LIMITED','JIRANIHOOD INVESTMENTS LIMITED','JIRANIHOOD FINANCIAL SERVICES LIMITED'],flag:{level:'warn',title:'Regulatory review likely',body:'Words such as Bank, Insurance, Microfinance, Securities, Pension and Trust imply regulated activity. Confirm licensing with the relevant authority before registering.'}},
-  {key:'marketing',isic:'M',label:'Marketing, Advertising & Communications',icon:'fa-bullhorn',color:'#E8730F',blurb:'Advertising, branding, PR, media, digital.',descriptors:['Marketing','Advertising','Communications','Creative','Media','Digital','Branding','Creative Agency','Media Solutions','Public Relations'],examples:['JIRANIHOOD MARKETING LIMITED','JIRANIHOOD ADVERTISING LIMITED','JIRANIHOOD COMMUNICATIONS LIMITED','JIRANIHOOD MEDIA LIMITED']},
-  {key:'research',isic:'M',label:'Research, Scientific & Technical',icon:'fa-flask',color:'#7A4FA3',blurb:'Research, analytics, laboratories, engineering.',descriptors:['Research','Scientific','Technical','Consulting','Analytics','Laboratory','Engineering','Environmental','Geospatial','Technology'],examples:['JIRANIHOOD RESEARCH LIMITED','JIRANIHOOD TECHNICAL SERVICES LIMITED','JIRANIHOOD SCIENTIFIC LIMITED','JIRANIHOOD ANALYTICS LIMITED']},
-  {key:'technology',isic:'J',label:'Technology & Digital',icon:'fa-microchip',color:'#1B6CA8',blurb:'Software, digital, data, AI, networks, platforms.',descriptors:['Technologies','Technology','Digital','Systems','Software','Solutions','Innovations','Labs','Data','AI','Networks','Platforms','Cyber','Cloud'],examples:['JIRANIHOOD TECHNOLOGIES LIMITED','JIRANIHOOD DIGITAL LIMITED','JIRANIHOOD SYSTEMS LIMITED','JIRANIHOOD INNOVATIONS LIMITED']},
-  {key:'trading',isic:'G',label:'Trading & General Commerce',icon:'fa-store',color:'#0E7C7B',blurb:'Retail, wholesale, distribution and general dealing.',descriptors:['Trading','Enterprises','Merchants','Supplies','Distributors','Distribution','Commerce','General Dealers','Retail','Wholesale'],examples:['JIRANIHOOD TRADING LIMITED','JIRANIHOOD ENTERPRISES LIMITED','JIRANIHOOD DISTRIBUTORS LIMITED','JIRANIHOOD SUPPLIES LIMITED']},
-  {key:'construction',isic:'F',label:'Construction & Engineering',icon:'fa-helmet-safety',color:'#B8564F',blurb:'Construction, contractors, civil works, infrastructure.',descriptors:['Construction','Contractors','Engineering','Infrastructure','Projects','Developments','Builders','Civil Works','Technical Services'],examples:['JIRANIHOOD CONSTRUCTION LIMITED','JIRANIHOOD ENGINEERING LIMITED','JIRANIHOOD PROJECTS LIMITED','JIRANIHOOD DEVELOPMENTS LIMITED']},
-  {key:'agriculture',isic:'A',label:'Agriculture & Agribusiness',icon:'fa-seedling',color:'#2E9C4A',blurb:'Farming, agro-processing, horticulture, livestock.',descriptors:['Agriculture','Agribusiness','Farms','Farming','Agro','Foods','Produce','Commodities','Agro-Processing','Horticulture','Livestock'],examples:['JIRANIHOOD AGRIBUSINESS LIMITED','JIRANIHOOD FARMS LIMITED','JIRANIHOOD AGRICULTURE LIMITED','JIRANIHOOD FOODS LIMITED']},
-  {key:'logistics',isic:'H',label:'Logistics, Transport & Supply Chain',icon:'fa-truck',color:'#1B6CA8',blurb:'Transport, freight, courier, warehousing, cargo.',descriptors:['Logistics','Transport','Freight','Haulage','Distribution','Couriers','Supply Chain','Warehousing','Cargo','Mobility'],examples:['JIRANIHOOD LOGISTICS LIMITED','JIRANIHOOD TRANSPORT LIMITED','JIRANIHOOD FREIGHT LIMITED','JIRANIHOOD SUPPLY CHAIN LIMITED']},
-  {key:'realestate',isic:'L',label:'Real Estate & Property',icon:'fa-building',color:'#7A4FA3',blurb:'Property, realty, estates, developments, lettings.',descriptors:['Properties','Property','Realty','Real Estate','Developments','Estates','Investments','Properties & Developments'],examples:['JIRANIHOOD PROPERTIES LIMITED','JIRANIHOOD REALTY LIMITED','JIRANIHOOD DEVELOPMENTS LIMITED']},
-  {key:'education',isic:'P',label:'Education & Training',icon:'fa-graduation-cap',color:'#E8730F',blurb:'Schools, colleges, training, skills development.',descriptors:['Education','Academy','Institute','Training','Learning','Skills','College','School','Development'],examples:['JIRANIHOOD ACADEMY LIMITED','JIRANIHOOD TRAINING LIMITED','JIRANIHOOD INSTITUTE LIMITED'],flag:{level:'warn',title:'Naming caution',body:'Terms such as University, College, School, Academy and Institute may imply a licensed or regulated status. Confirm the education-sector requirements before finalising the name.'}},
-  {key:'health',isic:'Q',label:'Health & Wellness',icon:'fa-heart-pulse',color:'#B8564F',blurb:'Clinics, wellness, medical, diagnostics, labs.',descriptors:['Health','Wellness','Care','Medical','Clinic','Pharmacy','Laboratory','Diagnostics','Allied Health','Rehab'],examples:['JIRANIHOOD HEALTH LIMITED','JIRANIHOOD WELLNESS LIMITED','JIRANIHOOD DIAGNOSTICS LIMITED'],flag:{level:'warn',title:'Regulatory review required',body:'Health-sector activity, the entity name, and the professional licences of practitioners are all separate. Confirm the required health authority registrations before registering.'}},
-  {key:'tourism',isic:'I',label:'Tourism & Hospitality',icon:'fa-plane',color:'#0E7C7B',blurb:'Lodges, hotels, tour operators, restaurants.',descriptors:['Tourism','Hospitality','Lodge','Hotel','Safari','Travel','Tours','Resort','Catering','Restaurant'],examples:['JIRANIHOOD TOURS LIMITED','JIRANIHOOD HOSPITALITY LIMITED','JIRANIHOOD SAFARI LIMITED']},
-  {key:'other',isic:'—',label:'Other / Not sure',icon:'fa-circle-question',color:'#5E7A67',blurb:'Let us assess your activity and recommend a direction.',descriptors:['Services','Solutions','Enterprises','Group','Holdings','Ventures','Zambia'],examples:['JIRANIHOOD SERVICES LIMITED','JIRANIHOOD ENTERPRISES LIMITED']}
+  {key:'consulting',isic:'M',label:'Consulting & Professional Advisory',icon:'fa-user-tie',color:'#2E9C4A',blurb:'Professional advice, consulting, strategy and management.',
+    descriptors:['Consulting','Advisory','Associates','Professionals','Management','Strategy','Solutions','Services','Corporate','Business','Partners','Consultancy','Group','Enterprises'],
+    examples:['JIRANIHOOD CONSULTING LIMITED','JIRANIHOOD ADVISORY LIMITED','JIRANIHOOD MANAGEMENT LIMITED','JIRANIHOOD BUSINESS SOLUTIONS LIMITED']},
+  {key:'financial',isic:'K',label:'Financial Services',icon:'fa-piggy-bank',color:'#B8564F',blurb:'Financial, capital, investment, advisory services.',
+    descriptors:['Financial','Finance','Capital','Investment','Advisory','Wealth','Asset','Credit','Fintech','Financial Services','Capital Partners','Investments','Holdings'],
+    examples:['JIRANIHOOD CAPITAL LIMITED','JIRANIHOOD INVESTMENTS LIMITED','JIRANIHOOD FINANCIAL SERVICES LIMITED'],
+    flag:{level:'warn',title:'Regulatory review likely',body:'Words such as Bank, Insurance, Microfinance, Securities, Pension and Trust imply regulated activity. Confirm licensing with the relevant authority before registering.'}},
+  {key:'marketing',isic:'M',label:'Marketing, Advertising & Communications',icon:'fa-bullhorn',color:'#E8730F',blurb:'Advertising, branding, PR, media, digital.',
+    descriptors:['Marketing','Advertising','Communications','Creative','Media','Digital','Branding','Creative Agency','Media Solutions','Public Relations','Content','Studio','Agency','Interactive'],
+    examples:['JIRANIHOOD MARKETING LIMITED','JIRANIHOOD ADVERTISING LIMITED','JIRANIHOOD COMMUNICATIONS LIMITED','JIRANIHOOD MEDIA LIMITED']},
+  {key:'research',isic:'M',label:'Research, Scientific & Technical',icon:'fa-flask',color:'#7A4FA3',blurb:'Research, analytics, laboratories, engineering.',
+    descriptors:['Research','Scientific','Technical','Consulting','Analytics','Laboratory','Engineering','Environmental','Geospatial','Technology','Investigations','Sciences'],
+    examples:['JIRANIHOOD RESEARCH LIMITED','JIRANIHOOD TECHNICAL SERVICES LIMITED','JIRANIHOOD SCIENTIFIC LIMITED','JIRANIHOOD ANALYTICS LIMITED']},
+  {key:'technology',isic:'J',label:'Technology & Digital',icon:'fa-microchip',color:'#1B6CA8',blurb:'Software, digital, data, AI, networks, platforms.',
+    descriptors:['Technologies','Technology','Digital','Systems','Software','Solutions','Innovations','Labs','Data','AI','Networks','Platforms','Cyber','Cloud','InfoTech','Tech','Analytics'],
+    examples:['JIRANIHOOD TECHNOLOGIES LIMITED','JIRANIHOOD DIGITAL LIMITED','JIRANIHOOD SYSTEMS LIMITED','JIRANIHOOD INNOVATIONS LIMITED']},
+  {key:'trading',isic:'G',label:'Trading & General Commerce',icon:'fa-store',color:'#0E7C7B',blurb:'Retail, wholesale, distribution and general dealing.',
+    descriptors:['Trading','Enterprises','Merchants','Supplies','Distributors','Distribution','Commerce','General Dealers','Retail','Wholesale','Traders','Suppliers','Commercial'],
+    examples:['JIRANIHOOD TRADING LIMITED','JIRANIHOOD ENTERPRISES LIMITED','JIRANIHOOD DISTRIBUTORS LIMITED','JIRANIHOOD SUPPLIES LIMITED']},
+  {key:'construction',isic:'F',label:'Construction & Engineering',icon:'fa-helmet-safety',color:'#B8564F',blurb:'Construction, contractors, civil works, infrastructure.',
+    descriptors:['Construction','Contractors','Engineering','Infrastructure','Projects','Developments','Builders','Civil Works','Technical Services','Plant Hire','Construction Services'],
+    examples:['JIRANIHOOD CONSTRUCTION LIMITED','JIRANIHOOD ENGINEERING LIMITED','JIRANIHOOD PROJECTS LIMITED','JIRANIHOOD DEVELOPMENTS LIMITED']},
+  {key:'agriculture',isic:'A',label:'Agriculture & Agribusiness',icon:'fa-seedling',color:'#2E9C4A',blurb:'Farming, agro-processing, horticulture, livestock.',
+    descriptors:['Agriculture','Agribusiness','Farms','Farming','Agro','Foods','Produce','Commodities','Agro-Processing','Horticulture','Livestock','Estates','Agro Ventures'],
+    examples:['JIRANIHOOD AGRIBUSINESS LIMITED','JIRANIHOOD FARMS LIMITED','JIRANIHOOD AGRICULTURE LIMITED','JIRANIHOOD FOODS LIMITED']},
+  {key:'logistics',isic:'H',label:'Logistics, Transport & Supply Chain',icon:'fa-truck',color:'#1B6CA8',blurb:'Transport, freight, courier, warehousing, cargo.',
+    descriptors:['Logistics','Transport','Freight','Haulage','Distribution','Couriers','Supply Chain','Warehousing','Cargo','Mobility','Trucking','Express','Transporters'],
+    examples:['JIRANIHOOD LOGISTICS LIMITED','JIRANIHOOD TRANSPORT LIMITED','JIRANIHOOD FREIGHT LIMITED','JIRANIHOOD SUPPLY CHAIN LIMITED']},
+  {key:'realestate',isic:'L',label:'Real Estate & Property',icon:'fa-building',color:'#7A4FA3',blurb:'Property, realty, estates, developments, lettings.',
+    descriptors:['Properties','Property','Realty','Real Estate','Developments','Estates','Investments','Properties & Developments','Lettings','Property Services'],
+    examples:['JIRANIHOOD PROPERTIES LIMITED','JIRANIHOOD REALTY LIMITED','JIRANIHOOD DEVELOPMENTS LIMITED']},
+  {key:'education',isic:'P',label:'Education & Training',icon:'fa-graduation-cap',color:'#E8730F',blurb:'Schools, colleges, training, skills development.',
+    descriptors:['Education','Academy','Institute','Training','Learning','Skills','College','School','Development','Educational Services','Training Centre'],
+    examples:['JIRANIHOOD ACADEMY LIMITED','JIRANIHOOD TRAINING LIMITED','JIRANIHOOD INSTITUTE LIMITED'],
+    flag:{level:'warn',title:'Naming caution',body:'Terms such as University, College, School, Academy and Institute may imply a licensed or regulated status. Confirm the education-sector requirements before finalising the name.'}},
+  {key:'health',isic:'Q',label:'Health & Wellness',icon:'fa-heart-pulse',color:'#B8564F',blurb:'Clinics, wellness, medical, diagnostics, labs.',
+    descriptors:['Health','Wellness','Care','Medical','Clinic','Pharmacy','Laboratory','Diagnostics','Allied Health','Rehab','Health Services'],
+    examples:['JIRANIHOOD HEALTH LIMITED','JIRANIHOOD WELLNESS LIMITED','JIRANIHOOD DIAGNOSTICS LIMITED'],
+    flag:{level:'warn',title:'Regulatory review required',body:'Health-sector activity, the entity name, and the professional licences of practitioners are all separate. Confirm the required health authority registrations before registering.'}},
+  {key:'tourism',isic:'I',label:'Tourism & Hospitality',icon:'fa-plane',color:'#0E7C7B',blurb:'Lodges, hotels, tour operators, restaurants.',
+    descriptors:['Tourism','Hospitality','Lodge','Hotel','Safari','Travel','Tours','Resort','Catering','Restaurant','Tourism Services','Hospitality Group'],
+    examples:['JIRANIHOOD TOURS LIMITED','JIRANIHOOD HOSPITALITY LIMITED','JIRANIHOOD SAFARI LIMITED']},
+  {key:'other',isic:'—',label:'Other / Not sure',icon:'fa-circle-question',color:'#5E7A67',blurb:'Let us assess your activity and recommend a direction.',
+    descriptors:['Services','Solutions','Enterprises','Group','Holdings','Ventures','Zambia','Company','Business','Corporation'],
+    examples:['JIRANIHOOD SERVICES LIMITED','JIRANIHOOD ENTERPRISES LIMITED']}
 ];
 
 /* ============================================================
@@ -263,33 +298,28 @@ function analyseName(name){
   const patterns=PATTERNS.filter(p=>n.includes(p));
   const prot=PROTECTED.filter(p=>n.includes(p));
   let score=100;
-  if(n.length<3){score-=40;issues.push({level:'crit',text:'Name is too short to be distinctive.'});}
-  if(/^\d+$/.test(n)){score-=40;issues.push({level:'crit',text:'A name made only of numbers is unlikely to be accepted.'});}
-  if(n.length>30){score-=10;issues.push({level:'warn',text:'Unusually long — shorter distinctive names are usually stronger.'});}
-  if(patterns.length>0){score-=patterns.length*6;issues.push({level:'warn',text:`Contains ${patterns.length} common pattern${patterns.length>1?'s':''}: ${patterns.join(', ')}. Add a more distinctive element.`});}
-  if(prot.length>0){score-=prot.length*20;issues.push({level:'crit',text:`Contains protected term${prot.length>1?'s':''}: ${prot.join(', ')}. Written consent may be required.`});}
-  if(GENERIC.includes(n)){score-=30;issues.push({level:'crit',text:'A single generic word is unlikely to be accepted.'});}
+  if(n.length<3){score-=40;issues.push({level:'crit',text:'Name is too short to be distinctive.'})}
+  if(/^\d+$/.test(n)){score-=40;issues.push({level:'crit',text:'A name made only of numbers is unlikely to be accepted.'})}
+  if(n.length>30){score-=10;issues.push({level:'warn',text:'Unusually long — shorter distinctive names are usually stronger.'})}
+  if(patterns.length>0){score-=patterns.length*6;issues.push({level:'warn',text:`Contains ${patterns.length} common pattern${patterns.length>1?'s':''}: ${patterns.join(', ')}. Add a more distinctive element.`})}
+  if(prot.length>0){score-=prot.length*20;issues.push({level:'crit',text:`Contains protected term${prot.length>1?'s':''}: ${prot.join(', ')}. Written consent may be required.`})}
+  if(GENERIC.includes(n)){score-=30;issues.push({level:'crit',text:'A single generic word is unlikely to be accepted.'})}
   score=Math.max(0,Math.min(100,Math.round(score)));
   return{score,issues,patterns,protected:prot};
 }
-function label(s){if(s>=80)return'Strong';if(s>=60)return'Moderate';if(s>=40)return'Weak';return'Needs work';}
-function color(s){if(s>=80)return'#1E7B3C';if(s>=60)return'#E8730F';return'#B8564F';}
+function label(s){if(s>=80)return'Strong';if(s>=60)return'Moderate';if(s>=40)return'Weak';return'Needs work'}
+function color(s){if(s>=80)return'#1E7B3C';if(s>=60)return'#E8730F';return'#B8564F'}
 
 /* ============================================================
-   SMALL UI
+   SHARED UI
    ============================================================ */
 function Btn({children,onClick,variant='primary',size='md',className='',type='button',disabled}){
   const base='inline-flex items-center justify-center gap-2.5 transition-all duration-300 tracking-wide disabled:opacity-30 disabled:cursor-not-allowed rounded-sm font-semibold';
   const sizes={sm:'text-[12px] px-4 py-2.5',md:'text-[13px] px-6 py-3.5',lg:'text-[13.5px] px-8 py-4'};
-  const variants={primary:'bg-gradient-to-br from-[#E8730F] to-[#F5A623] text-white hover:shadow-[0_0_25px_rgba(232,115,15,0.4)]',ghost:'border border-[#0A1F12]/20 text-[#0A1F12] hover:border-[#E8730F] hover:bg-[#E8730F]/5',ghostLt:'border border-white/20 text-white hover:bg-[#F5A623] hover:text-[#0A1F12] border-[#F5A623]'};
+  const variants={primary:'bg-gradient-to-br from-[#E8730F] to-[#F5A623] text-white hover:shadow-[0_0_25px_rgba(232,115,15,0.4)]',ghost:'border border-[#0A1F12]/20 text-[#0A1F12] hover:border-[#E8730F] hover:bg-[#E8730F]/5',ghostLt:'border border-white/20 text-white hover:bg-[#F5A623] hover:text-[#0A1F12]'};
   return <button type={type} onClick={onClick} disabled={disabled} className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}>{children}</button>;
 }
 function Arrow({className=''}){return <svg className={className} width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M9 1L13 5L9 9M13 5H1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-function Head({eyebrow,title,sub,light,className=''}){return <div className={className}>
-  {eyebrow&&<div style={{display:'flex',alignItems:'center',gap:16,marginBottom:20}}><span className={`micro ${light?'text-[#F5A623]':'text-[#0A1F12]/50'}`}>{eyebrow}</span></div>}
-  <h2 className={`serif ${light?'text-white':'text-[#0A1F12]'}`} style={{fontSize:'clamp(1.8rem,4.2vw,2.7rem)',lineHeight:1.1}}>{title}</h2>
-  {sub&&<p className={light?'text-white/50':'text-[#0A1F12]/55'} style={{marginTop:20,fontSize:15.5,lineHeight:1.6,maxWidth:'42rem'}}>{sub}</p>}
-</div>;}
 function Mark({size=36}){const gid='g'+Math.random().toString(36).slice(2,7);const aid='a'+Math.random().toString(36).slice(2,7);return <span className="rounded-full overflow-hidden flex-shrink-0" style={{width:size,height:size,boxShadow:'0 4px 12px -4px rgba(10,31,18,.5)'}}><svg viewBox="0 0 100 100" style={{display:'block',width:'100%',height:'100%'}}><defs><radialGradient id={gid} cx="30%" cy="25%" r="90%"><stop offset="0%" stopColor="#4CB050"/><stop offset="45%" stopColor="#1E7B3C"/><stop offset="100%" stopColor="#E8730F"/></radialGradient><linearGradient id={aid} x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stopColor="#FFC107"/><stop offset="100%" stopColor="#F5A623"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill={`url(#${gid})`}/><rect x="24" y="52" width="7" height="22" rx="1.2" fill="#FFFFFF" opacity="0.96"/><rect x="35" y="44" width="7" height="30" rx="1.2" fill="#FFFFFF" opacity="0.96"/><rect x="46" y="36" width="7" height="38" rx="1.2" fill="#C8E6C9"/><rect x="57" y="30" width="7" height="44" rx="1.2" fill="#C8E6C9"/><path d="M18 77 Q50 85 82 73" stroke="#FFFFFF" strokeWidth="2.4" fill="none" strokeLinecap="round" opacity="0.85"/><path d="M26 70 Q48 62 66 28" stroke={`url(#${aid})`} strokeWidth="6.5" fill="none" strokeLinecap="round"/><polygon points="70,13 84,29 62,35" fill="#F5A623"/></svg></span>;}
 function NotReg({tone='light'}){return <div style={{background:tone==='dark'?'rgba(255,255,255,.05)':'linear-gradient(135deg,#FFF4E0,#FFF9EE)',border:tone==='dark'?'1px solid rgba(245,166,35,.3)':'1px solid #E8730F',borderRadius:12,padding:'14px 18px',display:'flex',gap:14,alignItems:'flex-start'}}>
   <span style={{width:34,height:34,borderRadius:9,background:tone==='dark'?'rgba(245,166,35,.2)':'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className="fas fa-info-circle" style={{color:tone==='dark'?'#F5A623':'#fff',fontSize:14}}></i></span>
@@ -305,8 +335,8 @@ const DESKS={
   pacra:{id:'pacra',code:'1',title:'PACRA Desk',subtitle:'Business Registration & Corporate Compliance',authority:'Patents and Companies Registration Agency',color:'#2E9C4A',icon:'fa-building',
     intro:'Register, amend and keep your company legally active — from name clearance through annual returns.',
     options:[
-      {v:'structure',t:'Business Structure Advisory',d:'Self-service wizard — K45, done within 1 hour.',icon:'fa-compass',wizard:'structure'},
-      {v:'name',t:'Name Preparation & Clearance',d:'Self-service wizard — K45, done within 1 hour.',icon:'fa-tag',wizard:'names'},
+      {v:'structure',t:'Business Structure Advisory',d:'Self-service wizard — K25, done within 1 hour.',icon:'fa-compass',wizard:'structure'},
+      {v:'name',t:'Name Preparation & Clearance',d:'Self-service wizard — K25, done within 1 hour.',icon:'fa-tag',wizard:'names'},
       {v:'inc',t:'Company Incorporation',d:'Directors, shareholders, certificate.',icon:'fa-building',services:['p_inc']},
       {v:'bn',t:'Business Name Registration',d:'BN Form III — trading name.',icon:'fa-store',services:['p_bn']},
       {v:'amend',t:'Company Amendments',d:'Directors, address, activities, name.',icon:'fa-pen',services:['p_amend']},
@@ -383,12 +413,11 @@ const DESKS={
 };
 
 /* ============================================================
-   SERVICES — full catalogue, all source material preserved
+   SERVICES
    ============================================================ */
 const S={
-  // PACRA — Structure & Name point to wizard
-  p_structure:{code:'P0',desk:'pacra',title:'Business Structure Advisory',clientDesc:'Self-service wizard. Tell us about your business idea. Our platform recommends the right legal structure — Business Name, Private Company Limited by Shares, Company Limited by Guarantee, or another form — based on your activity and situation.',whatsCovered:['Guided question flow — no long forms','Industry classification against ISIC-aligned sectors','Legal structure recommendation with reasons','Referral to a qualified professional where legal advice is required','Instant assessment report','Formal StartEasy-branded report delivered within 1 hour'],service:'micro',timeline:'Done within 1 hour',wizardEntry:true,wizardScope:'structure',popular:true},
-  p_name:{code:'P1',desk:'pacra',title:'Name Preparation & Clearance',clientDesc:'Self-service wizard. Our platform develops three fully-constructed candidate names aligned with your business activity, legal structure and PACRA naming requirements — with a name distinctiveness score for each. Then we prepare the clearance application, submit on your behalf and track the case through to outcome.',whatsCovered:['Descriptive word family for your industry','Three-name proposal in preference order','Real-time name distinctiveness score','Common pattern and protected-term detection','Consistency check across all names','Submission information pack','Submission on your behalf','Case tracking','Plain-language explanation of any query'],service:'micro',timeline:'Done within 1 hour',wizardEntry:true,wizardScope:'names',popular:true},
+  p_structure:{code:'P0',desk:'pacra',title:'Business Structure Advisory',clientDesc:'Self-service wizard. Tell us about your business idea. Our platform recommends the right legal structure — Business Name, Private Company Limited by Shares, Company Limited by Guarantee, or another form — based on your activity and situation.',whatsCovered:['Guided question flow — no long forms','Industry classification against ISIC-aligned sectors','Primary and secondary activity capture','Legal structure recommendation with reasons','Referral to a qualified professional where legal advice is required','Instant assessment report','Formal StartEasy-branded report delivered within 1 hour'],service:'micro',timeline:'Done within 1 hour',wizardEntry:true,wizardScope:'structure',popular:true},
+  p_name:{code:'P1',desk:'pacra',title:'Name Preparation & Clearance',clientDesc:'Self-service wizard. Our platform develops three fully-constructed candidate names aligned with your business activity, legal structure and PACRA naming requirements — with a name distinctiveness score for each. Then we prepare the clearance application, submit on your behalf and track the case through to outcome.',whatsCovered:['Descriptive word library dropdown','Three-name proposal in preference order','Real-time name distinctiveness score','Common pattern and protected-term detection','Consistency check across all names','Submission information pack','Submission on your behalf','Case tracking','Plain-language explanation of any query'],service:'micro',timeline:'Done within 1 hour',wizardEntry:true,wizardScope:'names',popular:true},
   p_inc:{code:'P2',desk:'pacra',title:'Company Incorporation',clientDesc:'Full administrative preparation of a private limited company incorporation — directors, shareholders, share capital, registered office — with a pre-submission quality check and submission on your behalf.',whatsCovered:['Company information compiled','Director and shareholder particulars','Shareholding structure and share capital','Registered office evidence','Business activities description','Supporting declarations','Pre-submission quality check','Submission on your behalf','Certificate of Incorporation','Share capital certificate'],service:'complex',timeline:'3–14 working days after name clearance',popular:true},
   p_bn:{code:'P3',desk:'pacra',title:'Business Name Registration',clientDesc:'Administrative preparation and submission support for business-name registration, including PACRA BN Form III.',whatsCovered:['Application preparation','Supporting document check','Submission on your behalf','Reference tracking','Certificate processing'],service:'standard',timeline:'2–7 working days after clearance'},
   p_amend:{code:'P4',desk:'pacra',title:'Company Amendments',clientDesc:'Administrative preparation of amendment filings — directors, shareholders, company secretary, registered office, company name, activities, shareholding.',whatsCovered:['Amendment type confirmed','Correct form identified','Resolution preparation support','Consistency check across documents','Submission on your behalf','Cross-desk notification (ZRA, NAPSA, council)'],service:'standard',timeline:'3–10 working days'},
@@ -396,7 +425,6 @@ const S={
   p_bo:{code:'P6',desk:'pacra',title:'Beneficial Ownership Filing',clientDesc:'Administrative support for beneficial-ownership information requirements applicable to companies — mapping the ownership chain to natural persons and preparing the filing.',whatsCovered:['Ownership chain mapped to natural persons','Beneficial owners identified','Percentage reconciliation','Filing prepared and submitted on your behalf'],service:'standard',timeline:'Varies'},
   p_close:{code:'P7',desk:'pacra',title:'Business Closure & Deregistration',clientDesc:'Administrative support to close a business correctly — settle outstanding filings, obtain tax clearance, deregister as employer, surrender licences and archive records.',whatsCovered:['Outstanding filings regularised','Tax clearance obtained','Employer deregistration','Licence surrender support','Deregistration submitted on your behalf','Final records archived'],service:'complex',timeline:'Varies — often several weeks'},
   p_records:{code:'P8',desk:'pacra',title:'Corporate Records Administration',clientDesc:'Ongoing administration of your statutory records, corporate document register, director information and PACRA correspondence.',whatsCovered:['Statutory records administration','Corporate document register','Director and member information updates','Compliance reminders','PACRA correspondence follow-up','Company restoration / regularisation support'],ongoing:'standard',timeline:'Ongoing'},
-  // ZRA
   z_tpin:{code:'Z1',desk:'zra',title:'TPIN Registration',clientDesc:'Administrative preparation and submission support to obtain a Taxpayer Identification Number — the foundation of every tax obligation.',whatsCovered:['Identification documents verified','Exact-name consistency check','Registration submitted on your behalf','TPIN recorded and stored','Tax calendar started'],service:'basic',timeline:'1–10 working days',popular:true},
   z_types:{code:'Z2',desk:'zra',title:'Tax Type Registration',clientDesc:'Register for the tax types applicable to your business — VAT, PAYE, Turnover Tax, Withholding Tax, Rental Income Tax, Tourism Levy, Insurance Premium Levy and others.',whatsCovered:['Applicable tax types identified','Registration applications prepared','Submitted on your behalf','Return schedule set'],service:'standard',timeline:'Varies'},
   z_file:{code:'Z3',desk:'zra',title:'Recurring Return Filing',clientDesc:'Prepare and file your recurring returns on your behalf — PAYE, VAT, Turnover Tax, Withholding Tax, Nil returns — with payment coordination.',whatsCovered:['Return preparation for applicable tax types','Filing on your behalf','Payment coordination','Nil returns filed where applicable','Filing acknowledgements retained'],ongoing:'filing',timeline:'Recurring monthly / quarterly',popular:true},
@@ -404,32 +432,27 @@ const S={
   z_recover:{code:'Z5',desk:'zra',title:'Tax Compliance Recovery',clientDesc:'A structured programme to bring your tax position up to date — status check, backlog filing, penalty review and clearance readiness.',whatsCovered:['ZRA status check','Outstanding returns review','Missing returns identified','Filing backlog coordination','Penalty and interest statement review','Tax Clearance Certificate readiness'],service:'complex',ongoing:'standard',timeline:'Varies depending on backlog',popular:true},
   z_update:{code:'Z6',desk:'zra',title:'Taxpayer Information Update',clientDesc:'Update your registered name, address, banking details or responsible-officer information with ZRA.',whatsCovered:['Change scope confirmed','Correct form identified','Supporting evidence prepared','Update submitted on your behalf'],service:'basic',timeline:'Varies'},
   z_annual:{code:'Z7',desk:'zra',title:'Annual Tax Compliance',clientDesc:'Annual income tax return, annual tax filing calendar, compliance status checks and reconciliation of your taxpayer account.',whatsCovered:['Annual Income Tax return administration','Annual tax filing calendar','Tax compliance status checks','Tax account reconciliation','Outstanding return identification','Nil-return regularisation'],service:'standard',ongoing:'filing',timeline:'Annual'},
-  // NAPSA
   n_reg:{code:'N1',desk:'napsa',title:'Employer Registration',clientDesc:'Administrative support to register your business as an employer with NAPSA and set up your contribution cycle.',whatsCovered:['Employer registration submitted on your behalf','Employer account setup','NAPSA portal setup','Employee schedule prepared','Employer number recorded','Contribution calendar set'],service:'basic',timeline:'Varies',popular:true},
   n_emp:{code:'N2',desk:'napsa',title:'Employee Registration',clientDesc:'Administrative support to register individual employees promptly after engagement, with verified identification details.',whatsCovered:['Employee registration submitted on your behalf','Identification verification','Exact-name matching','Employee schedule maintained','Joiners, leavers and corrections'],service:'basic',timeline:'Ongoing'},
   n_monthly:{code:'N3',desk:'napsa',title:'Monthly Contribution Administration',clientDesc:'Prepare monthly contribution schedules, coordinate payments, and reconcile the NAPSA statement against your payroll.',whatsCovered:['Monthly contribution schedule prepared','Contribution return administration','Payment coordination','Compliance deadline monitoring','Contribution reconciliation','Employee contribution records'],ongoing:'filing',timeline:'Ongoing monthly'},
   n_cleanup:{code:'N4',desk:'napsa',title:'Compliance Clean-Up',clientDesc:'For businesses that have fallen behind — we review missing contributions, reconcile the statement, and update your records.',whatsCovered:['NAPSA account status check','Missing contribution review','Outstanding schedules identified','Contribution reconciliation','Employer account updates','Employee record corrections','Historical compliance administration'],service:'standard',ongoing:'filing',timeline:'Varies'},
   n_ongoing:{code:'N5',desk:'napsa',title:'Ongoing NAPSA Compliance',clientDesc:'Standing engagement — employer and employee administration, monthly contributions, filing and reconciliation.',whatsCovered:['Employer and employee administration','Monthly contribution schedules','Payment coordination','Annual employer compliance review','Employee register review','Compliance calendar management'],ongoing:'standard',timeline:'Ongoing monthly'},
-  // WCFCB
   w_reg:{code:'W1',desk:'wcfcb',title:'Employer Registration',clientDesc:'Administrative support to register your establishment with WCFCB — due within 14 days of commencing business.',whatsCovered:['WCFCB employer registration','Employer account setup','Establishment registration','Employer information capture','Portal setup support','Registration documentation'],service:'basic',timeline:'Varies',popular:true},
   w_assess:{code:'W2',desk:'wcfcb',title:'Annual Assessment Support',clientDesc:'Administrative support for earnings declaration, annual assessment coordination and reconciliation.',whatsCovered:['Earnings declaration prepared','Assessment administration','Annual assessment coordination','Payment deadline monitoring','Contribution / assessment reconciliation','Outstanding assessment review'],service:'standard',timeline:'Annual'},
   w_injury:{code:'W3',desk:'wcfcb',title:'Workplace Injury Documentation',clientDesc:'Administrative coordination of workplace injury documentation. We do not provide legal representation or medical adjudication.',whatsCovered:['Workplace accident documentation checklist','Claim documentation coordination','Submission support','Follow-up with WCFCB','Record keeping'],service:'basic',timeline:'Varies'},
   w_cleanup:{code:'W4',desk:'wcfcb',title:'Compliance Regularisation',clientDesc:'For establishments that have fallen behind on assessments — we review the position and bring you up to date.',whatsCovered:['WCFCB status check','Registration verification','Outstanding assessment review','Historical record reconciliation','Compliance regularisation'],service:'standard',ongoing:'filing',timeline:'Varies'},
   w_ongoing:{code:'W5',desk:'wcfcb',title:'Ongoing WCFCB Administration',clientDesc:'Standing engagement — employee register, earnings, annual assessment and payment deadlines.',whatsCovered:['Employee register maintenance','Earnings information coordination','Payroll information coordination','Annual assessment coordination','Payment deadline monitoring'],ongoing:'filing',timeline:'Ongoing'},
-  // NHIMA
   h_reg:{code:'H1',desk:'nhima',title:'Employer Registration',clientDesc:'Administrative support to register as an employer with NHIMA and set up your portal account.',whatsCovered:['NHIMA employer registration','Employer profile setup','Portal registration','Document submission','Employer account administration'],service:'basic',timeline:'Varies',popular:true},
   h_emp:{code:'H2',desk:'nhima',title:'Employee Registration',clientDesc:'Administrative support to register employees and maintain employee and beneficiary records.',whatsCovered:['Employee registration','New employee additions','Employee updates','Employee exits','Employee records administration','Beneficiary administration support where applicable'],service:'basic',timeline:'Ongoing'},
   h_monthly:{code:'H3',desk:'nhima',title:'Monthly Premium Administration',clientDesc:'Prepare monthly employee schedules, file returns, and coordinate premium payments.',whatsCovered:['Monthly employee schedules','Premium contribution administration','Monthly returns','Payment coordination','Filing deadline monitoring','Contribution reconciliation','Nil / zero activity administration'],ongoing:'filing',timeline:'Ongoing monthly'},
   h_cleanup:{code:'H4',desk:'nhima',title:'Compliance Regularisation',clientDesc:'For businesses that have fallen behind on returns or contributions — we review and bring you up to date.',whatsCovered:['NHIMA account review','Outstanding returns','Outstanding contributions','Employee reconciliation','Employer information updates','Compliance regularisation'],service:'standard',ongoing:'filing',timeline:'Varies'},
   h_ongoing:{code:'H5',desk:'nhima',title:'Ongoing NHIMA Compliance',clientDesc:'Standing engagement — monthly schedules, returns, premium payments and reconciliation.',whatsCovered:['Employee administration','Monthly employee schedules','Premium returns','Payment coordination','Contribution reconciliation'],ongoing:'standard',timeline:'Ongoing monthly'},
-  // Licensing
   l_trading:{code:'L1',desk:'licensing',title:'Council Trading Licence',clientDesc:'Administrative support to obtain or renew the trading licence issued by your local authority, together with the business levy.',whatsCovered:['Business levy registration and renewal','Correct licence category confirmed','Premises and registration documents prepared','Inspection coordination','Fee payment guidance','Licence collection guidance','Renewal date diarised'],service:'standard',timeline:'5–21 working days',popular:true},
   l_health:{code:'L2',desk:'licensing',title:'Health & Food Handling Permit',clientDesc:'Administrative support for health-related approval and staff food-handler medical certification.',whatsCovered:['Health requirements confirmed','Premises inspection readiness checklist','Food handler certification tracker','Application pack prepared and submitted on your behalf','Health permit renewal'],service:'standard',timeline:'Varies',popular:true},
   l_fire:{code:'L3',desk:'licensing',title:'Fire Certificate',clientDesc:'Administrative support to obtain or renew your fire certificate — application, inspection coordination and renewal.',whatsCovered:['Fire certificate application','Fire inspection coordination','Fire certificate renewal','Compliance documentation','Inspection follow-up'],service:'basic',timeline:'Varies'},
   l_premises:{code:'L4',desk:'licensing',title:'Premises, Zoning & Planning',clientDesc:'Administrative support to confirm permitted use, prepare lease or ownership evidence, and obtain planning or change-of-use consent.',whatsCovered:['Zoning pre-check','Lease or title evidence prepared','Planning consent support','Occupation certificate support','Property-related council applications','Ground-rent-related administration'],service:'standard',timeline:'Varies'},
   l_renew:{code:'L5',desk:'licensing',title:'Licence & Permit Renewal',clientDesc:'Administrative support to renew licences, permits and registrations — starting 60 days before expiry so nothing lapses.',whatsCovered:['Licence register built','Renewal started 60 days ahead','Updated supporting documents','Renewal submitted on your behalf','Next renewal reminder set'],service:'basic',ongoing:'filing',timeline:'Start 60 days before expiry'},
   l_ongoing:{code:'L6',desk:'licensing',title:'Council Licence Renewal Desk',clientDesc:'A managed renewals service that tracks every council and premises licence on your behalf.',whatsCovered:['Licence register maintained','Renewals started 60 days ahead','Supporting documents updated','Renewals submitted on your behalf','Renewal evidence retained'],ongoing:'filing',timeline:'Ongoing'},
-  // Sector
   s_zda:{code:'S1',desk:'sector',title:'ZDA Investment Registration',clientDesc:'Administrative support for ZDA registrations, investment licence applications and investment certificate administration.',whatsCovered:['ZDA registration support','Investment licence application coordination','Investment certificate administration','Investor documentation','Investment project information updates','ZDA compliance administration'],service:'complex',timeline:'Varies'},
   s_zema:{code:'S2',desk:'sector',title:'ZEMA Environmental Compliance',clientDesc:'Administrative support for environmental registration, licence application and compliance documentation with ZEMA.',whatsCovered:['Environmental registration coordination','Environmental licence / approval administration','Environmental compliance documentation','Renewal monitoring','ZEMA correspondence follow-up'],service:'complex',timeline:'Varies'},
   s_tourism:{code:'S3',desk:'sector',title:'Tourism Enterprise Registration',clientDesc:'Administrative support for tourism enterprise registration and licence renewals with the Zambia Tourism Agency.',whatsCovered:['Tourism enterprise registration','Tourism licence application support','Licence renewals','Tourism compliance documentation','Inspection coordination'],service:'standard',timeline:'Varies'},
@@ -439,13 +462,11 @@ const S={
   s_coop:{code:'S7',desk:'sector',title:'Cooperative Registration',clientDesc:'Administrative support for cooperative registration with the Department of Cooperatives.',whatsCovered:['Cooperative registration administration','Registration documentation','Amendments','Annual / periodic compliance administration','Records maintenance'],service:'standard',timeline:'Varies'},
   s_ceec:{code:'S8',desk:'sector',title:'CEEC Registration',clientDesc:'Administrative support for CEEC registration and documentation for qualifying businesses.',whatsCovered:['Registration / application administration','Documentation preparation','Compliance documentation','Application follow-up'],service:'standard',timeline:'Varies'},
   s_zppa:{code:'S9',desk:'sector',title:'ZPPA Supplier Registration',clientDesc:'Administrative support to register as a supplier for government tenders and prepare tender-readiness documentation.',whatsCovered:['Supplier registration support','Supplier profile administration','Documentation coordination','Compliance document management','Tender-readiness administration'],service:'standard',timeline:'Varies'},
-  // Compliance
   c_audit:{code:'C1',desk:'compliance',title:'Business Compliance Check-Up',clientDesc:'A written Business Compliance Status Report covering every applicable regulatory area — business identity, tax, employees, premises and industry obligations — with a clear rating for each item.',whatsCovered:['Business identity review — PACRA registration, certificate status, annual returns, directors, registered address','Tax review — TPIN, tax types, returns, tax clearance, outstanding obligations','Employee review — NAPSA, NHIMA, WCFCB, PAYE, employee records','Premises review — council business levy, health permit, fire certificate, occupation certificate, sector licences','Industry review — ZEMA, ZABS, ZDA, Tourism, ERB, ZICTA, other applicable regulators','Written report with 🟢 Compliant · 🟠 Action Required · 🔴 Non-Compliant / Outstanding · ⚪ Not Applicable ratings'],service:'checkup',timeline:'Report within 5 business days',popular:true},
   c_regularise:{code:'C2',desk:'compliance',title:'Compliance Regularisation Programme',clientDesc:'A structured programme to bring your business up to date across every applicable authority — filing backlog, expired licences, missing registrations, certificate recovery.',whatsCovered:['PACRA status check and outstanding annual returns','ZRA status check and missing tax returns','NAPSA, NHIMA and WCFCB status checks','Council licence status and expired licences','Missing certificates identified','Employee compliance review','Regulatory correspondence','Compliance backlog filed','Renewals coordinated','Certificate retrieval','Record reconstruction','Compliance calendar created'],service:'regularise',ongoing:'standard',timeline:'Varies depending on backlog',popular:true},
   c_ongoing:{code:'C3',desk:'compliance',title:'Ongoing Compliance Management',clientDesc:'We become your external administrative compliance department — maintaining your calendar, tracking deadlines, preparing documentation, coordinating submissions, and monitoring renewals across every authority.',whatsCovered:['PACRA — annual returns and corporate changes','ZRA — tax registrations, returns and compliance','NAPSA — employer, employee and contribution compliance','NHIMA — employee registration, returns and premiums','WCFCB — employer registration, assessments and compliance','Council — business levy and local licences','Health — permits and inspections','Fire — certificates and renewals','ZDA — investment regulatory matters','ZEMA — environmental licences','ZABS — standards and certification','Tourism — tourism licences','ERB — energy licences','ZICTA — ICT regulatory licences','ZPPA — supplier compliance','Monthly / quarterly compliance status report','Annual compliance review'],ongoing:'managed',timeline:'Ongoing',popular:true,subscription:true}
 };
 const ALL_SERVICES=Object.entries(S).map(([k,v])=>({key:k,...v}));
-const findService=code=>{const entry=Object.entries(S).find(([k,v])=>v.code===code);return entry?{key:entry[0],...entry[1]}:null;};
 const findServiceByKey=key=>S[key]?{key,...S[key]}:null;
 const getDesk=id=>DESKS[id];
 
@@ -473,18 +494,18 @@ function Modal({open,onClose,eyebrow,title,children,maxWidth='46rem'}){
 }
 
 /* Service detail */
-function ServiceDetail({serviceKey,onClose,onProceed,onWizard}){
-  const s=serviceKey?findServiceByKey(serviceKey):null;
-  if(!s)return null;
+function ServiceDetail({service,onClose,onProceed,onWizard}){
+  if(!service)return null;
+  const s=service;
   const desk=getDesk(s.desk);
   const sf=s.service?SF[s.service]:null;
   const og=s.ongoing?ONGOING[s.ongoing]:null;
-  return <Modal open={!!s} onClose={onClose} eyebrow={desk.title}>
+  return <Modal open={!!s} onClose={onClose} eyebrow={desk?desk.title:'StartEasy'}>
     <div className="fadein">
       <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:18}}>
-        <span style={{width:52,height:52,borderRadius:14,background:desk.color+'18',color:desk.color,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className={`fas ${desk.icon}`} style={{fontSize:20}}></i></span>
+        <span style={{width:52,height:52,borderRadius:14,background:desk?desk.color+'18':'#E8730F18',color:desk?desk.color:'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className={`fas ${desk?desk.icon:'fa-file'}`} style={{fontSize:20}}></i></span>
         <div className="min-w-0">
-          <span style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:700,display:'block',marginBottom:4,color:desk.color}}>{s.code} · {desk.title}</span>
+          <span style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:700,display:'block',marginBottom:4,color:desk?desk.color:'#E8730F'}}>{s.code} · {desk?desk.title:'StartEasy'}</span>
           <h2 className="serif" style={{fontSize:'clamp(1.4rem,3.2vw,1.8rem)',lineHeight:1.2,color:'#0A1F12'}}>{s.title}</h2>
         </div>
       </div>
@@ -505,7 +526,7 @@ function ServiceDetail({serviceKey,onClose,onProceed,onWizard}){
         <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:14}}>What is covered</div>
         <ul style={{listStyle:'none',padding:0,margin:0}}>
           {s.whatsCovered.map((d,i)=><li key={i} style={{display:'flex',alignItems:'flex-start',gap:12,fontSize:13.5,color:'rgba(10,31,18,.8)',lineHeight:1.6,marginBottom:10}}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={desk.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{marginTop:4,flexShrink:0}}><path d="M20 6L9 17l-5-5"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={desk?desk.color:'#E8730F'} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{marginTop:4,flexShrink:0}}><path d="M20 6L9 17l-5-5"/></svg>
             <span>{d}</span>
           </li>)}
         </ul>
@@ -532,12 +553,12 @@ function ServiceDetail({serviceKey,onClose,onProceed,onWizard}){
 }
 
 /* Engagement proposal */
-function Engagement({serviceKey,onClose,onAgreed}){
-  const s=serviceKey?findServiceByKey(serviceKey):null;
+function Engagement({service,onClose,onAgreed}){
   const [client,setClient]=useState({name:'',business:'',email:'',phone:''});
   const [agreed,setAgreed]=useState(false);
   const [error,setError]=useState('');
-  if(!s)return null;
+  if(!service)return null;
+  const s=service;
   const desk=getDesk(s.desk);
   const sf=s.service?SF[s.service]:null;
   const og=s.ongoing?ONGOING[s.ongoing]:null;
@@ -551,26 +572,32 @@ function Engagement({serviceKey,onClose,onAgreed}){
   return <Modal open={!!s} onClose={onClose} eyebrow="Engagement proposal" maxWidth="54rem">
     <div className="el printable" id="engagementLetter">
       <div className="eh">
-        <div>
-          <div className="brand">Start<em>Easy</em></div>
-          <div className="sub">Administrative Services Desk · Zambia</div>
-        </div>
-        <div>
-          <div className="dt">ENGAGEMENT PROPOSAL</div>
-          <div className="mt">{new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}<br/>Ref: SE-{s.code}-{new Date().getFullYear()}-{String(Math.floor(Math.random()*9000)+1000)}</div>
-        </div>
+        <div><div className="brand">Start<em>Easy</em></div><div className="sub">Administrative Services Desk · Zambia</div></div>
+        <div><div className="dt">ENGAGEMENT PROPOSAL</div><div className="mt">{new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}<br/>Ref: SE-{(s.code||'ADV')}-{new Date().getFullYear()}-{String(Math.floor(Math.random()*9000)+1000)}</div></div>
       </div>
       <p><strong>Dear {client.name||'[Client]'},</strong></p>
-      <p>Thank you for considering StartEasy Administrative Services Desk for your <strong>{s.title}</strong> requirement ({desk.title}). This engagement proposal sets out the scope, deliverables, fees and terms.</p>
+      <p>Thank you for considering StartEasy Administrative Services Desk for your <strong>{s.title}</strong> requirement{desk?` (${desk.title})`:''}. This engagement proposal sets out the scope, deliverables, fees and terms.</p>
 
       <h4>1. Scope</h4>
       <p>{s.clientDesc}</p>
       <p><strong>Typical timeline:</strong> {s.timeline}.</p>
 
-      <h4>2. What we will deliver</h4>
+      {s._wizardData&&<><h4>2. Your assessment summary</h4>
+      <div style={{background:'#F8F9FB',border:'1px solid #E8EEF3',borderRadius:8,padding:'16px 18px',marginBottom:14}}>
+        {s._wizardData.idea&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Business idea</span><span style={{color:'#0A1F12',fontWeight:700,textAlign:'right',maxWidth:'60%'}}>{s._wizardData.idea}</span></div>}
+        {s._wizardData.primaryActivity&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Primary activity</span><span style={{color:'#0A1F12',fontWeight:700}}>{s._wizardData.primaryActivity}</span></div>}
+        {s._wizardData.secondaryActivities&&s._wizardData.secondaryActivities.length>0&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Secondary activities</span><span style={{color:'#0A1F12',fontWeight:700,textAlign:'right',maxWidth:'60%'}}>{s._wizardData.secondaryActivities.join(', ')}</span></div>}
+        {s._wizardData.industry&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Industry</span><span style={{color:'#0A1F12',fontWeight:700}}>{s._wizardData.industry.label}</span></div>}
+        {s._wizardData.structure&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Legal structure</span><span style={{color:'#0A1F12',fontWeight:700}}>{s._wizardData.structure.label}</span></div>}
+        {s._wizardData.distinctive&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Distinctive name</span><span style={{color:'#0A1F12',fontWeight:700,fontFamily:'Consolas,monospace'}}>{s._wizardData.distinctive.toUpperCase()}</span></div>}
+        {s._wizardData.descriptor&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Descriptive word</span><span style={{color:'#0A1F12',fontWeight:700,fontFamily:'Consolas,monospace'}}>{s._wizardData.descriptor.toUpperCase()}</span></div>}
+        {s._wizardData.names&&s._wizardData.names.length>0&&<div style={{padding:'8px 0 4px'}}><div style={{fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Three-name proposal</div><ol style={{paddingLeft:20,margin:0}}>{s._wizardData.names.map((n,i)=><li key={i} style={{fontSize:12.5,fontFamily:'Consolas,monospace',color:'#0A1F12',fontWeight:700,marginBottom:4}}>{n}</li>)}</ol></div>}
+      </div></>}
+
+      <h4>{s._wizardData?'3':'2'}. What we will deliver</h4>
       <ul>{s.whatsCovered.map((d,i)=><li key={i}>{d}</li>)}</ul>
 
-      <h4>3. Fees</h4>
+      <h4>{s._wizardData?'4':'3'}. Fees</h4>
       <div className="feebox">
         {sf&&<div className="row"><span className="l">{sf.label}</span><span className="v">{sf.zm}</span></div>}
         {og&&<div className="row"><span className="l">{og.label} (per month)</span><span className="v">{og.zm}<span style={{fontSize:11,fontWeight:600,color:'#888',marginLeft:4}}>/mo</span></span></div>}
@@ -579,7 +606,7 @@ function Engagement({serviceKey,onClose,onAgreed}){
       </div>
       <p style={{fontSize:11.5,color:'#666',fontStyle:'italic',marginTop:8}}>All amounts are StartEasy service fees for administrative work only. They are separate from and do not include any government or regulator fee, which is confirmed with the relevant authority before submission.</p>
 
-      <h4>4. Terms</h4>
+      <h4>{s._wizardData?'5':'4'}. Terms</h4>
       <ul>
         <li>StartEasy provides administrative preparation, coordination, submission and tracking services. We are not a government authority, regulator, law firm, auditor or tax adviser.</li>
         <li>Where a matter requires legal, tax, audit or other regulated professional advice, StartEasy will refer you to an appropriately qualified professional.</li>
@@ -588,14 +615,13 @@ function Engagement({serviceKey,onClose,onAgreed}){
         <li>Work begins only after StartEasy has verified your payment against our records. You will receive confirmation on WhatsApp and/or email.</li>
       </ul>
 
-      <h4>5. Acceptance</h4>
+      <h4>{s._wizardData?'6':'5'}. Acceptance</h4>
       <p>To proceed, complete your client details, confirm your agreement below, and pay the fee. Payment generates an official engagement reference.</p>
 
       <div className="sign">
         <div><div className="line"></div><div className="lbl">For StartEasy Administrative Services Desk</div></div>
         <div><div className="line"></div><div className="lbl">For the Client</div></div>
       </div>
-
       <div className="ft"><strong>StartEasy Administrative Services Desk</strong> · Lusaka, Zambia · {CONTACT_EMAIL} · +260 768 526 191</div>
     </div>
 
@@ -622,11 +648,12 @@ function Engagement({serviceKey,onClose,onAgreed}){
 
 /* Payment */
 function Payment({service,client,onClose,onDone}){
-  const s=service;const desk=getDesk(s.desk);
+  const s=service;
+  const desk=getDesk(s.desk);
   const sf=s.service?SF[s.service]:null;
   const og=s.ongoing?ONGOING[s.ongoing]:null;
   const amountDue=sf?sf.zm:og.zm;
-  const receiptPrefix='SE-'+s.code;
+  const receiptPrefix='SE-'+(s.code||'ADV');
   const [method,setMethod]=useState(null);
   const [senderName,setSenderName]=useState(client.name||'');
   const [senderContact,setSenderContact]=useState(client.phone||client.email||'');
@@ -639,7 +666,7 @@ function Payment({service,client,onClose,onDone}){
   const [whatsappSent,setWhatsappSent]=useState(false);
   const [copied,setCopied]=useState('');
   const copyTxt=(t,k)=>{const done=()=>{setCopied(k);setTimeout(()=>setCopied(''),1500)};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done).catch(done);else done()};
-  const buildMsg=(r,dt)=>['*STARTEASY — ENGAGEMENT FEE*','','*Ref:* '+r,'*Date:* '+dt,'','*Client:* '+client.name,'*Business:* '+(client.business||'—'),'*Email:* '+client.email,'','*Engagement:*',s.code+' — '+s.title,'','*Payment*','Method: '+(PAYMENT_METHODS[method]?PAYMENT_METHODS[method].label:'—'),'Amount: '+amountDue,'Sender: '+senderName,'Contact: '+senderContact,'TxID: '+userRef].join('\n');
+  const buildMsg=(r,dt)=>['*STARTEASY — ENGAGEMENT FEE*','','*Ref:* '+r,'*Date:* '+dt,'','*Client:* '+client.name,'*Business:* '+(client.business||'—'),'*Email:* '+client.email,'','*Engagement:*',(s.code||'ADV')+' — '+s.title,'','*Payment*','Method: '+(PAYMENT_METHODS[method]?PAYMENT_METHODS[method].label:'—'),'Amount: '+amountDue,'Sender: '+senderName,'Contact: '+senderContact,'TxID: '+userRef].join('\n');
   const confirm=()=>{
     setErrorMsg('');
     if(!method){setErrorMsg('Select a payment method.');return}
@@ -669,8 +696,8 @@ function Payment({service,client,onClose,onDone}){
           <ol className="tl">
             <li data-step="1"><div className="tt">Payment reference received</div><div className="td">Your submission is logged in the StartEasy queue.</div><span className="tw">Instant</span></li>
             <li data-step="2"><div className="tt">Officer verifies manually</div><div className="td">A StartEasy officer matches your reference against our records.</div><span className="tw">Within 4 working hours</span></li>
-            <li data-step="3"><div className="tt">Engagement begins</div><div className="td">We confirm and begin work on your {desk.title} matter.</div><span className="tw">Same working day</span></li>
-            {og&&<li data-step="4"><div className="tt">Ongoing billing begins</div><div className="td">Your monthly {og.label} is billed from the engagement start date.</div><span className="tw">Monthly</span></li>}
+            <li data-step="3"><div className="tt">Engagement begins</div><div className="td">We confirm and begin work on your matter.</div><span className="tw">Same working day</span></li>
+            <li data-step="4"><div className="tt">Report delivered</div><div className="td">Your formal StartEasy-branded report is delivered to your email.</div><span className="tw">Within 1 hour of verification</span></li>
           </ol>
         </div>
         <button type="button" onClick={onDone} style={{marginTop:18,padding:'12px 24px',border:'1px solid rgba(10,31,18,.2)',background:'#fff',borderRadius:8,fontSize:13.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit',color:'#0A1F12'}}>Close and return home</button>
@@ -732,31 +759,37 @@ function Payment({service,client,onClose,onDone}){
 }
 
 /* ============================================================
-   WIZARD — Structure & Name
+   WIZARD
    ============================================================ */
 function Wizard({initialScope,onExit,onOrderFormal}){
   const [step,setStep]=useState(0);
   const [scope,setScope]=useState(initialScope||null);
   const [idea,setIdea]=useState('');
+  const [primaryActivity,setPrimaryActivity]=useState('');
+  const [secondaryActivities,setSecondaryActivities]=useState([]);
   const [industry,setIndustry]=useState(null);
-  const [structure,setStructure]=useState(null);
   const [descriptor,setDescriptor]=useState('');
+  const [structure,setStructure]=useState(null);
   const [distinctive,setDistinctive]=useState('');
+  const [customDescriptor,setCustomDescriptor]=useState('');
 
-  useEffect(()=>{if(industry&&!descriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0]);}},[industry]);
-  useEffect(()=>{if(industry&&!structure&&scope!=='names'){setStructure('ltd');}},[industry,scope]);
+  const toggleSecondary=a=>setSecondaryActivities(prev=>prev.includes(a)?prev.filter(x=>x!==a):[...prev,a]);
+
+  useEffect(()=>{if(industry&&!descriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0])}},[industry]);
+  useEffect(()=>{if(industry&&!structure&&scope!=='names'){setStructure('ltd')}},[industry,scope]);
 
   const stepsArr=useMemo(()=>{
     if(!scope)return['scope'];
-    const s=['scope','idea','industry'];
+    const s=['scope','idea','activity','secondary'];
     if(scope==='structure'||scope==='both')s.push('structure');
-    if(scope==='names'||scope==='both'){s.push('descriptor');s.push('distinctive');}
+    if(scope==='names'||scope==='both'){s.push('industry');s.push('descriptor');s.push('distinctive');}
+    else{s.push('industry');}
     s.push('report');
     return s;
   },[scope]);
   const current=stepsArr[step];
   const industryData=industry?INDUSTRIES.find(i=>i.key===industry):null;
-  const structureData=structure?STRUCTURES.find(s=>s.key===structure):null;
+  const structureData=structure?STRUCTURES.find(x=>x.key===structure):null;
   const analysis=useMemo(()=>analyseName(distinctive),[distinctive]);
 
   const names=useMemo(()=>{
@@ -773,13 +806,15 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const readiness=useMemo(()=>{
     let t=0;
     if(idea.trim().length>=20)t+=15;
+    if(primaryActivity)t+=10;
+    if(secondaryActivities.length>0)t+=5;
     if(industry)t+=15;
     if(structure)t+=15;
     if(descriptor)t+=15;
     if(analysis.score>=80)t+=25;else if(analysis.score>=60)t+=18;else if(analysis.score>=40)t+=10;
     if(industryData?.flag)t-=5;
     return Math.max(0,Math.min(100,t));
-  },[idea,industry,structure,descriptor,analysis,industryData]);
+  },[idea,primaryActivity,secondaryActivities,industry,structure,descriptor,analysis,industryData]);
 
   useEffect(()=>{if(step>=stepsArr.length)setStep(stepsArr.length-1)},[stepsArr.length,step]);
   useEffect(()=>{window.scrollTo({top:120,behavior:'smooth'})},[step]);
@@ -789,6 +824,8 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const can=()=>{
     if(current==='scope')return!!scope;
     if(current==='idea')return idea.trim().length>=15;
+    if(current==='activity')return!!primaryActivity;
+    if(current==='secondary')return true;
     if(current==='industry')return!!industry;
     if(current==='structure')return!!structure;
     if(current==='descriptor')return!!descriptor;
@@ -801,6 +838,8 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const sendWa=()=>{
     const lines=['*STARTEASY — STRUCTURE & NAME ASSESSMENT*',''];
     if(idea)lines.push('*Idea:* '+idea,'');
+    if(primaryActivity)lines.push('*Primary activity:* '+primaryActivity);
+    if(secondaryActivities.length>0)lines.push('*Secondary activities:* '+secondaryActivities.join(', '));
     if(industryData)lines.push('*Industry:* '+industryData.label+' (ISIC '+industryData.isic+')');
     if(structureData)lines.push('*Structure:* '+structureData.label);
     if(distinctive)lines.push('*Distinctive:* '+distinctive.toUpperCase());
@@ -808,20 +847,18 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     if(names.length){lines.push('','*Three-name proposal:*',...names.map((n,i)=>(i+1)+'. '+n))}
     if(analysis.score)lines.push('','*Name score:* '+analysis.score+'/100 · '+label(analysis.score));
     lines.push('*Readiness:* '+readiness+'%');
-    lines.push('','_I would like StartEasy to review and proceed with the K45 formal report._');
+    lines.push('','_I would like StartEasy to review and proceed with the K25 formal report._');
     window.open(waUrl(lines.join('\n')),'_blank','noopener,noreferrer');
   };
   const orderFormal=()=>{
-    const service=findService('P0');  // Structure Advisory as the umbrella
+    const title=scope==='structure'?'Business Structure Advisory':scope==='names'?'Name Preparation & Clearance':'Business Structure & Name Advisory';
     onOrderFormal({
-      code:'ADV',
-      desk:'pacra',
-      title:scope==='structure'?'Business Structure Advisory':scope==='names'?'Name Preparation & Clearance':'Business Structure & Name Advisory',
+      code:'ADV',desk:'pacra',title,
       clientDesc:'Self-service wizard completed. Formal StartEasy-branded report, reviewed by an officer, delivered within 1 hour. Ready to attach to your PACRA submission.',
-      whatsCovered:['Wizard answers captured','Industry classification','Legal structure recommendation'+(scope!=='structure'?' and three-name proposal':''),'Name distinctiveness scoring and flags','Formal StartEasy-branded report','Delivered within 1 hour'],
+      whatsCovered:['Wizard answers captured and reviewed','Industry classification','Legal structure recommendation'+(scope!=='structure'?' and three-name proposal':''),'Name distinctiveness scoring and flags','Formal StartEasy-branded report','Delivered within 1 hour'],
       service:'micro',
       timeline:'Delivered within 1 hour',
-      _wizardData:{scope,idea,industry:industryData,structure:structureData,descriptor,distinctive,names,analysis,readiness}
+      _wizardData:{scope,idea,primaryActivity,secondaryActivities,industry:industryData,structure:structureData,descriptor,distinctive,names,analysis,readiness}
     });
   };
 
@@ -834,7 +871,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
         <h1 className="serif" style={{fontSize:'clamp(1.9rem,4.6vw,2.9rem)',lineHeight:1.08,marginBottom:16,maxWidth:800}}>Business Structure &amp; Name Advisory</h1>
         <p style={{fontSize:15.5,lineHeight:1.7,color:'rgba(255,255,255,.65)',maxWidth:720,marginBottom:24}}>Answer a few guided questions. Our platform generates your assessment live — business activity, industry classification, recommended structure, descriptive word family and three fully-constructed name proposals aligned with PACRA naming requirements.</p>
         <div style={{display:'inline-flex',alignItems:'center',gap:16,padding:'14px 22px',background:'rgba(245,166,35,.12)',border:'1px solid rgba(245,166,35,.35)',borderRadius:12,flexWrap:'wrap'}}>
-          <div><div style={{fontSize:10,letterSpacing:'.16em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:4}}>Service Fee</div><div className="serif" style={{fontSize:24,fontWeight:800,color:'#fff',lineHeight:1}}>K45<span style={{fontSize:13,fontWeight:600,color:'rgba(255,255,255,.6)',marginLeft:8}}>$4.50</span></div></div>
+          <div><div style={{fontSize:10,letterSpacing:'.16em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:4}}>Assessment Report Fee</div><div className="serif" style={{fontSize:24,fontWeight:800,color:'#fff',lineHeight:1}}>K25<span style={{fontSize:13,fontWeight:600,color:'rgba(255,255,255,.6)',marginLeft:8}}>~ $1.49</span></div></div>
           <div style={{width:1,height:40,background:'rgba(255,255,255,.2)'}}/>
           <div><div style={{fontSize:10,letterSpacing:'.16em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:4}}>Delivery</div><div style={{fontSize:13.5,fontWeight:700,color:'#fff'}}>Within 1 hour</div></div>
         </div>
@@ -845,7 +882,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
       <div style={{maxWidth:1240,margin:'0 auto',padding:'16px 24px',display:'flex',gap:8,overflowX:'auto'}}>
         {stepsArr.map((s,i)=>{
           const state=i<step?'done':(i===step?'active':'');
-          const labels={scope:'Scope',idea:'Idea',industry:'Industry',structure:'Structure',descriptor:'Descriptor',distinctive:'Core name',report:'Report'};
+          const labels={scope:'Scope',idea:'Business idea',activity:'Primary activity',secondary:'Secondary',structure:'Structure',industry:'Industry',descriptor:'Descriptor',distinctive:'Core name',report:'Report'};
           return <button key={s} onClick={()=>goStep(i)} className={`step ${state}`} style={{cursor:i<=step?'pointer':'default'}}>
             <span className="n">{i<step?'✓':String(i+1)}</span><span>{labels[s]}</span>
           </button>;
@@ -858,11 +895,13 @@ function Wizard({initialScope,onExit,onOrderFormal}){
         <div className="fadein" key={current}>
           {current==='scope'&&<WScope scope={scope} setScope={setScope}/>}
           {current==='idea'&&<WIdea idea={idea} setIdea={setIdea}/>}
-          {current==='industry'&&<WIndustry industry={industry} setIndustry={setIndustry}/>}
+          {current==='activity'&&<WActivity primaryActivity={primaryActivity} setPrimaryActivity={setPrimaryActivity}/>}
+          {current==='secondary'&&<WSecondary secondaryActivities={secondaryActivities} toggleSecondary={toggleSecondary} setSecondaryActivities={setSecondaryActivities}/>}
           {current==='structure'&&<WStructure structure={structure} setStructure={setStructure} industryKey={industry}/>}
-          {current==='descriptor'&&<WDescriptor industry={industry} descriptor={descriptor} setDescriptor={setDescriptor}/>}
+          {current==='industry'&&<WIndustry industry={industry} setIndustry={setIndustry}/>}
+          {current==='descriptor'&&<WDescriptor industry={industry} descriptor={descriptor} setDescriptor={setDescriptor} customDescriptor={customDescriptor} setCustomDescriptor={setCustomDescriptor}/>}
           {current==='distinctive'&&<WDistinctive distinctive={distinctive} setDistinctive={setDistinctive} analysis={analysis}/>}
-          {current==='report'&&<WReport scope={scope} idea={idea} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={descriptor} names={names} analysis={analysis} readiness={readiness} onPrint={print} onWhatsapp={sendWa} onOrderFormal={orderFormal}/>}
+          {current==='report'&&<WReport scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={descriptor} names={names} analysis={analysis} readiness={readiness} onPrint={print} onWhatsapp={sendWa} onOrderFormal={orderFormal}/>}
           {current!=='report'&&<div style={{display:'flex',gap:12,marginTop:32,paddingTop:24,borderTop:'1px solid rgba(10,31,18,.06)',flexWrap:'wrap'}}>
             {step>0&&<button onClick={back} style={{padding:'13px 22px',background:'#fff',border:'1px solid rgba(10,31,18,.15)',borderRadius:8,fontSize:13.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit',color:'#0A1F12'}}>← Back</button>}
             <button onClick={next} disabled={!can()} style={{flex:1,minWidth:200,padding:'13px 24px',background:can()?'linear-gradient(135deg,#E8730F,#F5A623)':'rgba(10,31,18,.1)',color:can()?'#fff':'rgba(10,31,18,.4)',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:can()?'pointer':'not-allowed',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:10}}>
@@ -870,68 +909,82 @@ function Wizard({initialScope,onExit,onOrderFormal}){
             </button>
           </div>}
         </div>
-        <WizardSidebar scope={scope} idea={idea} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={descriptor} names={names} analysis={analysis} readiness={readiness}/>
+        <WizardSidebar scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={descriptor} names={names} analysis={analysis} readiness={readiness}/>
       </div>
     </section>
 
-    <section style={{maxWidth:1240,margin:'0 auto',padding:'0 24px 40px'}}>
-      <NotReg/>
-    </section>
+    <section style={{maxWidth:1240,margin:'0 auto',padding:'0 24px 40px'}}><NotReg/></section>
   </div>;
 }
 
 function WScope({scope,setScope}){
   const opts=[
-    {v:'structure',icon:'fa-layer-group',t:'Help me choose the right structure',d:'Business Name vs Private Company vs Company Limited by Guarantee.',time:'~5 min · K45'},
-    {v:'names',icon:'fa-wand-magic-sparkles',t:'Help me prepare names for clearance',d:'Three fully-constructed names aligned with PACRA naming requirements.',time:'~5 min · K45'},
-    {v:'both',icon:'fa-rocket',t:'Both — full structure & name advisory',d:'Recommended. Structure first, then names that fit the structure.',time:'~8 min · K45'}
+    {v:'structure',icon:'fa-layer-group',t:'Help me choose the right structure',d:'Business Name vs Private Company vs Company Limited by Guarantee.',time:'~5 min · K25'},
+    {v:'names',icon:'fa-wand-magic-sparkles',t:'Help me prepare names for clearance',d:'Three fully-constructed names aligned with PACRA naming requirements.',time:'~5 min · K25'},
+    {v:'both',icon:'fa-rocket',t:'Both — full structure & name advisory',d:'Recommended. Structure first, then names that fit the structure.',time:'~8 min · K25'}
   ];
   return <div>
     <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 1 · Self-orientation</div>
     <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>What would you like help with?</h2>
     <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:28,maxWidth:640}}>Pick the path that best describes you. The platform will guide you step-by-step. You can always engage a StartEasy officer at any stage.</p>
     <div style={{display:'flex',flexDirection:'column',gap:12}}>
-      {opts.map(o=>{
-        const on=scope===o.v;
-        return <button key={o.v} onClick={()=>setScope(o.v)} className={`gtile ${on?'sel':''}`} style={{flexDirection:'row',gap:16,padding:'22px 24px',alignItems:'flex-start'}}>
-          <span className="ico"><i className={`fas ${o.icon}`}></i></span>
-          <div style={{flex:1,minWidth:0}}>
-            <h3 style={{fontSize:16,marginBottom:6}}>{o.t}</h3>
-            <p style={{fontSize:12.5,marginBottom:8}}>{o.d}</p>
-            <span style={{fontSize:10.5,letterSpacing:'.1em',textTransform:'uppercase',fontWeight:700,color:'#8A6828',background:'rgba(232,115,15,.08)',padding:'3px 10px',borderRadius:99}}>{o.time}</span>
-          </div>
-        </button>;
-      })}
+      {opts.map(o=>{const on=scope===o.v;return <button key={o.v} onClick={()=>setScope(o.v)} className={`gtile ${on?'sel':''}`} style={{flexDirection:'row',gap:16,padding:'22px 24px',alignItems:'flex-start'}}>
+        <span className="ico"><i className={`fas ${o.icon}`}></i></span>
+        <div style={{flex:1,minWidth:0}}>
+          <h3 style={{fontSize:16,marginBottom:6}}>{o.t}</h3>
+          <p style={{fontSize:12.5,marginBottom:8}}>{o.d}</p>
+          <span style={{fontSize:10.5,letterSpacing:'.1em',textTransform:'uppercase',fontWeight:700,color:'#8A6828',background:'rgba(232,115,15,.08)',padding:'3px 10px',borderRadius:99}}>{o.time}</span>
+        </div>
+      </button>})}
     </div>
   </div>;
 }
+
 function WIdea({idea,setIdea}){
   return <div>
     <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 2 · Your business idea</div>
-    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>In your own words — what will the business do?</h2>
+    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>What exactly will the business do?</h2>
     <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>Don't use a proposed name yet. Just describe the business in one or two plain sentences. We build the name from the activity — not the other way around.</p>
     <textarea value={idea} onChange={e=>setIdea(e.target.value)} rows={5} placeholder="Example: I want to start a business that helps other companies with marketing, advertising and business advice." className="inp" style={{minHeight:140,resize:'vertical'}}/>
     <div style={{marginTop:14,fontSize:12,color:'rgba(10,31,18,.5)',display:'flex',gap:8,alignItems:'center'}}><i className="fas fa-lightbulb" style={{color:'#E8730F',fontSize:12}}></i><span>Tip — mention what you sell, who you sell to, and how you deliver it.</span></div>
   </div>;
 }
-function WIndustry({industry,setIndustry}){
+
+function WActivity({primaryActivity,setPrimaryActivity}){
   return <div>
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 3 · Directory</div>
-    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Which industry best describes the business?</h2>
-    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>PACRA classifies businesses according to ISIC — the International Standard Industrial Classification. Picking the closest industry gives us the right descriptive word family.</p>
-    <div style={{display:'grid',gap:10,gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))'}}>
-      {INDUSTRIES.map(i=>{
-        const on=industry===i.key;
-        return <button key={i.key} onClick={()=>setIndustry(i.key)} className={`iti ${on?'sel':''}`}>
-          <div className="isic" style={{color:i.color}}><i className={`fas ${i.icon}`} style={{marginRight:6}}></i>ISIC {i.isic}</div>
-          <h4>{i.label}</h4>
-          <p>{i.blurb}</p>
-          {i.flag&&<span style={{fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',fontWeight:700,color:'#7A5C10',background:'rgba(245,166,35,.15)',padding:'3px 8px',borderRadius:99,display:'inline-block',marginTop:8}}><i className="fas fa-flag" style={{marginRight:4,fontSize:9}}></i>Review</span>}
-        </button>;
-      })}
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 3 · Primary activity</div>
+    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>What is the primary activity of the business?</h2>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>Choose the single best descriptor of what the business actually does. This drives the industry classification and the descriptive word family.</p>
+    <div style={{maxWidth:520}}>
+      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Primary activity</label>
+      <select value={primaryActivity} onChange={e=>setPrimaryActivity(e.target.value)} className="inp-select">
+        <option value="">— Choose the primary activity —</option>
+        {PRIMARY_ACTIVITIES.map(a=><option key={a} value={a}>{a}</option>)}
+      </select>
+      {primaryActivity&&<div style={{marginTop:14,padding:'12px 16px',background:'rgba(46,156,74,.08)',border:'1px solid rgba(46,156,74,.25)',borderRadius:8,fontSize:12.5,color:'#0F5C2A',display:'flex',alignItems:'center',gap:10}}>
+        <i className="fas fa-check-circle" style={{color:'#1E7B3C'}}></i>
+        <span>Primary activity set: <strong>{primaryActivity}</strong></span>
+      </div>}
     </div>
   </div>;
 }
+
+function WSecondary({secondaryActivities,toggleSecondary,setSecondaryActivities}){
+  return <div>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 4 · Secondary activities</div>
+    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Are there any secondary activities?</h2>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>Tick everything that also applies. These will be captured on your assessment report and, where relevant, added to your business activities description for the PACRA submission.</p>
+    <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
+      {SECONDARY_ACTIVITIES.map(a=>{const on=secondaryActivities.includes(a);return <button key={a} onClick={()=>toggleSecondary(a)} className={`dchip ${on?'on':''}`}>{on&&<i className="fas fa-check" style={{fontSize:10}}></i>}{a}</button>})}
+    </div>
+    {secondaryActivities.length>0&&<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,padding:'12px 16px',background:'rgba(232,115,15,.06)',border:'1px solid rgba(232,115,15,.2)',borderRadius:8,fontSize:12.5,color:'#8A6828',flexWrap:'wrap'}}>
+      <span><strong>{secondaryActivities.length}</strong> secondary activit{secondaryActivities.length===1?'y':'ies'} selected</span>
+      <button onClick={()=>setSecondaryActivities([])} style={{background:'none',border:'none',color:'#E8730F',fontWeight:700,cursor:'pointer',fontFamily:'inherit',fontSize:12,textDecoration:'underline'}}>Clear all</button>
+    </div>}
+    {secondaryActivities.length===0&&<div style={{padding:'14px 18px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:8,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic'}}>Optional — you can skip this step if there are no secondary activities.</div>}
+  </div>;
+}
+
 function WStructure({structure,setStructure,industryKey}){
   const recommend=useMemo(()=>{
     if(!industryKey)return['ltd'];
@@ -941,48 +994,72 @@ function WStructure({structure,setStructure,industryKey}){
     return['ltd','bn'];
   },[industryKey]);
   return <div>
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 4 · Guided choice</div>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 5 · Guided choice</div>
     <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Which legal structure fits your situation?</h2>
     <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>We recommend based on your industry and the type of organisation you are building. You can change this.</p>
     <div style={{display:'flex',flexDirection:'column',gap:12}}>
-      {STRUCTURES.map(s=>{
-        const on=structure===s.key;
-        const isRec=recommend.includes(s.key)&&s.key!=='unsure';
-        return <button key={s.key} onClick={()=>setStructure(s.key)} className={`stile ${on?'sel':''}`}>
-          {isRec&&<span className="rec"><i className="fas fa-check" style={{marginRight:4,fontSize:9}}></i>Recommended</span>}
-          <h4>{s.label}</h4>
-          <p>{s.desc}</p>
-          {s.endings.length>0&&<div className="ends">{s.endings.map(e=><span key={e}>{e}</span>)}</div>}
-          <div style={{fontSize:11,color:'rgba(10,31,18,.5)',lineHeight:1.5}}><strong style={{color:'rgba(10,31,18,.6)'}}>Typical for:</strong> {s.typical.join(' · ')}</div>
-        </button>;
-      })}
+      {STRUCTURES.map(s=>{const on=structure===s.key;const isRec=recommend.includes(s.key)&&s.key!=='unsure';return <button key={s.key} onClick={()=>setStructure(s.key)} className={`stile ${on?'sel':''}`}>
+        {isRec&&<span className="rec"><i className="fas fa-check" style={{marginRight:4,fontSize:9}}></i>Recommended</span>}
+        <h4>{s.label}</h4>
+        <p>{s.desc}</p>
+        {s.endings.length>0&&<div className="ends">{s.endings.map(e=><span key={e}>{e}</span>)}</div>}
+        <div style={{fontSize:11,color:'rgba(10,31,18,.5)',lineHeight:1.5}}><strong style={{color:'rgba(10,31,18,.6)'}}>Typical for:</strong> {s.typical.join(' · ')}</div>
+      </button>})}
     </div>
   </div>;
 }
-function WDescriptor({industry,descriptor,setDescriptor}){
+
+function WIndustry({industry,setIndustry}){
+  return <div>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 6 · Industry directory</div>
+    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Which industry best describes the business?</h2>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>PACRA classifies businesses according to ISIC — the International Standard Industrial Classification. Picking the closest industry unlocks the right descriptive word family.</p>
+    <div style={{display:'grid',gap:10,gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))'}}>
+      {INDUSTRIES.map(i=>{const on=industry===i.key;return <button key={i.key} onClick={()=>setIndustry(i.key)} className={`iti ${on?'sel':''}`}>
+        <div className="isic" style={{color:i.color}}><i className={`fas ${i.icon}`} style={{marginRight:6}}></i>ISIC {i.isic}</div>
+        <h4>{i.label}</h4>
+        <p>{i.blurb}</p>
+        {i.flag&&<span style={{fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',fontWeight:700,color:'#7A5C10',background:'rgba(245,166,35,.15)',padding:'3px 8px',borderRadius:99,display:'inline-block',marginTop:8}}><i className="fas fa-flag" style={{marginRight:4,fontSize:9}}></i>Review</span>}
+      </button>})}
+    </div>
+  </div>;
+}
+
+function WDescriptor({industry,descriptor,setDescriptor,customDescriptor,setCustomDescriptor}){
   const ind=INDUSTRIES.find(i=>i.key===industry);
   if(!ind)return null;
+  const finalDescriptor=customDescriptor||descriptor;
   return <div>
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 5 · Descriptive word family</div>
-    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>What should the name say about the business?</h2>
-    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>The <strong>descriptive word</strong> communicates the nature of the business. Pick the one that best fits — the platform builds three name proposals around your choice.</p>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 7 · Descriptive word library</div>
+    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Choose your preferred descriptive word.</h2>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>The <strong>descriptive word</strong> communicates the nature of the business. Pick one from the StartEasy Descriptive Word Library — filtered to your industry — or type your own.</p>
     {ind.flag&&<div style={{background:'#FFF4E5',borderLeft:'4px solid #E8730F',borderRadius:8,padding:'14px 18px',marginBottom:24,display:'flex',gap:12}}>
       <i className="fas fa-info-circle" style={{color:'#E8730F',fontSize:16,flexShrink:0,marginTop:2}}></i>
       <div><div style={{fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#7A5C10',marginBottom:6}}>{ind.flag.title}</div><p style={{fontSize:12.5,lineHeight:1.6,color:'#7A5C10',margin:0}}>{ind.flag.body}</p></div>
     </div>}
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:12}}>Choose a descriptive word</div>
-    <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:28}}>
-      {ind.descriptors.map(d=><button key={d} onClick={()=>setDescriptor(d)} className={`dchip ${descriptor===d?'on':''}`}>{d}</button>)}
+    <div style={{maxWidth:600,marginBottom:20}}>
+      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>StartEasy Descriptive Word Library · filtered for <strong>{ind.label}</strong></label>
+      <select value={customDescriptor?'':descriptor} onChange={e=>{setDescriptor(e.target.value);setCustomDescriptor('')}} className="inp-select">
+        <option value="">— Choose from the library —</option>
+        {ind.descriptors.map(d=><option key={d} value={d}>{d}</option>)}
+      </select>
     </div>
-    <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:10,padding:20}}>
-      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:12}}>Example names in this family</div>
-      <ul style={{listStyle:'none',padding:0,margin:0}}>{ind.examples.map((e,i)=><li key={i} style={{fontFamily:'Consolas,monospace',fontSize:12.5,color:'rgba(10,31,18,.7)',padding:'6px 0',borderBottom:i<ind.examples.length-1?'1px dashed rgba(10,31,18,.06)':'none'}}>{e}</li>)}</ul>
+    <div style={{maxWidth:600,marginBottom:20}}>
+      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Or type your own descriptive word</label>
+      <input value={customDescriptor} onChange={e=>setCustomDescriptor(e.target.value)} placeholder="e.g. Ventures, Group, Holdings, Collective" style={{width:'100%',background:'#fff',border:'2px solid '+(customDescriptor?'#E8730F':'rgba(10,31,18,.12)'),borderRadius:12,padding:'16px 20px',fontSize:14.5,color:'#0A1F12',fontFamily:'inherit'}}/>
+      {customDescriptor&&<div style={{marginTop:8,fontSize:11.5,color:'rgba(10,31,18,.55)',fontStyle:'italic'}}>You are using a custom descriptor: <strong style={{fontFamily:'Consolas,monospace',color:'#0A1F12'}}>{customDescriptor.toUpperCase()}</strong></div>}
     </div>
+    {finalDescriptor&&<div style={{background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:'18px 22px',color:'#fff'}}>
+      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:10}}>Your chosen descriptive word</div>
+      <div className="serif" style={{fontSize:24,fontWeight:800,color:'#F5A623',fontFamily:'Consolas,monospace'}}>{finalDescriptor.toUpperCase()}</div>
+    </div>}
+    {!finalDescriptor&&<div style={{marginTop:20,padding:'16px 20px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:8,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic'}}>Choose from the library above or type your own to continue.</div>}
   </div>;
 }
+
 function WDistinctive({distinctive,setDistinctive,analysis}){
   return <div>
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 6 · Distinctive element</div>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 8 · Distinctive element</div>
     <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>What is your distinctive name?</h2>
     <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>This is the unique, invented or personal word that identifies your business. Not a generic term — the part that makes your name yours.</p>
     <div style={{position:'relative',marginBottom:20}}>
@@ -1001,13 +1078,14 @@ function WDistinctive({distinctive,setDistinctive,analysis}){
     </div>
   </div>;
 }
-function WReport({scope,idea,industryData,structureData,distinctive,descriptor,names,analysis,readiness,onPrint,onWhatsapp,onOrderFormal}){
+
+function WReport({scope,idea,primaryActivity,secondaryActivities,industryData,structureData,distinctive,descriptor,names,analysis,readiness,onPrint,onWhatsapp,onOrderFormal}){
   const refNo='SE-ADV-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*9000)+1000);
   const date=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
   return <div>
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 7 · Assessment report</div>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 9 · Assessment report</div>
     <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Your assessment is ready.</h2>
-    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>The preview below is free to keep. To have a StartEasy officer produce the formal StartEasy-branded report — ready to attach to your PACRA submission — engage us for <strong>K45</strong>. Delivered within 1 hour.</p>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>The preview below is free to keep. To have a StartEasy officer produce the formal StartEasy-branded report — ready to attach to your PACRA submission — engage us for <strong>K25 (~$1.49)</strong>. Delivered within 1 hour.</p>
 
     <div className="rpt printable" id="assessmentReport">
       <div className="rh">
@@ -1016,6 +1094,8 @@ function WReport({scope,idea,industryData,structureData,distinctive,descriptor,n
       </div>
       <h5>1. Business profile</h5>
       {idea&&<div className="row"><span className="k">Business idea</span><span className="v">{idea}</span></div>}
+      {primaryActivity&&<div className="row"><span className="k">Primary activity</span><span className="v">{primaryActivity}</span></div>}
+      {secondaryActivities&&secondaryActivities.length>0&&<div className="row"><span className="k">Secondary activities</span><span className="v">{secondaryActivities.join(', ')}</span></div>}
       {industryData&&<><div className="row"><span className="k">Industry</span><span className="v">{industryData.label}</span></div><div className="row"><span className="k">ISIC classification</span><span className="v">{industryData.isic}</span></div></>}
       {structureData&&<><div className="row"><span className="k">Recommended structure</span><span className="v">{structureData.label}</span></div>{structureData.endings.length>0&&<div className="row"><span className="k">Legal ending</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{structureData.endings.join(' / ')}</span></div>}</>}
       {(descriptor||distinctive)&&<><h5>2. Name architecture</h5>{distinctive&&<div className="row"><span className="k">Distinctive element</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{distinctive.toUpperCase()}</span></div>}{descriptor&&<div className="row"><span className="k">Descriptive word</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{descriptor.toUpperCase()}</span></div>}{structureData&&structureData.endings.length>0&&<div className="row"><span className="k">Legal ending</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{structureData.endings[0]}</span></div>}</>}
@@ -1030,21 +1110,22 @@ function WReport({scope,idea,industryData,structureData,distinctive,descriptor,n
     <div style={{marginTop:24,display:'flex',flexWrap:'wrap',gap:12}}>
       <button onClick={onPrint} style={{padding:'14px 24px',background:'#0A1F12',color:'#fff',border:'none',borderRadius:8,fontSize:13.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:9}}><i className="fas fa-print"></i> Print / Save preview</button>
       <button onClick={onWhatsapp} style={{padding:'14px 24px',background:'#25D366',color:'#fff',border:'none',borderRadius:8,fontSize:13.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:9}}><i className="fab fa-whatsapp"></i> Send to team</button>
-      <button onClick={onOrderFormal} style={{flex:1,minWidth:220,padding:'14px 24px',background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,fontSize:13.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:9}}><i className="fas fa-file-signature"></i> Order formal report — K45</button>
+      <button onClick={onOrderFormal} style={{flex:1,minWidth:220,padding:'14px 24px',background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,fontSize:13.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:9}}><i className="fas fa-file-signature"></i> Order formal report — K25</button>
     </div>
   </div>;
 }
-function WizardSidebar({scope,idea,industryData,structureData,distinctive,descriptor,names,analysis,readiness}){
+
+function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryData,structureData,distinctive,descriptor,names,analysis,readiness}){
   const pct=readiness;
   const ringColor=color(readiness);
-  const circumference=2*Math.PI*45;
-  const dash=circumference*(1-pct/100);
+  const circ=2*Math.PI*45;
+  const dash=circ*(1-pct/100);
   return <aside style={{position:'sticky',top:110,height:'fit-content'}}>
     <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:24,textAlign:'center',marginBottom:20}}>
       <div style={{width:110,height:110,position:'relative',margin:'0 auto 16px'}}>
         <svg width="110" height="110" viewBox="0 0 100 100" style={{transform:'rotate(-90deg)'}}>
           <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(10,31,18,.08)" strokeWidth="8"/>
-          <circle cx="50" cy="50" r="45" fill="none" stroke={ringColor} strokeWidth="8" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dash} style={{transition:'stroke-dashoffset .5s ease'}}/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke={ringColor} strokeWidth="8" strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={dash} style={{transition:'stroke-dashoffset .5s ease'}}/>
         </svg>
         <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
           <div className="serif" style={{fontSize:28,fontWeight:800,color:ringColor,lineHeight:1}}>{pct}%</div>
@@ -1057,7 +1138,9 @@ function WizardSidebar({scope,idea,industryData,structureData,distinctive,descri
       <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:14}}>Live preview</div>
       <SideRow label="Scope" value={scope?{structure:'Structure',names:'Names',both:'Full advisory'}[scope]:'—'} done={!!scope}/>
       <SideRow label="Idea" value={idea?(idea.length>40?idea.slice(0,40)+'…':idea):'—'} done={!!idea}/>
-      <SideRow label="Industry" value={industryData?industryData.label:'—'} done={!!industryData} color={industryData?.color}/>
+      <SideRow label="Primary activity" value={primaryActivity||'—'} done={!!primaryActivity}/>
+      <SideRow label="Secondary" value={secondaryActivities.length>0?secondaryActivities.length+' selected':'—'} done={secondaryActivities.length>0}/>
+      {scope!=='structure'&&<SideRow label="Industry" value={industryData?industryData.label:'—'} done={!!industryData} color={industryData?.color}/>}
       {scope!=='names'&&<SideRow label="Structure" value={structureData?structureData.label:'—'} done={!!structureData}/>}
       {scope!=='structure'&&<>
         <SideRow label="Descriptor" value={descriptor?descriptor.toUpperCase():'—'} done={!!descriptor}/>
@@ -1080,6 +1163,7 @@ function WizardSidebar({scope,idea,industryData,structureData,distinctive,descri
     </div>
   </aside>;
 }
+
 function SideRow({label,value,done,color:c}){
   return <div style={{display:'flex',justifyContent:'space-between',gap:12,padding:'10px 0',borderBottom:'1px dashed rgba(10,31,18,.06)',alignItems:'flex-start'}}>
     <span style={{fontSize:11.5,color:'rgba(10,31,18,.45)',fontWeight:600,flexShrink:0}}>{label}</span>
@@ -1105,7 +1189,7 @@ function Nav({route,go}){
           {NAV.map(([r,label])=><button key={r} onClick={()=>nav(r)} style={{fontSize:12.5,letterSpacing:'.04em',transition:'all .2s',position:'relative',padding:'4px 0',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',color:route===r?'#F5A623':'rgba(255,255,255,.55)'}}>{label}{route===r&&<span style={{position:'absolute',bottom:-2,left:0,right:0,height:2,background:'#F5A623',borderRadius:99}}/>}</button>)}
         </nav>
         <div style={{display:'flex',alignItems:'center',gap:12}}>
-          <Btn size="sm" variant="primary" onClick={()=>nav('wizard')} className="hidden sm:inline-flex">Structure &amp; Name K45 <Arrow/></Btn>
+          <Btn size="sm" variant="primary" onClick={()=>nav('wizard')} className="hidden sm:inline-flex">Structure &amp; Name K25 <Arrow/></Btn>
           <button onClick={()=>setOpen(!open)} className="xl:hidden" style={{width:36,height:36,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:5,background:'none',border:'none',cursor:'pointer'}} aria-label="Menu"><span style={{display:'block',width:20,height:2,background:'#fff',borderRadius:99,transform:open?'rotate(45deg) translateY(3.5px)':'none',transition:'transform .2s'}}/><span style={{display:'block',width:20,height:2,background:'#fff',borderRadius:99,transform:open?'rotate(-45deg) translateY(-3.5px)':'none',transition:'transform .2s'}}/></button>
         </div>
       </div>
@@ -1113,6 +1197,7 @@ function Nav({route,go}){
     {open&&<div className="xl:hidden" style={{borderTop:'1px solid rgba(255,255,255,.1)',background:'#0A1F12'}}><div style={{padding:'16px 24px',maxHeight:'70vh',overflowY:'auto'}}>{NAV.map(([r,label])=><button key={r} onClick={()=>nav(r)} style={{width:'100%',display:'flex',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,.05)',textAlign:'left',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit'}}><span style={{fontSize:14,color:route===r?'#F5A623':'rgba(255,255,255,.6)'}}>{label}</span></button>)}</div></div>}
   </header>;
 }
+
 function Footer({go}){
   return <footer style={{background:'#0A1F12',color:'#fff',borderTop:'1px solid rgba(245,166,35,.1)'}}>
     <div style={{maxWidth:1240,margin:'0 auto',padding:'56px 24px'}}>
@@ -1126,16 +1211,13 @@ function Footer({go}){
         <div><span className="micro" style={{color:'#F5A623',display:'block',marginBottom:20}}>Contact</span><div style={{display:'flex',flexDirection:'column',gap:12,fontSize:13,color:'rgba(255,255,255,.5)'}}><p style={{margin:0}}>{CONTACT_EMAIL}</p><p style={{margin:0}}>+260 768 526 191</p><p style={{margin:0,color:'rgba(255,255,255,.35)',fontSize:12}}>Lusaka, Zambia</p></div></div>
       </div>
       <div style={{marginTop:48,paddingTop:32,borderTop:'1px solid rgba(255,255,255,.1)'}}>
-        <p style={{fontSize:11,color:'rgba(255,255,255,.35)',lineHeight:1.75,maxWidth:900}}><strong style={{color:'rgba(255,255,255,.55)'}}>Important:</strong> StartEasy is an administrative services desk. We prepare, coordinate, submit and track your filings with PACRA, ZRA, NAPSA, NHIMA, WCFCB, councils and sector regulators — but we are not a government authority or a regulator, and we do not guarantee regulatory approval. Where a matter crosses into legal, tax, audit or other regulated professional advice, we refer you to a qualified professional. Requirements and fees change — we verify the applicable requirement with the relevant authority before every submission. Service fees shown are for StartEasy administrative work and are separate from any government or regulator fee. A StartEasy officer verifies each payment reference manually. Our advisory is designed to reduce avoidable name-clearance and registration errors. PACRA itself warns that name-clearance criteria are not exhaustive.</p>
+        <p style={{fontSize:11,color:'rgba(255,255,255,.35)',lineHeight:1.75,maxWidth:900}}><strong style={{color:'rgba(255,255,255,.55)'}}>Important:</strong> StartEasy is an administrative services desk. We prepare, coordinate, submit and track your filings with PACRA, ZRA, NAPSA, NHIMA, WCFCB, councils and sector regulators — but we are not a government authority or a regulator, and we do not guarantee regulatory approval. Where a matter crosses into legal, tax, audit or other regulated professional advice, we refer you to a qualified professional. Requirements and fees change — we verify the applicable requirement with the relevant authority before every submission. Service fees shown are for StartEasy administrative work and are separate from any government or regulator fee. A StartEasy officer verifies each payment reference manually.</p>
         <p style={{fontSize:11,color:'rgba(255,255,255,.3)',marginTop:20}}>© {new Date().getFullYear()} StartEasy Administrative Services Desk · Zambia.</p>
       </div>
     </div>
   </footer>;
 }
 
-/* ============================================================
-   SERVICE CARD
-   ============================================================ */
 function ServiceCard({serviceKey,onClick}){
   const s=findServiceByKey(serviceKey);
   if(!s)return null;
@@ -1151,11 +1233,7 @@ function ServiceCard({serviceKey,onClick}){
       <h3>{s.title}</h3>
       <p>{s.clientDesc.length>135?s.clientDesc.slice(0,135)+'…':s.clientDesc}</p>
       <div className="foot">
-        <div>
-          <div className="lbl">{lbl}</div>
-          <div className="fee">{fee}{og&&!sf&&<span style={{fontSize:11,fontWeight:600,color:'rgba(10,31,18,.5)',marginLeft:4}}>/mo</span>}</div>
-          <div className="when">{s.timeline}</div>
-        </div>
+        <div><div className="lbl">{lbl}</div><div className="fee">{fee}{og&&!sf&&<span style={{fontSize:11,fontWeight:600,color:'rgba(10,31,18,.5)',marginLeft:4}}>/mo</span>}</div><div className="when">{s.timeline}</div></div>
         <span style={{display:'flex',alignItems:'center',gap:6,fontSize:10.5,letterSpacing:'.12em',textTransform:'uppercase',fontWeight:700,color:desk.color,flexShrink:0}}>Details <Arrow/></span>
       </div>
     </div>
@@ -1165,9 +1243,17 @@ function ServiceCard({serviceKey,onClick}){
 /* ============================================================
    PAGES
    ============================================================ */
+function Head({eyebrow,title,sub,light,className=''}){
+  return <div className={className}>
+    {eyebrow&&<div style={{display:'flex',alignItems:'center',gap:16,marginBottom:20}}><span className={`micro ${light?'':'text-[#0A1F12]/50'}`} style={{color:light?'#F5A623':'rgba(10,31,18,.5)'}}>{eyebrow}</span></div>}
+    <h2 className="serif" style={{fontSize:'clamp(1.8rem,4.2vw,2.7rem)',lineHeight:1.1,color:light?'#fff':'#0A1F12'}}>{title}</h2>
+    {sub&&<p style={{marginTop:20,fontSize:15.5,lineHeight:1.6,maxWidth:'42rem',color:light?'rgba(255,255,255,.5)':'rgba(10,31,18,.55)'}}>{sub}</p>}
+  </div>;
+}
+
 function Home({go}){
   const orientation=[
-    {icon:'fa-compass',title:'Business Structure & Name',desc:'Self-service wizard — K45, done within 1 hour.',route:'wizard'},
+    {icon:'fa-compass',title:'Business Structure & Name',desc:'Self-service wizard — K25, done within 1 hour.',route:'wizard'},
     {icon:'fa-rocket',title:'Start a business',desc:'Register a name, incorporate a company.',route:'desk',arg:'pacra'},
     {icon:'fa-file-invoice-dollar',title:'Tax registration',desc:'TPIN, VAT, PAYE, tax clearance.',route:'desk',arg:'zra'},
     {icon:'fa-users',title:'Employ staff',desc:'NAPSA, NHIMA, WCFCB, PAYE.',route:'desk',arg:'napsa'},
@@ -1183,14 +1269,12 @@ function Home({go}){
         <h1 className="serif" style={{fontSize:'clamp(2.2rem,5.8vw,3.8rem)',lineHeight:1.05,maxWidth:'48rem',marginBottom:24}}>You Run the Business.<br/><span style={{fontStyle:'italic',color:'#F5A623'}}>We Manage the Paperwork.</span></h1>
         <p style={{fontSize:15.5,lineHeight:1.7,color:'rgba(255,255,255,.6)',maxWidth:'38rem',marginBottom:40}}>Business compliance and regulatory administration for Zambian entrepreneurs, founders, SMEs and established companies. Tell us what you need — we guide you to the right service, prepare the engagement proposal, and once agreed — we handle it on your behalf.</p>
         <div style={{display:'flex',flexWrap:'wrap',gap:12}}>
-          <Btn size="lg" variant="primary" onClick={()=>go('wizard')}>Structure &amp; Name advisory — K45 <Arrow/></Btn>
+          <Btn size="lg" variant="primary" onClick={()=>go('wizard')}>Structure &amp; Name advisory — K25 <Arrow/></Btn>
           <Btn size="lg" variant="ghostLt" onClick={()=>go('desks')}>Browse all desks</Btn>
         </div>
       </div>
     </section>
-
     <section style={{maxWidth:1240,margin:'0 auto',padding:'40px 24px 0'}}><NotReg/></section>
-
     <section style={{maxWidth:1240,margin:'0 auto',padding:'56px 24px'}}>
       <Head eyebrow="Start here" title="What brings you to StartEasy today?" sub="Pick the closest match. We will show only what applies to you." className="mb-10" style={{maxWidth:'42rem'}}/>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{marginTop:40}}>
@@ -1200,7 +1284,6 @@ function Home({go}){
         </button>)}
       </div>
     </section>
-
     <section style={{background:'#fff'}}>
       <div style={{maxWidth:1240,margin:'0 auto',padding:'56px 24px'}}>
         <Head eyebrow="Or explore by desk" title="Eight specialist desks." sub="Each desk handles a defined set of administrative services with the relevant authority." className="mb-10" style={{maxWidth:'42rem'}}/>
@@ -1213,7 +1296,6 @@ function Home({go}){
         </div>
       </div>
     </section>
-
     <section style={{background:'#0A1F12',color:'#fff'}}>
       <div style={{maxWidth:1240,margin:'0 auto',padding:'64px 24px'}}>
         <Head light eyebrow="How engagement works" title="Three steps from question to delivery." className="mb-12" style={{maxWidth:'42rem'}}/>
@@ -1284,9 +1366,7 @@ function DeskDetail({deskId,go,onServiceClick,onWizard}){
         <p style={{fontSize:15.5,lineHeight:1.7,color:'rgba(255,255,255,.7)',maxWidth:'46rem'}}>{desk.intro}</p>
       </div>
     </section>
-
     <section style={{maxWidth:1240,margin:'0 auto',padding:'40px 24px 0'}}><NotReg/></section>
-
     <section style={{maxWidth:1240,margin:'0 auto',padding:'48px 24px 32px'}}>
       <div style={{marginBottom:24}}>
         <span className="micro" style={{color:'rgba(10,31,18,.5)',display:'block',marginBottom:12}}>Step 1 · Guided exploration</span>
@@ -1300,30 +1380,26 @@ function DeskDetail({deskId,go,onServiceClick,onWizard}){
         </button>)}
       </div>
     </section>
-
-    {choice&&selected&&!askOnly&&selected.services&&selected.services.length>0&&(
-      <section style={{maxWidth:1240,margin:'0 auto',padding:'0 24px 56px'}}>
-        <div style={{background:'linear-gradient(135deg,#FFF9E6,#FFFCF0)',border:'1.5px solid #F0E0A0',borderRadius:12,padding:'18px 22px',marginBottom:26}}>
-          <div style={{display:'flex',gap:14,alignItems:'flex-start'}}>
-            <span style={{width:36,height:36,borderRadius:10,background:'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className="fas fa-lightbulb" style={{color:'#fff',fontSize:15}}></i></span>
-            <div><div style={{fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:5}}>Your guidance</div>
-            <p style={{fontSize:13.5,lineHeight:1.65,color:'rgba(10,31,18,.75)',margin:0}}>For <strong>{selected.t}</strong>, these are the StartEasy services that apply. Click any service to see exactly what is covered, the fee structure and the timeline.</p></div>
+    {choice&&selected&&!askOnly&&selected.services&&selected.services.length>0&&<section style={{maxWidth:1240,margin:'0 auto',padding:'0 24px 56px'}}>
+      <div style={{background:'linear-gradient(135deg,#FFF9E6,#FFFCF0)',border:'1.5px solid #F0E0A0',borderRadius:12,padding:'18px 22px',marginBottom:26}}>
+        <div style={{display:'flex',gap:14,alignItems:'flex-start'}}>
+          <span style={{width:36,height:36,borderRadius:10,background:'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className="fas fa-lightbulb" style={{color:'#fff',fontSize:15}}></i></span>
+          <div><div style={{fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:5}}>Your guidance</div>
+          <p style={{fontSize:13.5,lineHeight:1.65,color:'rgba(10,31,18,.75)',margin:0}}>For <strong>{selected.t}</strong>, these are the StartEasy services that apply. Click any service to see exactly what is covered, the fee structure and the timeline.</p></div>
+        </div>
+      </div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {selected.services.map(key=>{const s=findServiceByKey(key);if(!s)return null;if(s.wizardEntry)return <button key={key} onClick={()=>onWizard(s.wizardScope)} className="svc" style={{'--accent':desk.color}}>
+          <div className="bar"></div>
+          <div className="bd">
+            <span className="code">{s.code} <span style={{color:'#E8730F',fontWeight:800}}>· WIZARD</span></span>
+            <h3>{s.title}</h3><p>{s.clientDesc.length>135?s.clientDesc.slice(0,135)+'…':s.clientDesc}</p>
+            <div className="foot"><div><div className="lbl">Service Fee</div><div className="fee">{SF.micro.zm}</div><div className="when">{s.timeline}</div></div>
+            <span style={{display:'flex',alignItems:'center',gap:6,fontSize:10.5,letterSpacing:'.12em',textTransform:'uppercase',fontWeight:700,color:desk.color,flexShrink:0}}>Begin <Arrow/></span></div>
           </div>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {selected.services.map(key=>{const s=findServiceByKey(key);if(!s)return null;if(s.wizardEntry)return <button key={key} onClick={()=>onWizard(s.wizardScope)} className="svc" style={{'--accent':desk.color}}>
-            <div className="bar"></div>
-            <div className="bd">
-              <span className="code">{s.code} <span style={{color:'#E8730F',fontWeight:800}}>· WIZARD</span></span>
-              <h3>{s.title}</h3><p>{s.clientDesc.length>135?s.clientDesc.slice(0,135)+'…':s.clientDesc}</p>
-              <div className="foot"><div><div className="lbl">Service Fee</div><div className="fee">{SF.micro.zm}</div><div className="when">{s.timeline}</div></div>
-              <span style={{display:'flex',alignItems:'center',gap:6,fontSize:10.5,letterSpacing:'.12em',textTransform:'uppercase',fontWeight:700,color:desk.color,flexShrink:0}}>Begin <Arrow/></span></div>
-            </div>
-          </button>;return <ServiceCard key={key} serviceKey={key} onClick={onServiceClick}/>;})}
-        </div>
-      </section>
-    )}
-
+        </button>;return <ServiceCard key={key} serviceKey={key} onClick={onServiceClick}/>})}
+      </div>
+    </section>}
     {choice&&askOnly&&<section style={{maxWidth:1240,margin:'0 auto',padding:'0 24px 56px'}}>
       <div style={{background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:'36px 32px',color:'#fff',textAlign:'center'}}>
         <i className="fas fa-comments" style={{fontSize:38,color:'#F5A623',marginBottom:16,display:'block'}}></i>
@@ -1332,7 +1408,6 @@ function DeskDetail({deskId,go,onServiceClick,onWizard}){
         <a href={waUrl('Hello StartEasy — I have a question about '+desk.title+'.')} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:10,padding:'14px 26px',background:'#25D366',color:'#fff',borderRadius:8,fontSize:14,fontWeight:700,textDecoration:'none'}}><i className="fab fa-whatsapp"></i> Chat with an officer</a>
       </div>
     </section>}
-
     <section style={{maxWidth:1240,margin:'0 auto',padding:'0 24px 56px'}}>
       <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:'28px 32px',display:'flex',flexWrap:'wrap',gap:24,justifyContent:'space-between',alignItems:'center'}}>
         <div style={{flex:'1 1 280px'}}>
@@ -1439,10 +1514,10 @@ function PricingPage({go}){
           </div>)}
         </div>
       </div>
-      <div style={{padding:20,borderRadius:8,maxWidth:820,background:'#FFF4E5',borderLeft:'3px solid #FFC107',fontSize:12.5,color:'#7A5C10',lineHeight:1.65}}><strong>Pricing note.</strong> These figures are StartEasy service fees for administrative work — preparing, checking, submitting and tracking on your behalf. They are separate from any government or regulator fee, which is always confirmed before submission. The Structure &amp; Name advisory is K45 and is delivered within 1 hour.</div>
+      <div style={{padding:20,borderRadius:8,maxWidth:820,background:'#FFF4E5',borderLeft:'3px solid #FFC107',fontSize:12.5,color:'#7A5C10',lineHeight:1.65}}><strong>Pricing note.</strong> These figures are StartEasy service fees for administrative work — preparing, checking, submitting and tracking on your behalf. They are separate from any government or regulator fee, which is always confirmed before submission. The Structure &amp; Name advisory is <strong>K25 (~$1.49)</strong> and is delivered within 1 hour.</div>
       <div style={{marginTop:32,display:'flex',flexWrap:'wrap',gap:12}}>
         <Btn size="lg" variant="primary" onClick={()=>go('desks')}>Choose a desk <Arrow/></Btn>
-        <Btn size="lg" variant="ghost" onClick={()=>go('wizard')}>Structure &amp; Name — K45</Btn>
+        <Btn size="lg" variant="ghost" onClick={()=>go('wizard')}>Structure &amp; Name — K25</Btn>
       </div>
     </section>
   </div>;
@@ -1512,7 +1587,7 @@ function App(){
   const [routeArg,setRouteArg]=useState(null);
   const [wizardScope,setWizardScope]=useState(null);
   const [serviceModal,setServiceModal]=useState(null);
-  const [engagementModal,setEngagementModal]=useState(null);
+  const [engagementService,setEngagementService]=useState(null);
   const [engagementClient,setEngagementClient]=useState(null);
   const [paymentOpen,setPaymentOpen]=useState(false);
 
@@ -1520,14 +1595,12 @@ function App(){
   const go=useCallback((r,arg)=>{setRoute(r);setRouteArg(arg||null);try{location.hash='#/'+r+(arg?'/'+arg:'')}catch(e){}window.scrollTo({top:0,behavior:'auto'})},[]);
   useEffect(()=>{const h=()=>{const raw=(location.hash||'').replace(/^#\/?/,'');const parts=raw.split('/').filter(Boolean);setRoute(parts[0]||'home');setRouteArg(parts[1]||null)};window.addEventListener('hashchange',h);return()=>window.removeEventListener('hashchange',h)},[]);
 
-  const openWizard=useCallback(scope=>{setWizardScope(scope||null);go('wizard');setTimeout(()=>window.scrollTo({top:0,behavior:'smooth'}),50)},[go]);
-  const proceedToEngagement=useCallback(s=>{setServiceModal(null);setTimeout(()=>setEngagementModal(s.key||s.code),260)},[]);
-  const agreedEngagement=useCallback(({client,service})=>{setEngagementClient({client,service});setEngagementModal(null);setTimeout(()=>setPaymentOpen(true),280)},[]);
+  const openWizard=useCallback(scope=>{setWizardScope(scope||null);go('wizard')},[go]);
+  const proceedToEngagement=useCallback(s=>{setServiceModal(null);setTimeout(()=>setEngagementService(s),260)},[]);
+  const agreedEngagement=useCallback(({client,service})=>{setEngagementClient({client,service});setEngagementService(null);setTimeout(()=>setPaymentOpen(true),280)},[]);
   const closePayment=useCallback(()=>{setPaymentOpen(false);setTimeout(()=>setEngagementClient(null),260)},[]);
-  const handleServiceClick=useCallback(s=>{if(s.wizardEntry){openWizard(s.wizardScope);return}setServiceModal(s.key)},[openWizard]);
-  const handleWizardOrder=useCallback(wizData=>{
-    setEngagementModal({code:wizData.code,desk:wizData.desk,title:wizData.title,clientDesc:wizData.clientDesc,whatsCovered:wizData.whatsCovered,service:wizData.service,timeline:wizData.timeline,key:'_wizard'});
-  },[]);
+  const handleServiceClick=useCallback(s=>{if(s.wizardEntry){openWizard(s.wizardScope);return}setServiceModal(s)},[openWizard]);
+  const handleWizardOrder=useCallback(wizData=>{setEngagementService(wizData)},[]);
 
   const view=()=>{
     switch(route){
@@ -1542,19 +1615,13 @@ function App(){
     }
   };
 
-  const serviceForModal=useMemo(()=>{
-    if(!serviceModal)return null;
-    if(typeof serviceModal==='object'&&serviceModal._wizard)return serviceModal;
-    return serviceModal;
-  },[serviceModal]);
-
   return <div style={{minHeight:'100vh',background:'#F5FAF6',display:'flex',flexDirection:'column'}}>
     <Nav route={route} go={go}/>
     <main style={{flex:1}}>{view()}</main>
     <Footer go={go}/>
     <FloatingAssistant/>
-    {serviceModal&&typeof serviceModal==='string'&&<ServiceDetail serviceKey={serviceModal} onClose={()=>setServiceModal(null)} onProceed={proceedToEngagement} onWizard={openWizard}/>}
-    {engagementModal&&<Engagement serviceKey={engagementModal} onClose={()=>setEngagementModal(null)} onAgreed={agreedEngagement}/>}
+    {serviceModal&&<ServiceDetail service={serviceModal} onClose={()=>setServiceModal(null)} onProceed={proceedToEngagement} onWizard={openWizard}/>}
+    {engagementService&&<Engagement service={engagementService} onClose={()=>setEngagementService(null)} onAgreed={agreedEngagement}/>}
     {paymentOpen&&engagementClient&&<Modal open={paymentOpen} onClose={closePayment} eyebrow="Engagement payment" maxWidth="52rem">
       <Payment service={engagementClient.service} client={engagementClient.client} onClose={closePayment} onDone={()=>{closePayment();setTimeout(()=>go('home'),320)}}/>
     </Modal>}
