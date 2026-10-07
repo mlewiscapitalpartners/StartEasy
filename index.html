@@ -167,6 +167,46 @@ const CONTACT_EMAIL='engagements@starteasy.zm';
 function isMobile(){return typeof navigator!=='undefined'&&/android|iphone|ipad|ipod|mobile/i.test((navigator.userAgent||'').toLowerCase());}
 function waUrl(msg,p){const phone=p||ADMIN_WHATSAPP;const e=encodeURIComponent(msg);return isMobile()?'whatsapp://send?phone='+phone+'&text='+e:'https://wa.me/'+phone+'?text='+e;}
 
+/* ============================================================
+   LOCAL PERSISTENCE
+   Saves wizard progress on the device so a returning user —
+   after a lost connection, a page refresh, or a detour to
+   browse elsewhere — resumes exactly where they left off.
+   ============================================================ */
+const LS_KEY='starteasy.session.v1';
+
+function readSnapshot(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw)return null;
+    const d=JSON.parse(raw);
+    return (d&&typeof d==='object')?d:null;
+  }catch(e){return null}
+}
+function writeSnapshot(patch){
+  try{
+    const cur=readSnapshot()||{};
+    const next={...cur,...patch,v:1,savedAt:Date.now()};
+    localStorage.setItem(LS_KEY,JSON.stringify(next));
+    return next;
+  }catch(e){return null}
+}
+function clearSnapshot(){try{localStorage.removeItem(LS_KEY)}catch(e){}}
+function hasResumableWizard(snap){
+  if(!snap||!snap.wizard)return false;
+  const w=snap.wizard;
+  return !!(w.scope||(w.idea&&String(w.idea).trim().length>0)||w.distinctive||w.industry||w.primaryActivity||w.structure);
+}
+function timeAgo(ts){
+  if(!ts)return '';
+  const s=Math.max(0,Math.floor((Date.now()-ts)/1000));
+  if(s<60)return 'just now';
+  if(s<3600)return Math.floor(s/60)+' min ago';
+  if(s<86400)return Math.floor(s/3600)+' hr ago';
+  const d=Math.floor(s/86400);
+  return d+' day'+(d>1?'s':'')+' ago';
+}
+
 const SF={
   micro:{zm:'K25',usd:'$1.49',label:'Service Fee · Micro'},
   basic:{zm:'K250',usd:'$25',label:'Service Fee · Basic'},
@@ -260,13 +300,57 @@ const INDUSTRIES=[
     examples:['JIRANIHOOD SERVICES LIMITED','JIRANIHOOD ENTERPRISES LIMITED']}
 ];
 
+/* ---------- LEGAL ENDINGS ---------- */
+const LEGAL_ENDINGS={
+  LIMITED:{key:'LIMITED',label:'LIMITED',display:'LIMITED',
+    desc:'Standard statutory legal ending — confirms the entity is a body corporate with limited liability.'},
+  NONE:{key:'NONE',label:'No legal ending',display:'',
+    desc:'A guarantee company may be registered without the word LIMITED where its objects are charitable, educational, religious, scientific or otherwise for the public welfare, subject to PACRA approval.'},
+  UNLIMITED:{key:'UNLIMITED',label:'UNLIMITED',display:'UNLIMITED',
+    desc:'Members\' liability is not limited. Reserved for special cases where a guarantee company must be unlimited.'},
+  PLC:{key:'PLC',label:'PLC',display:'PLC',
+    desc:'Public Limited Company — required where shares may be offered to the public, the company is listed or seeking listing, or a special-case public structure applies.'}
+};
+
+/* ---------- LEGAL STRUCTURES ---------- */
 const STRUCTURES=[
-  {key:'bn',label:'Business Name',desc:'A trading name registered under a proprietor. No separate legal personality.',endings:[],typical:['Sole traders','Small operations','Side businesses']},
-  {key:'ltd',label:'Private Company Limited by Shares',desc:'An incorporated company whose ownership is represented through shares.',endings:['LIMITED','LTD'],typical:['SMEs','Trading companies','Consulting firms','Technology companies','Growth businesses','Companies bringing in investors'],rec:true},
-  {key:'ltdg',label:'Company Limited by Guarantee',desc:'An incorporated company whose structure is based on members\' guarantees rather than shares.',endings:['LIMITED','LTD'],typical:['Associations','Non-profits','Member-based organisations']},
-  {key:'plc',label:'Public Company (PLC)',desc:'A company whose shares can be offered to the public, subject to applicable rules.',endings:['PLC'],typical:['Larger companies','Public offerings']},
-  {key:'unsure',label:'Not sure — help me decide',desc:'We will walk you through the choice based on what the organisation is intended to do.',endings:['LIMITED','LTD'],typical:['Founders weighing options']}
+  {key:'bn',label:'Statutory Business Name',short:'Business Name',icon:'fa-store',
+   desc:'A business name registered with PACRA under the Registration of Business Names Act. The proprietor remains personally liable, and the registered name carries the statutory legal ending LIMITED.',
+   endings:['LIMITED'],endingRule:'fixed',
+   typical:['Sole traders','Small operations','Side businesses','One-person ventures','Informal-to-formal transitions'],
+   note:'PACRA statutory business names carry the legal ending LIMITED as part of the registered name.'},
+  {key:'ltd',label:'Private Company Limited by Shares',short:'Private Limited by Shares',icon:'fa-building',
+   desc:'An incorporated company whose ownership is represented through shares. Shareholders\' liability is limited to any amount unpaid on their shares.',
+   endings:['LIMITED'],endingRule:'fixed',rec:true,
+   typical:['SMEs','Trading companies','Consulting firms','Technology companies','Growth businesses','Companies bringing in investors'],
+   note:'A private company limited by shares automatically carries the legal ending LIMITED. LTD is the accepted short form.'},
+  {key:'ltdg',label:'Company Limited by Guarantee',short:'Limited by Guarantee',icon:'fa-people-group',
+   desc:'An incorporated company whose members guarantee a fixed amount rather than holding shares. Commonly used for associations, non-profits and member-based organisations.',
+   endings:['LIMITED','NONE','UNLIMITED'],endingRule:'choice',
+   typical:['Associations','Non-profits','Member-based organisations','Faith and community bodies','Professional bodies','Clubs and societies'],
+   note:'A guarantee company may be registered WITH the legal ending LIMITED, WITHOUT any legal ending, or as an UNLIMITED company — depending on its objects and on PACRA approval.'},
+  {key:'plc',label:'Public Company (PLC)',short:'Public Company',icon:'fa-chart-line',
+   desc:'A company whose shares may be offered to the public, subject to the applicable rules. Intended for established companies, stock-exchange listing or pre-IPO positioning, and special cases.',
+   endings:['PLC'],endingRule:'fixed',
+   typical:['Established companies','Stock exchange listing','Pre-IPO','Public offerings','Special cases'],
+   note:'A public company must carry the legal ending PLC.'},
+  {key:'unsure',label:'Not sure — help me decide',short:'Not sure',icon:'fa-circle-question',
+   desc:'We walk you through the choice based on what the organisation is intended to do, who owns it, and whether it will ever take in investors or offer shares to the public.',
+   endings:['LIMITED'],endingRule:'fixed',
+   typical:['Founders weighing options','Committee-led organisations','Mixed-ownership groups'],
+   note:'If you are unsure we default to the private company limited by shares position and confirm with you before submission.'}
 ];
+
+/* Resolve the actual legal ending string for a chosen structure + ending option */
+function resolveLegalEnding(structure,choice){
+  if(!structure)return 'LIMITED';
+  if(structure.endingRule==='choice'){
+    if(choice==='NONE')return '';
+    if(choice==='UNLIMITED')return 'UNLIMITED';
+    return 'LIMITED';
+  }
+  return structure.endings[0]||'';
+}
 
 const PATTERNS=['zambia','lusaka','ndola','kitwe','livingstone','kabwe','solwezi','africa','copperbelt','zambezi','luangwa','trading','investments','holdings','enterprises','services','general','dealers','group','global','international'];
 const PROTECTED=['bank','insurance','trust','microfinance','pension','securities','lottery','gaming','casino','university','national','government','ministry','municipal','council','chartered','royal','sacco','cooperative','revenue','customs'];
@@ -317,16 +401,18 @@ function validateCustomDescriptor(text,industry){
 }
 
 /* ---- SIX-NAME GENERATOR ---- */
-function buildSixNames(distinctive,effectiveDescriptor,industryData,structureData){
+function buildSixNames(distinctive,effectiveDescriptor,industryData,legalEnding){
   if(!distinctive||!distinctive.trim()||!effectiveDescriptor||!industryData)return[];
   const distinct=distinctive.trim().toUpperCase();
   const desc=effectiveDescriptor.toUpperCase().trim();
-  const descLower=desc.toLowerCase();
-  const ending=structureData&&structureData.endings.length?structureData.endings[0]:'LIMITED';
+  const ending=(legalEnding===undefined||legalEnding===null)?'LIMITED':String(legalEnding).trim();
+  /* Compose: [DISTINCTIVE] [DESCRIPTOR] [LEGAL ENDING] — the ending is omitted entirely
+     when the guarantee company is registered without one. */
+  const compose=d=>[distinct,d,ending].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
   const out=[];
 
   // Proposal 1 — the user's own custom descriptor, in full
-  out.push(`${distinct} ${desc} ${ending}`.trim());
+  out.push(compose(desc));
 
   // Track used descriptors to avoid duplicates
   const used=new Set([desc]);
@@ -336,7 +422,7 @@ function buildSixNames(distinctive,effectiveDescriptor,industryData,structureDat
     const u=candidate.toUpperCase();
     if(used.has(u))return;
     used.add(u);
-    out.push(`${distinct} ${u} ${ending}`.trim());
+    out.push(compose(u));
   };
 
   // Proposals 2+ — embedded library words first (short forms detected inside the custom phrase)
@@ -617,6 +703,7 @@ function Engagement({service,onClose,onAgreed}){
         {s._wizardData.secondaryActivities&&s._wizardData.secondaryActivities.length>0&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Secondary activities</span><span style={{color:'#0A1F12',fontWeight:700,textAlign:'right',maxWidth:'60%'}}>{s._wizardData.secondaryActivities.join(', ')}</span></div>}
         {s._wizardData.industry&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Industry</span><span style={{color:'#0A1F12',fontWeight:700}}>{s._wizardData.industry.label}</span></div>}
         {s._wizardData.structure&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Legal structure</span><span style={{color:'#0A1F12',fontWeight:700}}>{s._wizardData.structure.label}</span></div>}
+        {s._wizardData.structure&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Legal ending</span><span style={{color:'#0A1F12',fontWeight:700,fontFamily:'Consolas,monospace'}}>{s._wizardData.legalEnding||'(none)'}</span></div>}
         {s._wizardData.distinctive&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Distinctive name</span><span style={{color:'#0A1F12',fontWeight:700,fontFamily:'Consolas,monospace'}}>{s._wizardData.distinctive.toUpperCase()}</span></div>}
         {s._wizardData.descriptor&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Descriptive word</span><span style={{color:'#0A1F12',fontWeight:700,fontFamily:'Consolas,monospace'}}>{s._wizardData.descriptor.toUpperCase()}</span></div>}
         {s._wizardData.names&&s._wizardData.names.length>0&&<div style={{padding:'8px 0 4px'}}><div style={{fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Six-name proposal</div><ol style={{paddingLeft:20,margin:0}}>{s._wizardData.names.map((n,i)=><li key={i} style={{fontSize:12.5,fontFamily:'Consolas,monospace',color:'#0A1F12',fontWeight:700,marginBottom:4}}>{n}</li>)}</ol></div>}
@@ -789,21 +876,52 @@ function Payment({service,client,onClose,onDone}){
    WIZARD
    ============================================================ */
 function Wizard({initialScope,onExit,onOrderFormal}){
-  const [step,setStep]=useState(0);
-  const [scope,setScope]=useState(initialScope||null);
-  const [idea,setIdea]=useState('');
-  const [primaryActivity,setPrimaryActivity]=useState('');
-  const [secondaryActivities,setSecondaryActivities]=useState([]);
-  const [industry,setIndustry]=useState(null);
-  const [descriptor,setDescriptor]=useState('');
-  const [customDescriptor,setCustomDescriptor]=useState('');
-  const [structure,setStructure]=useState(null);
-  const [distinctive,setDistinctive]=useState('');
+  /* ---- Returning-user detection: hydrate from the saved snapshot ---- */
+  const boot=useMemo(()=>{
+    const snap=readSnapshot();
+    const w=snap&&snap.wizard?snap.wizard:null;
+    if(!w)return{data:null,savedAt:null};
+    /* If the user explicitly picked a different wizard entry this time, start fresh for that path */
+    if(initialScope&&w.scope&&w.scope!==initialScope)return{data:null,savedAt:null};
+    return{data:w,savedAt:snap.savedAt||null};
+  },[]); // mount-only
+
+  const b=boot.data||{};
+  const [step,setStep]=useState(typeof b.step==='number'?b.step:0);
+  const [scope,setScope]=useState(b.scope||initialScope||null);
+  const [idea,setIdea]=useState(b.idea||'');
+  const [primaryActivity,setPrimaryActivity]=useState(b.primaryActivity||'');
+  const [secondaryActivities,setSecondaryActivities]=useState(Array.isArray(b.secondaryActivities)?b.secondaryActivities:[]);
+  const [industry,setIndustry]=useState(b.industry||null);
+  const [descriptor,setDescriptor]=useState(b.descriptor||'');
+  const [customDescriptor,setCustomDescriptor]=useState(b.customDescriptor||'');
+  const [structure,setStructure]=useState(b.structure||null);
+  const [legalEnding,setLegalEnding]=useState(b.legalEnding||'LIMITED');
+  const [distinctive,setDistinctive]=useState(b.distinctive||'');
+  const [restoredAt,setRestoredAt]=useState(boot.savedAt);
+  const [showRestored,setShowRestored]=useState(!!boot.data);
 
   const toggleSecondary=a=>setSecondaryActivities(prev=>prev.includes(a)?prev.filter(x=>x!==a):[...prev,a]);
 
+  /* ---- Autosave: every meaningful change is written immediately ---- */
+  useEffect(()=>{
+    writeSnapshot({wizard:{step,scope,idea,primaryActivity,secondaryActivities,industry,descriptor,customDescriptor,structure,legalEnding,distinctive}});
+  },[step,scope,idea,primaryActivity,secondaryActivities,industry,descriptor,customDescriptor,structure,legalEnding,distinctive]);
+
+  const startOver=()=>{
+    clearSnapshot();
+    setStep(0);setScope(null);setIdea('');setPrimaryActivity('');setSecondaryActivities([]);
+    setIndustry(null);setDescriptor('');setCustomDescriptor('');setStructure(null);
+    setLegalEnding('LIMITED');setDistinctive('');setShowRestored(false);setRestoredAt(null);
+  };
+
   useEffect(()=>{if(industry&&!descriptor&&!customDescriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0])}},[industry]);
   useEffect(()=>{if(industry&&!structure&&scope!=='names'){setStructure('ltd')}},[industry,scope]);
+  /* Keep the legal ending aligned whenever a fixed-ending structure is chosen */
+  useEffect(()=>{
+    const sd=structure?STRUCTURES.find(x=>x.key===structure):null;
+    if(sd&&sd.endingRule!=='choice')setLegalEnding(sd.endings[0]||'');
+  },[structure]);
 
   const effectiveDescriptor=useMemo(()=>customDescriptor.trim()||descriptor,[customDescriptor,descriptor]);
 
@@ -821,8 +939,11 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const structureData=structure?STRUCTURES.find(x=>x.key===structure):null;
   const analysis=useMemo(()=>analyseName(distinctive),[distinctive]);
 
+  /* ---------- LEGAL ENDING (drives the name-clearance format) ---------- */
+  const effectiveEnding=useMemo(()=>resolveLegalEnding(structureData,legalEnding),[structureData,legalEnding]);
+
   /* ---------- SIX-NAME PROPOSAL ---------- */
-  const names=useMemo(()=>buildSixNames(distinctive,effectiveDescriptor,industryData,structureData),[distinctive,effectiveDescriptor,industryData,structureData]);
+  const names=useMemo(()=>buildSixNames(distinctive,effectiveDescriptor,industryData,effectiveEnding),[distinctive,effectiveDescriptor,industryData,effectiveEnding]);
   const embeddedLibraryWords=useMemo(()=>findEmbeddedLibraryWords(effectiveDescriptor,industryData),[effectiveDescriptor,industryData]);
 
   const readiness=useMemo(()=>{
@@ -863,6 +984,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     if(secondaryActivities.length>0)lines.push('*Secondary activities:* '+secondaryActivities.join(', '));
     if(industryData)lines.push('*Industry:* '+industryData.label+' (ISIC '+industryData.isic+')');
     if(structureData)lines.push('*Structure:* '+structureData.label);
+    if(structureData)lines.push('*Legal ending:* '+(effectiveEnding||'(none)'));
     if(distinctive)lines.push('*Distinctive:* '+distinctive.toUpperCase());
     if(effectiveDescriptor)lines.push('*Descriptor:* '+effectiveDescriptor.toUpperCase());
     if(names.length){lines.push('','*Six-name proposal:*',...names.map((n,i)=>(i+1)+'. '+n))}
@@ -879,7 +1001,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
       whatsCovered:['Wizard answers captured and reviewed','Industry classification','Legal structure recommendation'+(scope!=='structure'?' and six-name proposal':''),'Name distinctiveness scoring and flags','Formal StartEasy-branded report','Delivered within 1 hour'],
       service:'micro',
       timeline:'Delivered within 1 hour',
-      _wizardData:{scope,idea,primaryActivity,secondaryActivities,industry:industryData,structure:structureData,descriptor:effectiveDescriptor,distinctive,names,analysis,readiness}
+      _wizardData:{scope,idea,primaryActivity,secondaryActivities,industry:industryData,structure:structureData,legalEnding:effectiveEnding,descriptor:effectiveDescriptor,distinctive,names,analysis,readiness}
     });
   };
 
@@ -899,11 +1021,25 @@ function Wizard({initialScope,onExit,onOrderFormal}){
       </div>
     </section>
 
+    {showRestored&&<section style={{maxWidth:1240,margin:'0 auto',padding:'20px 24px 0'}}>
+      <div className="fadein" style={{background:'linear-gradient(135deg,#FFF9E6,#FFFCF0)',border:'1.5px solid #F0E0A0',borderRadius:12,padding:'16px 20px',display:'flex',gap:14,alignItems:'center',flexWrap:'wrap'}}>
+        <span style={{width:38,height:38,borderRadius:10,background:'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className="fas fa-rotate-left" style={{color:'#fff',fontSize:14}}></i></span>
+        <div style={{flex:'1 1 260px',minWidth:0}}>
+          <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:3}}>Welcome back</div>
+          <div style={{fontSize:13.5,color:'#0A1F12',fontWeight:600,lineHeight:1.5}}>We restored your assessment{restoredAt?` from ${timeAgo(restoredAt)}`:''}. Everything is saved on this device as you go — you can safely close the page and return.</div>
+        </div>
+        <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+          <button onClick={()=>setShowRestored(false)} style={{padding:'9px 16px',background:'#0A1F12',color:'#fff',border:'none',borderRadius:8,fontSize:12.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>Keep going</button>
+          <button onClick={startOver} style={{padding:'9px 16px',background:'#fff',color:'#0A1F12',border:'1px solid rgba(10,31,18,.15)',borderRadius:8,fontSize:12.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>Start over</button>
+        </div>
+      </div>
+    </section>}
+
     <section style={{background:'#fff',borderBottom:'1px solid rgba(10,31,18,.06)',position:'sticky',top:0,zIndex:20}}>
       <div style={{maxWidth:1240,margin:'0 auto',padding:'16px 24px',display:'flex',gap:8,overflowX:'auto'}}>
         {stepsArr.map((s,i)=>{
           const state=i<step?'done':(i===step?'active':'');
-          const labels={scope:'Scope',idea:'Business idea',activity:'Primary activity',secondary:'Secondary',structure:'Structure',industry:'Industry',descriptor:'Descriptor',distinctive:'Core name',report:'Report'};
+          const labels={scope:'Scope',idea:'Business idea',activity:'Primary activity',secondary:'Secondary',structure:'Legal structure',industry:'Industry',descriptor:'Descriptor',distinctive:'Core name',report:'Report'};
           return <button key={s} onClick={()=>goStep(i)} className={`step ${state}`} style={{cursor:i<=step?'pointer':'default'}}>
             <span className="n">{i<step?'✓':String(i+1)}</span><span>{labels[s]}</span>
           </button>;
@@ -918,11 +1054,11 @@ function Wizard({initialScope,onExit,onOrderFormal}){
           {current==='idea'&&<WIdea idea={idea} setIdea={setIdea}/>}
           {current==='activity'&&<WActivity primaryActivity={primaryActivity} setPrimaryActivity={setPrimaryActivity}/>}
           {current==='secondary'&&<WSecondary secondaryActivities={secondaryActivities} toggleSecondary={toggleSecondary} setSecondaryActivities={setSecondaryActivities}/>}
-          {current==='structure'&&<WStructure structure={structure} setStructure={setStructure} industryKey={industry}/>}
+          {current==='structure'&&<WStructure structure={structure} setStructure={setStructure} legalEnding={legalEnding} setLegalEnding={setLegalEnding} industryKey={industry} distinctive={distinctive} descriptor={effectiveDescriptor}/>}
           {current==='industry'&&<WIndustry industry={industry} setIndustry={setIndustry}/>}
           {current==='descriptor'&&<WDescriptor industry={industry} descriptor={descriptor} setDescriptor={setDescriptor} customDescriptor={customDescriptor} setCustomDescriptor={setCustomDescriptor}/>}
           {current==='distinctive'&&<WDistinctive distinctive={distinctive} setDistinctive={setDistinctive} analysis={analysis}/>}
-          {current==='report'&&<WReport scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness} onWhatsapp={sendWa} onOrderFormal={orderFormal}/>}
+          {current==='report'&&<WReport scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} legalEnding={effectiveEnding} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness} onWhatsapp={sendWa} onOrderFormal={orderFormal}/>}
           {current!=='report'&&<div style={{display:'flex',gap:12,marginTop:32,paddingTop:24,borderTop:'1px solid rgba(10,31,18,.06)',flexWrap:'wrap'}}>
             {step>0&&<button onClick={back} style={{padding:'13px 22px',background:'#fff',border:'1px solid rgba(10,31,18,.15)',borderRadius:8,fontSize:13.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit',color:'#0A1F12'}}>← Back</button>}
             <button onClick={next} disabled={!can()} style={{flex:1,minWidth:200,padding:'13px 24px',background:can()?'linear-gradient(135deg,#E8730F,#F5A623)':'rgba(10,31,18,.1)',color:can()?'#fff':'rgba(10,31,18,.4)',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:can()?'pointer':'not-allowed',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:10}}>
@@ -930,7 +1066,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
             </button>
           </div>}
         </div>
-        <WizardSidebar scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness} embeddedLibraryWords={embeddedLibraryWords}/>
+        <WizardSidebar scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} legalEnding={effectiveEnding} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness} embeddedLibraryWords={embeddedLibraryWords}/>
       </div>
     </section>
 
@@ -1006,7 +1142,7 @@ function WSecondary({secondaryActivities,toggleSecondary,setSecondaryActivities}
   </div>;
 }
 
-function WStructure({structure,setStructure,industryKey}){
+function WStructure({structure,setStructure,legalEnding,setLegalEnding,industryKey,distinctive,descriptor}){
   const recommend=useMemo(()=>{
     if(!industryKey)return['ltd'];
     if(['financial','health'].includes(industryKey))return['ltd'];
@@ -1014,19 +1150,52 @@ function WStructure({structure,setStructure,industryKey}){
     if(industryKey==='other')return['ltd','ltdg','bn'];
     return['ltd','bn'];
   },[industryKey]);
+
+  const sel=structure?STRUCTURES.find(s=>s.key===structure):null;
+  const resolved=resolveLegalEnding(sel,legalEnding);
+  const preview=[distinctive?distinctive.toUpperCase():'[DISTINCTIVE]',descriptor?descriptor.toUpperCase():'[DESCRIPTOR]',resolved||'(no legal ending)'].join(' ');
+
   return <div>
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 5 · Guided choice</div>
-    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Which legal structure fits your situation?</h2>
-    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>We recommend based on your industry and the type of organisation you are building. You can change this.</p>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 5 · Legal structure &amp; name clearance</div>
+    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Which structure should the name be cleared under?</h2>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:660}}>PACRA name clearance depends on the <strong>type of entity</strong> you are registering — because the <strong>legal ending</strong> forms part of the name itself. Choose the structure that matches what you are building. We recommend based on your industry and situation, and you can change this at any time.</p>
+
     <div style={{display:'flex',flexDirection:'column',gap:12}}>
       {STRUCTURES.map(s=>{const on=structure===s.key;const isRec=recommend.includes(s.key)&&s.key!=='unsure';return <button key={s.key} onClick={()=>setStructure(s.key)} className={`stile ${on?'sel':''}`}>
         {isRec&&<span className="rec"><i className="fas fa-check" style={{marginRight:4,fontSize:9}}></i>Recommended</span>}
-        <h4>{s.label}</h4>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+          <span style={{width:34,height:34,borderRadius:9,background:'rgba(232,115,15,.1)',color:'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className={`fas ${s.icon}`} style={{fontSize:14}}></i></span>
+          <h4 style={{margin:0}}>{s.label}</h4>
+        </div>
         <p>{s.desc}</p>
-        {s.endings.length>0&&<div className="ends">{s.endings.map(e=><span key={e}>{e}</span>)}</div>}
+        <div className="ends">
+          {s.endings.map(e=><span key={e}>{(LEGAL_ENDINGS[e]&&LEGAL_ENDINGS[e].display)||e||'NO ENDING'}</span>)}
+        </div>
         <div style={{fontSize:11,color:'rgba(10,31,18,.5)',lineHeight:1.5}}><strong style={{color:'rgba(10,31,18,.6)'}}>Typical for:</strong> {s.typical.join(' · ')}</div>
       </button>})}
     </div>
+
+    {sel&&sel.endingRule==='choice'&&<div style={{marginTop:26,background:'#fff',border:'2px solid rgba(232,115,15,.35)',borderRadius:12,padding:'22px 24px'}}>
+      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Guarantee company · legal ending</div>
+      <p style={{fontSize:13,lineHeight:1.6,color:'rgba(10,31,18,.65)',marginBottom:16}}>A company limited by guarantee may be registered in any of these three forms. Choose the one that fits your objects and constitution.</p>
+      <div className="grid sm:grid-cols-3 gap-3">
+        {sel.endings.map(k=>{const le=LEGAL_ENDINGS[k];const on=legalEnding===k;return <button key={k} onClick={()=>setLegalEnding(k)} className={`stile ${on?'sel':''}`} style={{padding:'16px 18px'}}>
+          <h4 style={{fontFamily:'Consolas,monospace',fontSize:14,marginBottom:8,letterSpacing:'.02em'}}>{le.display||'NO ENDING'}</h4>
+          <p style={{fontSize:11.5,margin:0}}>{le.desc}</p>
+        </button>})}
+      </div>
+    </div>}
+
+    {sel&&<div style={{marginTop:22,background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:'24px 26px',color:'#fff'}}>
+      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:12}}>Name clearance format</div>
+      <div style={{fontFamily:'Consolas,monospace',fontSize:'clamp(1rem,2.4vw,1.3rem)',fontWeight:700,color:'#fff',lineHeight:1.45,wordBreak:'break-word'}}>{preview}</div>
+      <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid rgba(255,255,255,.15)',fontSize:12.5,lineHeight:1.6,color:'rgba(255,255,255,.65)'}}>
+        <i className="fas fa-info-circle" style={{color:'#F5A623',marginRight:8}}></i>{sel.note}
+      </div>
+      <div style={{marginTop:10,fontSize:12,color:'rgba(255,255,255,.45)'}}>Legal ending applied: <strong style={{color:'#F5A623'}}>{resolved||'(none)'}</strong></div>
+    </div>}
+
+    {!sel&&<div style={{marginTop:22,padding:'16px 20px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:10,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic'}}>Choose a structure above to see the legal ending and the name clearance format.</div>}
   </div>;
 }
 
@@ -1137,7 +1306,7 @@ function WDistinctive({distinctive,setDistinctive,analysis}){
   </div>;
 }
 
-function WReport({scope,idea,primaryActivity,secondaryActivities,industryData,structureData,distinctive,descriptor,names,analysis,readiness,onWhatsapp,onOrderFormal}){
+function WReport({scope,idea,primaryActivity,secondaryActivities,industryData,structureData,legalEnding,distinctive,descriptor,names,analysis,readiness,onWhatsapp,onOrderFormal}){
   const refNo='SE-ADV-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*9000)+1000);
   const date=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
   return <div>
@@ -1157,18 +1326,25 @@ function WReport({scope,idea,primaryActivity,secondaryActivities,industryData,st
         {primaryActivity&&<div className="row"><span className="k">Primary activity</span><span className="v">{primaryActivity}</span></div>}
         {secondaryActivities&&secondaryActivities.length>0&&<div className="row"><span className="k">Secondary activities</span><span className="v">{secondaryActivities.join(', ')}</span></div>}
         {industryData&&<><div className="row"><span className="k">Industry</span><span className="v">{industryData.label}</span></div><div className="row"><span className="k">ISIC classification</span><span className="v">{industryData.isic}</span></div></>}
-        {structureData&&<><div className="row"><span className="k">Recommended structure</span><span className="v">{structureData.label}</span></div>{structureData.endings.length>0&&<div className="row"><span className="k">Legal ending</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{structureData.endings.join(' / ')}</span></div>}</>}
-        {(descriptor||distinctive)&&<><h5>2. Name architecture</h5>{distinctive&&<div className="row"><span className="k">Distinctive element</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{distinctive.toUpperCase()}</span></div>}{descriptor&&<div className="row"><span className="k">Descriptive word</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{descriptor.toUpperCase()}</span></div>}{structureData&&structureData.endings.length>0&&<div className="row"><span className="k">Legal ending</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{structureData.endings[0]}</span></div>}</>}
+
+        <h5>2. Legal structure &amp; name clearance</h5>
+        {structureData?<>
+          <div className="row"><span className="k">Structure selected</span><span className="v">{structureData.label}</span></div>
+          <div className="row"><span className="k">Legal ending applied</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{legalEnding||'(no legal ending)'}</span></div>
+          <div className={'flag ok'}><i className="fas fa-check-circle ic" style={{color:'#1E7B3C'}}></i><div>{structureData.note}</div></div>
+        </>:<div className="row"><span className="k">Structure</span><span className="v">Not selected</span></div>}
+
+        {(descriptor||distinctive)&&<><h5>3. Name architecture</h5>{distinctive&&<div className="row"><span className="k">Distinctive element</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{distinctive.toUpperCase()}</span></div>}{descriptor&&<div className="row"><span className="k">Descriptive word</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{descriptor.toUpperCase()}</span></div>}{structureData&&<div className="row"><span className="k">Legal ending</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{legalEnding||'(none)'}</span></div>}</>}
         {names.length>0&&<>
-          <h5>3. Six-name proposal (preference order)</h5>
+          <h5>4. Six-name proposal (preference order)</h5>
           <p style={{fontSize:11.5,color:'#666',lineHeight:1.6,margin:'0 0 10px',fontStyle:'italic'}}>Six candidates give you room to resubmit if PACRA reverts any of the first three. The top three are the strongest options based on your answers — the remaining three are fallbacks in the same descriptive family.</p>
           <ol className="names">
             {names.map((n,i)=><li key={i}><span className="nm">{n}</span>{i<3&&<span style={{marginLeft:8,fontSize:9.5,letterSpacing:'.1em',textTransform:'uppercase',fontWeight:800,color:'#E8730F'}}>· Preferred</span>}{i>=3&&<span style={{marginLeft:8,fontSize:9.5,letterSpacing:'.1em',textTransform:'uppercase',fontWeight:800,color:'#888'}}>· Fallback</span>}</li>)}
           </ol>
         </>}
-        {industryData?.flag&&<><h5>4. Regulatory flag</h5><div className={'flag '+industryData.flag.level}><i className={'fas '+(industryData.flag.level==='warn'?'fa-info-circle':'fa-exclamation-triangle')+' ic'}></i><div><strong>{industryData.flag.title}.</strong> {industryData.flag.body}</div></div></>}
-        {distinctive&&<><h5>{industryData?.flag?'5':'4'}. Name distinctiveness score</h5><div className="row"><span className="k">Score</span><span className="v" style={{color:color(analysis.score)}}>{analysis.score}/100 · {label(analysis.score)}</span></div>{analysis.issues.map((iss,i)=><div key={i} className={'flag '+(iss.level==='crit'?'crit':'warn')}><i className={'fas '+(iss.level==='crit'?'fa-times-circle':'fa-info-circle')+' ic'}></i><div>{iss.text}</div></div>)}{analysis.issues.length===0&&<div className="flag ok"><i className="fas fa-check-circle ic" style={{color:'#1E7B3C'}}></i><div>No critical issues detected. Ready for PACRA name-clearance submission.</div></div>}</>}
-        <h5>{industryData?.flag?(distinctive?'6':'5'):(distinctive?'5':'4')}. Readiness</h5>
+        {industryData?.flag&&<><h5>5. Regulatory flag</h5><div className={'flag '+industryData.flag.level}><i className={'fas '+(industryData.flag.level==='warn'?'fa-info-circle':'fa-exclamation-triangle')+' ic'}></i><div><strong>{industryData.flag.title}.</strong> {industryData.flag.body}</div></div></>}
+        {distinctive&&<><h5>{industryData?.flag?'6':'5'}. Name distinctiveness score</h5><div className="row"><span className="k">Score</span><span className="v" style={{color:color(analysis.score)}}>{analysis.score}/100 · {label(analysis.score)}</span></div>{analysis.issues.map((iss,i)=><div key={i} className={'flag '+(iss.level==='crit'?'crit':'warn')}><i className={'fas '+(iss.level==='crit'?'fa-times-circle':'fa-info-circle')+' ic'}></i><div>{iss.text}</div></div>)}{analysis.issues.length===0&&<div className="flag ok"><i className="fas fa-check-circle ic" style={{color:'#1E7B3C'}}></i><div>No critical issues detected. Ready for PACRA name-clearance submission.</div></div>}</>}
+        <h5>{industryData?.flag?(distinctive?'7':'6'):(distinctive?'6':'5')}. Readiness</h5>
         <div className="row"><span className="k">Overall readiness</span><span className="v" style={{color:color(readiness),fontSize:14}}>{readiness}% · {label(readiness)}</span></div>
         <div className="foot"><strong>Prepared by StartEasy Administrative Services Desk</strong> · Lusaka, Zambia · {CONTACT_EMAIL} · +260 768 526 191<br/><span style={{fontStyle:'italic',display:'block',marginTop:8}}>This preview is generated by the StartEasy platform from your answers. It is designed to reduce avoidable name-clearance and registration errors. PACRA itself warns that name-clearance criteria are not exhaustive and has issued a public notice titled "AVOID PAYING FOR REVERTED CASES." StartEasy is not a government authority or regulator. Where a matter requires legal, tax, audit or other regulated professional advice, we refer you to a qualified professional.</span></div>
       </div>
@@ -1207,7 +1383,7 @@ function WReport({scope,idea,primaryActivity,secondaryActivities,industryData,st
   </div>;
 }
 
-function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryData,structureData,distinctive,descriptor,names,analysis,readiness,embeddedLibraryWords}){
+function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryData,structureData,legalEnding,distinctive,descriptor,names,analysis,readiness,embeddedLibraryWords}){
   const pct=readiness;
   const ringColor=color(readiness);
   const circ=2*Math.PI*45;
@@ -1235,6 +1411,7 @@ function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryD
       <SideRow label="Secondary" value={secondaryActivities.length>0?secondaryActivities.length+' selected':'—'} done={secondaryActivities.length>0}/>
       {scope!=='structure'&&<SideRow label="Industry" value={industryData?industryData.label:'—'} done={!!industryData} color={industryData?.color}/>}
       {scope!=='names'&&<SideRow label="Structure" value={structureData?structureData.label:'—'} done={!!structureData}/>}
+      {scope!=='names'&&<SideRow label="Legal ending" value={structureData?(legalEnding||'(none)'):'—'} done={!!structureData}/>}
       {scope!=='structure'&&<>
         <SideRow label="Descriptor" value={descriptor?descriptor.toUpperCase():'—'} done={!!descriptor}/>
         <SideRow label="Distinctive" value={distinctive?distinctive.toUpperCase():'—'} done={!!distinctive} color={distinctive?color(analysis.score):null}/>
@@ -1258,6 +1435,9 @@ function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryD
       <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Need help?</div>
       <p style={{fontSize:12,lineHeight:1.55,color:'rgba(10,31,18,.65)',margin:'0 0 12px'}}>You can engage a StartEasy officer at any stage — the wizard stays free to use.</p>
       <a href={waUrl('Hello StartEasy — I need help with the Structure & Name Advisory.')} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,padding:'10px 16px',background:'#25D366',color:'#fff',borderRadius:8,fontSize:12.5,fontWeight:700,textDecoration:'none'}}><i className="fab fa-whatsapp"></i> Talk to an officer</a>
+    </div>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,fontSize:11,color:'rgba(10,31,18,.45)',marginTop:16}}>
+      <i className="fas fa-cloud-arrow-up" style={{color:'#1E7B3C'}}></i> Progress saved on this device
     </div>
   </aside>;
 }
@@ -1333,7 +1513,10 @@ function ServiceCard({serviceKey,onClick}){
   </button>;
 }
 
-function Home({go}){
+function Home({go,onResume}){
+  const [snap,setSnap]=useState(()=>readSnapshot());
+  const resumable=hasResumableWizard(snap);
+  const savedLabel=snap&&snap.savedAt?timeAgo(snap.savedAt):'';
   const orientation=[
     {icon:'fa-compass',title:'Business Structure & Name',desc:'Self-service wizard — K25, done within 1 hour.',route:'wizard'},
     {icon:'fa-rocket',title:'Start a business',desc:'Register a name, incorporate a company.',route:'desk',arg:'pacra'},
@@ -1356,6 +1539,22 @@ function Home({go}){
         </div>
       </div>
     </section>
+
+    {resumable&&<section style={{maxWidth:1240,margin:'0 auto',padding:'28px 24px 0'}}>
+      <div className="fadein" style={{background:'linear-gradient(135deg,#FFF9E6,#FFFCF0)',border:'1.5px solid #F0E0A0',borderRadius:12,padding:'20px 24px',display:'flex',gap:16,alignItems:'center',flexWrap:'wrap'}}>
+        <span style={{width:42,height:42,borderRadius:11,background:'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className="fas fa-rotate-left" style={{color:'#fff',fontSize:16}}></i></span>
+        <div style={{flex:'1 1 280px',minWidth:0}}>
+          <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:4}}>Welcome back</div>
+          <div style={{fontSize:14.5,color:'#0A1F12',fontWeight:600,lineHeight:1.5}}>You have a Structure &amp; Name assessment in progress{savedLabel?` — saved ${savedLabel}`:''}.</div>
+          <div style={{fontSize:12.5,color:'rgba(10,31,18,.6)',marginTop:4,lineHeight:1.55}}>Your answers are stored on this device, so you can pick up exactly where you stopped.</div>
+        </div>
+        <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+          <button onClick={onResume} style={{padding:'12px 20px',background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,fontSize:13.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8}}><i className="fas fa-play"></i> Continue where I left off</button>
+          <button onClick={()=>{clearSnapshot();setSnap(null)}} style={{padding:'12px 20px',background:'#fff',color:'#0A1F12',border:'1px solid rgba(10,31,18,.15)',borderRadius:8,fontSize:13.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>Start fresh</button>
+        </div>
+      </div>
+    </section>}
+
     <section style={{maxWidth:1240,margin:'0 auto',padding:'40px 24px 0'}}><NotReg/></section>
     <section style={{maxWidth:1240,margin:'0 auto',padding:'56px 24px'}}>
       <Head eyebrow="Start here" title="What brings you to StartEasy today?" sub="Pick the closest match. We will show only what applies to you." style={{marginBottom:40,maxWidth:'42rem'}}/>
@@ -1665,6 +1864,7 @@ function App(){
   const [route,setRoute]=useState('home');
   const [routeArg,setRouteArg]=useState(null);
   const [wizardScope,setWizardScope]=useState(null);
+  const [wizardSession,setWizardSession]=useState(0);
   const [serviceModal,setServiceModal]=useState(null);
   const [engagementService,setEngagementService]=useState(null);
   const [engagementClient,setEngagementClient]=useState(null);
@@ -1674,7 +1874,7 @@ function App(){
   const go=useCallback((r,arg)=>{setRoute(r);setRouteArg(arg||null);try{location.hash='#/'+r+(arg?'/'+arg:'')}catch(e){}window.scrollTo({top:0,behavior:'auto'})},[]);
   useEffect(()=>{const h=()=>{const raw=(location.hash||'').replace(/^#\/?/,'');const parts=raw.split('/').filter(Boolean);setRoute(parts[0]||'home');setRouteArg(parts[1]||null)};window.addEventListener('hashchange',h);return()=>window.removeEventListener('hashchange',h)},[]);
 
-  const openWizard=useCallback(scope=>{setWizardScope(scope||null);go('wizard')},[go]);
+  const openWizard=useCallback(scope=>{setWizardScope(scope||null);setWizardSession(s=>s+1);go('wizard')},[go]);
   const proceedToEngagement=useCallback(s=>{setServiceModal(null);setTimeout(()=>setEngagementService(s),260)},[]);
   const agreedEngagement=useCallback(({client,service})=>{setEngagementClient({client,service});setEngagementService(null);setTimeout(()=>setPaymentOpen(true),280)},[]);
   const closePayment=useCallback(()=>{setPaymentOpen(false);setTimeout(()=>setEngagementClient(null),260)},[]);
@@ -1683,14 +1883,14 @@ function App(){
 
   const view=()=>{
     switch(route){
-      case 'wizard': return <Wizard initialScope={wizardScope} onExit={()=>go('home')} onOrderFormal={handleWizardOrder}/>;
+      case 'wizard': return <Wizard key={'wz'+wizardSession} initialScope={wizardScope} onExit={()=>go('home')} onOrderFormal={handleWizardOrder}/>;
       case 'desks': return <DesksPage go={go}/>;
       case 'desk': return <DeskDetail deskId={routeArg||'pacra'} go={go} onServiceClick={handleServiceClick} onWizard={openWizard}/>;
       case 'services': return <ServicesPage onServiceClick={handleServiceClick}/>;
       case 'engagement': return <EngagementPage go={go}/>;
       case 'pricing': return <PricingPage go={go}/>;
       case 'about': return <AboutPage/>;
-      default: return <Home go={go}/>;
+      default: return <Home go={go} onResume={()=>openWizard(null)}/>;
     }
   };
 
@@ -1702,7 +1902,7 @@ function App(){
     {serviceModal&&<ServiceDetail service={serviceModal} onClose={()=>setServiceModal(null)} onProceed={proceedToEngagement} onWizard={openWizard}/>}
     {engagementService&&<Engagement service={engagementService} onClose={()=>setEngagementService(null)} onAgreed={agreedEngagement}/>}
     {paymentOpen&&engagementClient&&<Modal open={paymentOpen} onClose={closePayment} eyebrow="Engagement payment" maxWidth="52rem">
-      <Payment service={engagementClient.service} client={engagementClient.client} onClose={closePayment} onDone={()=>{closePayment();setTimeout(()=>go('home'),320)}}/>
+      <Payment service={engagementClient.service} client={engagementClient.client} onClose={closePayment} onDone={()=>{clearSnapshot();closePayment();setTimeout(()=>go('home'),320)}}/>
     </Modal>}
   </div>;
 }
