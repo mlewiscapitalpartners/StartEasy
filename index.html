@@ -217,20 +217,50 @@ const PAYMENT_METHODS = {
 };
 
 /* =========================================================
-   SERVICE FULFILMENT
+   SERVICE FULFILMENT — keyed by desk
    ========================================================= */
 const SERVICE_FULFILMENT = {
-  startup: { name:'Business Startup Desk engagement', sla:'Acknowledged within 4 working hours', channel:'Email + WhatsApp',
+  pacra: { name:'PACRA Desk engagement', sla:'Acknowledged within 4 working hours', channel:'Email + WhatsApp',
     nextSteps:[
-      {t:'Payment verified',d:'StartEasy confirms your payment against our records.',when:'Within 4 working hours'},
-      {t:'Officer assigned',d:'A named officer is assigned to your startup matter.',when:'Within 1 working day'},
-      {t:'Intake review',d:'Your structure, names and documents are reviewed.',when:'Within 2 working days'},
+      {t:'Payment verified',d:'StartEasy confirms your service fee against our records.',when:'Within 4 working hours'},
+      {t:'Officer assigned',d:'A named officer is assigned to your PACRA matter.',when:'Within 1 working day'},
+      {t:'Intake review',d:'Your structure, names and documents are reviewed against PACRA requirements.',when:'Within 2 working days'},
       {t:'Preparation & quality check',d:'Applications are prepared and checked before submission.',when:'As agreed'},
-      {t:'Submission support',d:'The officer assists with submission through the official channel.',when:'As you are ready'},
-      {t:'Tracking & completion',d:'The case is tracked until the outcome is known.',when:'Throughout'}
+      {t:'Submission on your behalf',d:'The officer submits your application through the official PACRA channel.',when:'As you are ready'},
+      {t:'Tracking & completion',d:'The case is tracked until the PACRA outcome is known.',when:'Throughout'}
     ],
-    actions:['Watch WhatsApp for the officer introduction.','Have your ID and proposed names ready.','Respond promptly to document requests.'] },
-  compliance: { name:'Business Compliance Desk engagement', sla:'Active immediately — first review within 5 business days', channel:'Your account + Email',
+    actions:['Watch WhatsApp for the officer introduction.','Have your NRC or passport and proposed names ready.','Respond promptly to document requests.'] },
+  zra: { name:'ZRA Desk engagement', sla:'Acknowledged within 4 working hours', channel:'Email + WhatsApp',
+    nextSteps:[
+      {t:'Payment verified',d:'StartEasy confirms your service fee against our records.',when:'Within 4 working hours'},
+      {t:'Officer assigned',d:'A named officer is assigned to your ZRA matter.',when:'Within 1 working day'},
+      {t:'Document review',d:'Your identification and entity documents are checked for exact-name consistency.',when:'Within 2 working days'},
+      {t:'Preparation',d:'The registration or filing is prepared and quality-checked.',when:'As agreed'},
+      {t:'Submission on your behalf',d:'The officer submits through the official ZRA channel.',when:'As you are ready'},
+      {t:'Tax calendar set',d:'Applicable tax types and due dates are added to your compliance calendar.',when:'On completion'}
+    ],
+    actions:['Watch WhatsApp for the officer introduction.','Have your TPIN, registration certificate and bank details ready.','Respond promptly to any ZRA query.'] },
+  napsa: { name:'NAPSA Desk engagement', sla:'Acknowledged within 4 working hours', channel:'Email + WhatsApp',
+    nextSteps:[
+      {t:'Payment verified',d:'StartEasy confirms your service fee against our records.',when:'Within 4 working hours'},
+      {t:'Officer assigned',d:'A named officer is assigned to your NAPSA matter.',when:'Within 1 working day'},
+      {t:'Employee schedule compiled',d:'Employee names, IDs and engagement dates are verified.',when:'Within 2 working days'},
+      {t:'Registration prepared',d:'Employer and/or employee registrations are prepared and checked.',when:'As agreed'},
+      {t:'Submission on your behalf',d:'The officer submits through the official NAPSA channel.',when:'As you are ready'},
+      {t:'Contribution calendar set',d:'Monthly contribution and return dates are added to your calendar.',when:'On completion'}
+    ],
+    actions:['Watch WhatsApp for the officer introduction.','Have your registration certificate and employee details ready.','Respond promptly to any NAPSA query.'] },
+  licensing: { name:'Licensing Desk engagement', sla:'Acknowledged within 4 working hours', channel:'Email + WhatsApp',
+    nextSteps:[
+      {t:'Payment verified',d:'StartEasy confirms your service fee against our records.',when:'Within 4 working hours'},
+      {t:'Officer assigned',d:'A named officer is assigned to your licensing matter.',when:'Within 1 working day'},
+      {t:'Requirement mapping',d:'The correct licence category and authority are confirmed.',when:'Within 2 working days'},
+      {t:'Document preparation',d:'Your application pack is prepared and quality-checked.',when:'As agreed'},
+      {t:'Submission on your behalf',d:'The officer submits through the correct official channel.',when:'As you are ready'},
+      {t:'Renewal diarised',d:'The renewal date is added to your compliance calendar.',when:'On issue'}
+    ],
+    actions:['Watch WhatsApp for the officer introduction.','Have your lease, registration certificate and TPIN ready.','Book any required premises inspection early.'] },
+  compliance: { name:'Compliance Desk engagement', sla:'Active immediately — first review within 5 business days', channel:'Your account + Email',
     nextSteps:[
       {t:'Engagement activated',d:'Your compliance desk engagement is now active.',when:'Instant'},
       {t:'Compliance calendar populated',d:'Recurring filings, renewals and deadlines are loaded to your calendar.',when:'Within 24 hours'},
@@ -239,35 +269,17 @@ const SERVICE_FULFILMENT = {
       {t:'First compliance review',d:'An officer performs an initial compliance review of your account.',when:'Within 5 business days'}
     ],
     actions:['Add your current licences, permits and renewals to your calendar.','Upload copies of your registration certificate, TPIN and licence documents.','Watch for your first compliance review summary.'] },
-  tax: { name:'Tax & Employment Administration engagement', sla:'Officer assigned within 1 working day', channel:'WhatsApp + Email + your account',
-    nextSteps:[
-      {t:'Payment verified',d:'Your engagement is now active.',when:'Within 4 working hours'},
-      {t:'Officer assigned',d:'A named officer is assigned to your tax / employment matter.',when:'Within 1 working day'},
-      {t:'Document review',d:'The officer reviews your pack and identifies any gaps.',when:'Within 2 working days'},
-      {t:'Coordination',d:'Administrative coordination with the relevant authority begins.',when:'As agreed'},
-      {t:'Milestone updates',d:'You receive updates at each milestone.',when:'Throughout'}
-    ],
-    actions:['Watch WhatsApp for the officer introduction.','Have your TPIN, registration certificate and employee details ready.','Respond promptly to any query from the authority.'] },
   nameReport: { name:'Name Readiness Report', sla:'Delivered within 2 business days', channel:'Email + WhatsApp',
     nextSteps:[
-      {t:'Payment verified',d:'StartEasy confirms your payment against our records.',when:'Within 4 working hours'},
+      {t:'Payment verified',d:'StartEasy confirms your service fee against our records.',when:'Within 4 working hours'},
       {t:'Analyst assigned',d:'A named analyst is assigned to screen your name(s).',when:'Within 1 working day'},
       {t:'Screening performed',d:'Protected-term check, similarity analysis and saturation review.',when:'Within 1 working day'},
       {t:'Report delivered',d:'Formal PDF report sent to your email on file.',when:'Within 2 business days'}
     ],
     actions:['Watch your email — check your spam folder too.','Reply with any additional names you want screened.'] },
-  licence: { name:'Licensing & Permits engagement', sla:'Officer assigned within 1 working day', channel:'WhatsApp + Email',
-    nextSteps:[
-      {t:'Payment verified',d:'Your engagement is now active.',when:'Within 4 working hours'},
-      {t:'Officer assigned',d:'A named officer is assigned to your licensing matter.',when:'Within 1 working day'},
-      {t:'Requirement mapping',d:'The correct licence category and authority are confirmed.',when:'Within 2 working days'},
-      {t:'Document preparation',d:'Your application pack is prepared and quality-checked.',when:'As agreed'},
-      {t:'Submission & tracking',d:'Submission support and case tracking through to outcome.',when:'As agreed'}
-    ],
-    actions:['Watch WhatsApp for the officer introduction.','Have your lease, registration certificate and TPIN ready.','Book any required premises inspection early.'] },
   generic: { name:'StartEasy service', sla:'Acknowledged within 4 working hours', channel:'Email + WhatsApp',
     nextSteps:[
-      {t:'Payment verified',d:'StartEasy confirms your payment against our records.',when:'Within 4 working hours'},
+      {t:'Payment verified',d:'StartEasy confirms your service fee against our records.',when:'Within 4 working hours'},
       {t:'Service activated',d:'Your request is logged and activated.',when:'Within 4 working hours'},
       {t:'Officer assigned',d:'A named officer is assigned to your matter.',when:'Within 1 working day'},
       {t:'Delivery begins',d:'The agreed work begins and you receive updates.',when:'As agreed'}
@@ -276,234 +288,113 @@ const SERVICE_FULFILMENT = {
 };
 
 /* =========================================================
-   SERVICES — this is the heart of the app.
-   Practical, priced, requestable.
+   SERVICE GROUPS — organised around the desks
    ========================================================= */
 const SERVICE_GROUPS = [
+  /* ============= PACRA DESK ============= */
   {
-    id:'startup',
-    code:'A',
-    title:'Business Startup Desk',
-    subtitle:'Set up right the first time',
-    color:'#2E9C4A',
-    icon:'fa-rocket',
-    intro:'For entrepreneurs and founders establishing a new business in Zambia. Administrative preparation, name guidance and registration support — checked before submission.',
+    id:'pacra', code:'1', title:'PACRA Desk', subtitle:'Business registration & company setup',
+    authority:'Patents and Companies Registration Agency',
+    color:'#2E9C4A', icon:'fa-building',
+    actsOn:'StartEasy acts on your behalf with PACRA — we prepare, check and submit your applications, and track your case through to outcome. We are not PACRA.',
+    intro:'Business names, private company incorporation, amendments, annual returns, beneficial ownership and deregistration — prepared to the standard PACRA expects.',
     services:[
-      {
-        code:'A1',
-        title:'Business Structure Guidance',
-        tagline:'Choose the right structure before you commit',
-        desc:'A guided session explaining the difference between a Business Name, a Private Company Limited by Shares, a Company Limited by Guarantee, a cooperative and other structures — so you register the right one.',
-        deliverables:['Structure comparison for your situation','Written recommendation with reasons','Referral to a qualified professional where legal advice is required'],
-        priceZm:'K150', priceUsd:'$15', timeline:'Delivered within 1 business day', serviceKey:'startup'
-      },
-      {
-        code:'A2',
-        title:'Proposed Name Preparation',
-        tagline:'Three strong candidate names, correctly formatted',
-        desc:'We help you develop and format proposed names, prepare alternatives in strict order of preference, and review them against published naming guidance before you submit.',
-        deliverables:['Name brainstorming session','Three candidate names in preference order','Administrative review against naming guidance','Pre-submission checklist'],
-        priceZm:'K100', priceUsd:'$10', timeline:'Delivered within 1 business day', serviceKey:'startup', popular:true
-      },
-      {
-        code:'A3',
-        title:'Name Clearance Support',
-        tagline:'Prepare, submit and track the clearance case',
-        desc:'We prepare the clearance information, check consistency, support the submission and track the case — and explain in plain language any query or reversion you receive.',
-        deliverables:['Clearance information prepared','Consistency check across all names','Submission information pack','Case tracking','Plain-language explanation of any query or reversion'],
-        priceZm:'K250', priceUsd:'$25', timeline:'1–5 working days', serviceKey:'startup', popular:true
-      },
-      {
-        code:'A4',
-        title:'Company Incorporation Preparation',
-        tagline:'The full incorporation pack, quality-checked',
-        desc:'Administrative preparation of your incorporation application — directors, shareholders, shareholding, registered office, business activities, declarations and supporting documents — with a pre-submission quality check.',
-        deliverables:['Company information compiled','Director & shareholder particulars','Shareholding structure','Registered office evidence','Business activities description','Supporting declarations','Pre-submission quality check'],
-        priceZm:'K850', priceUsd:'$85', timeline:'3–14 working days after name clearance', serviceKey:'startup', popular:true
-      },
-      {
-        code:'A5',
-        title:'Business Name Registration Support',
-        tagline:'BN Form III prepared and submitted correctly',
-        desc:'Administrative preparation and submission support for business-name registration, including PACRA BN Form III (Application for Registration of a Business Name).',
-        deliverables:['Application preparation','Supporting document check','Submission support','Reference tracking'],
-        priceZm:'K450', priceUsd:'$45', timeline:'2–7 working days after clearance', serviceKey:'startup'
-      }
+      {code:'P1',title:'Business Structure Guidance',tagline:'Choose the right structure before you commit',desc:'A guided session explaining the difference between a Business Name, a Private Company Limited by Shares, a Company Limited by Guarantee, a cooperative and other structures — so you register the right one.',deliverables:['Structure comparison for your situation','Written recommendation with reasons','Referral to a qualified professional where legal advice is required'],priceZm:'K150',priceUsd:'$15',timeline:'Delivered within 1 business day',serviceKey:'pacra'},
+      {code:'P2',title:'Proposed Name Preparation',tagline:'Three strong candidate names, correctly formatted',desc:'We help you develop and format proposed names, prepare alternatives in strict order of preference, and review them against published naming guidance before you submit.',deliverables:['Name brainstorming session','Three candidate names in preference order','Administrative review against naming guidance','Pre-submission checklist'],priceZm:'K100',priceUsd:'$10',timeline:'Delivered within 1 business day',serviceKey:'pacra',popular:true},
+      {code:'P3',title:'Name Clearance Support',tagline:'Prepare, submit and track the clearance case',desc:'We prepare the clearance information, check consistency, submit on your behalf and track the case — and explain in plain language any query or reversion you receive.',deliverables:['Clearance information prepared','Consistency check across all names','Submission information pack','Submission on your behalf','Case tracking','Plain-language explanation of any query or reversion'],priceZm:'K250',priceUsd:'$25',timeline:'1–5 working days',serviceKey:'pacra',popular:true},
+      {code:'P4',title:'Company Incorporation Preparation',tagline:'The full incorporation pack, quality-checked',desc:'Administrative preparation of your private limited company incorporation — directors, shareholders, shareholding, registered office, business activities, declarations and supporting documents — with a pre-submission quality check and submission on your behalf.',deliverables:['Company information compiled','Director & shareholder particulars','Shareholding structure','Registered office evidence','Business activities description','Supporting declarations','Pre-submission quality check','Submission on your behalf'],priceZm:'K850',priceUsd:'$85',timeline:'3–14 working days after name clearance',serviceKey:'pacra',popular:true},
+      {code:'P5',title:'Business Name Registration Support',tagline:'BN Form III prepared and submitted correctly',desc:'Administrative preparation and submission support for business-name registration, including PACRA BN Form III (Application for Registration of a Business Name).',deliverables:['Application preparation','Supporting document check','Submission on your behalf','Reference tracking'],priceZm:'K450',priceUsd:'$45',timeline:'2–7 working days after clearance',serviceKey:'pacra'},
+      {code:'P6',title:'Company Amendments',tagline:'Change directors, shareholders, address or activities',desc:'Administrative preparation of amendment filings — changes to directors, shareholders, company secretary, registered office, share capital, name or business activities. Includes cross-desk notification.',deliverables:['Amendment type confirmed','Correct form identified','Resolution preparation support','Consistency check','Submission on your behalf','Cross-desk notification (ZRA, NAPSA, council)'],priceZm:'K500',priceUsd:'$50',timeline:'3–10 working days',serviceKey:'pacra'},
+      {code:'P7',title:'Annual Return & Statutory Filings',tagline:'Filed within the statutory window',desc:'Administrative preparation and filing of your annual return against your current statutory registers, with full figure reconciliation.',deliverables:['Statutory registers updated','Annual return prepared','Figure reconciliation','Filing on your behalf','Acknowledgement retained','Next filing scheduled'],priceZm:'K600',priceUsd:'$60',timeline:'Filed within the statutory window',serviceKey:'pacra'},
+      {code:'P8',title:'Beneficial Ownership Filings',tagline:'Identify and record beneficial owners correctly',desc:'Administrative support for beneficial-ownership information requirements applicable to companies — mapping the ownership chain to natural persons and preparing the filing.',deliverables:['Ownership chain mapped','Beneficial owners identified','Percentage reconciliation','Filing prepared and submitted on your behalf'],priceZm:'K350',priceUsd:'$35',timeline:'Varies',serviceKey:'pacra'},
+      {code:'P9',title:'Business Closure / Deregistration',tagline:'Close properly, with records intact',desc:'Administrative support to close a business correctly — strike off, final tax position, employer deregistration, licence surrender and record archiving.',deliverables:['Outstanding filings regularised','Tax clearance obtained','Employer deregistration','Licence surrender support','Deregistration application prepared and submitted on your behalf','Final records archived'],priceZm:'K750',priceUsd:'$75',timeline:'Varies — often several weeks',serviceKey:'pacra'}
     ]
   },
+  /* ============= ZRA DESK ============= */
   {
-    id:'compliance',
-    code:'B',
-    title:'Business Compliance Desk',
-    subtitle:'Stay compliant, month after month',
-    color:'#0E7C7B',
-    icon:'fa-calendar-check',
-    intro:'The recurring side of StartEasy. A customized compliance calendar keeps filings, renewals and statutory deadlines visible — with reminders at 60, 30 and 7 days so nothing lapses.',
+    id:'zra', code:'2', title:'ZRA Desk', subtitle:'Tax registration & taxpayer administration',
+    authority:'Zambia Revenue Authority',
+    color:'#1B6CA8', icon:'fa-file-invoice-dollar',
+    actsOn:'StartEasy acts on your behalf with ZRA — we prepare, check and submit your registrations and filings, and track your case through to outcome. We are not ZRA.',
+    intro:'TPIN, VAT, PAYE, tax clearance, customs readiness and taxpayer updates — administrative coordination without representing StartEasy as a tax practice.',
+    services:[
+      {code:'Z1',title:'TPIN Registration',tagline:'Your Taxpayer Identification Number',desc:'Administrative preparation and submission support to obtain a Taxpayer Identification Number — the foundation of every tax obligation in Zambia.',deliverables:['Identification documents verified','Exact-name consistency check','Registration submitted on your behalf','TPIN recorded and stored','Tax calendar started'],priceZm:'K350',priceUsd:'$35',timeline:'1–10 working days',serviceKey:'zra',popular:true},
+      {code:'Z2',title:'VAT Registration',tagline:'Register for Value Added Tax correctly',desc:'Administrative support for VAT registration once turnover reaches the applicable threshold, or voluntarily where that suits your model.',deliverables:['Threshold assessment','Turnover evidence pack','Application prepared and submitted on your behalf','VAT returns added to your compliance calendar'],priceZm:'K450',priceUsd:'$45',timeline:'Varies',serviceKey:'zra'},
+      {code:'Z3',title:'PAYE Employer Registration',tagline:'Register as an employer for PAYE',desc:'Administrative support to register as an employer for Pay As You Earn and set up payroll deduction procedures.',deliverables:['Employer registration submitted on your behalf','Employee particulars compiled','Payroll cycle documented','Monthly PAYE returns diarised'],priceZm:'K450',priceUsd:'$45',timeline:'Varies',serviceKey:'zra'},
+      {code:'Z4',title:'Tax Clearance Support',tagline:'Get your tax account in order',desc:'Administrative support for obtaining tax clearance — including a full account sweep, regularising outstanding returns and preparing the application.',deliverables:['Tax account position reviewed','Outstanding returns identified','Regularisation support','Clearance application prepared and submitted on your behalf','Expiry reminder set'],priceZm:'K400',priceUsd:'$40',timeline:'Varies depending on account status',serviceKey:'zra',popular:true},
+      {code:'Z5',title:'Customs / Import-Export Registration',tagline:'Register for cross-border trade',desc:'Administrative support to register with Customs and build an import/export document pack template ready for clearance.',deliverables:['Customs registration prepared','Classification guidance','Permit requirement screening','Document pack template'],priceZm:'K650',priceUsd:'$65',timeline:'Varies',serviceKey:'zra'},
+      {code:'Z6',title:'Taxpayer Information Updates',tagline:'Keep your ZRA records current',desc:'Administrative support to update your registered name, address, banking details or responsible-officer information with ZRA.',deliverables:['Change scope confirmed','Correct form identified','Supporting evidence prepared','Update submitted on your behalf'],priceZm:'K300',priceUsd:'$30',timeline:'Varies',serviceKey:'zra'},
+      {code:'Z7',title:'Tax Account Administration',tagline:'Review, regularise and clear blocking issues',desc:'Administrative review of your tax account position, identification of outstanding returns and support to regularise and clear blocking issues.',deliverables:['Full account sweep','Outstanding returns listed','Regularisation plan','Filing support','Status monitoring'],priceZm:'K450',priceUsd:'$45',timeline:'Varies',serviceKey:'zra'}
+    ]
+  },
+  /* ============= NAPSA DESK ============= */
+  {
+    id:'napsa', code:'3', title:'NAPSA Desk', subtitle:'Employer & employee social security',
+    authority:'National Pension Scheme Authority',
+    color:'#7A4FA3', icon:'fa-users',
+    actsOn:'StartEasy acts on your behalf with NAPSA — we prepare, check and submit your registrations, and set up your contribution cycle. We are not NAPSA.',
+    intro:'Employer registration, employee registration, monthly contributions, returns and reconciliation — keeping the statutory contribution cycle clean.',
+    services:[
+      {code:'N1',title:'NAPSA Employer Registration',tagline:'Register as an employer for social security',desc:'Administrative support to register as an employer with NAPSA and set up the monthly contribution cycle.',deliverables:['Employer registration submitted on your behalf','Employee schedule prepared','Employer number recorded','Contribution calendar set'],priceZm:'K450',priceUsd:'$45',timeline:'Varies',serviceKey:'napsa',popular:true},
+      {code:'N2',title:'Employee Registration',tagline:'Register each employee, correctly',desc:'Administrative support to register individual employees promptly after engagement, with verified identification details.',deliverables:['Employee registration submitted on your behalf','Identification verification','Exact-name matching','Employee schedule maintained'],priceZm:'K200',priceUsd:'$20',timeline:'Ongoing',serviceKey:'napsa'},
+      {code:'N3',title:'Monthly Contributions Administration',tagline:'Calculate, remit and reconcile',desc:'Administrative support to calculate, remit and reconcile statutory contributions against your payroll every month.',deliverables:['Contribution calculation support','Remittance preparation','Monthly reconciliation','Statement check'],priceZm:'K350 / month',priceUsd:'$35 / month',timeline:'Ongoing monthly',serviceKey:'napsa'},
+      {code:'N4',title:'Contribution Returns & Reconciliation',tagline:'File returns, reconcile statements',desc:'Administrative support to file contribution returns and reconcile the NAPSA statement against your payroll records.',deliverables:['Return preparation','Filing on your behalf','Statement reconciliation','Discrepancy resolution support'],priceZm:'K300',priceUsd:'$30',timeline:'Monthly',serviceKey:'napsa'},
+      {code:'N5',title:'Employee Data Updates',tagline:'Joiners, leavers, name corrections',desc:'Administrative support for employee data changes — joiners, leavers, name corrections and identification updates.',deliverables:['Change type confirmed','Supporting evidence prepared','Update submitted on your behalf','Record confirmation'],priceZm:'K150',priceUsd:'$15',timeline:'As needed',serviceKey:'napsa'}
+    ]
+  },
+  /* ============= LICENSING DESK ============= */
+  {
+    id:'licensing', code:'4', title:'Licensing Desk', subtitle:'Local authority & sector regulator permits',
+    authority:'Councils, health authorities and sector regulators',
+    color:'#E8730F', icon:'fa-id-card',
+    actsOn:'StartEasy acts on your behalf with councils and sector regulators — we prepare, check and submit your applications, and track your case through to outcome. We are not the council or a regulator.',
+    intro:'Business licences, health and food handling permits, premises and zoning approvals, fire safety, sector licences and renewals — trading legality, established correctly.',
+    services:[
+      {code:'L1',title:'Council Business Licence',tagline:'The trading licence for your location',desc:'Administrative support to obtain or renew the trading licence issued by the local authority covering your physical location.',deliverables:['Correct licence category confirmed','Premises and registration documents prepared','Inspection coordination','Fee payment guidance','Licence collection guidance','Renewal date diarised'],priceZm:'K500',priceUsd:'$50',timeline:'5–21 working days',serviceKey:'licensing',popular:true},
+      {code:'L2',title:'Health & Food Handling Permit',tagline:'For restaurants, bars and food businesses',desc:'Administrative support for health-related approval and staff food-handler medical certification.',deliverables:['Health requirements confirmed','Premises inspection readiness checklist','Food handler certification tracker','Application pack prepared and submitted on your behalf'],priceZm:'K450',priceUsd:'$45',timeline:'Varies',serviceKey:'licensing',popular:true},
+      {code:'L3',title:'Premises, Zoning & Fire Requirements',tagline:'Confirm the premises may lawfully be used',desc:'Administrative support to confirm permitted use, prepare lease or ownership evidence, and obtain any planning or change-of-use consent.',deliverables:['Zoning pre-check','Lease or title evidence prepared','Planning consent support','Fire safety screening','Approvals retained on file'],priceZm:'K400',priceUsd:'$40',timeline:'Varies',serviceKey:'licensing'},
+      {code:'L4',title:'Sector Regulator Licence',tagline:'Health, education, transport, finance, mining, agriculture',desc:'Administrative support to identify the correct sector regulator, prepare the technical documentation and track the application.',deliverables:['Correct regulator identified','Licensing requirements confirmed','Technical documentation pack','Submission on your behalf','Query response tracking','Renewal and reporting diarised'],priceZm:'From K750',priceUsd:'From $75',timeline:'Varies by regulator',serviceKey:'licensing'},
+      {code:'L5',title:'Liquor Licence',tagline:'Sale and supply of alcohol',desc:'Administrative support for liquor licensing for bars, restaurants, bottle stores and hotels.',deliverables:['Licence category confirmed','Premises evidence prepared','Application prepared and submitted on your behalf','Renewal diarised'],priceZm:'K600',priceUsd:'$60',timeline:'Varies',serviceKey:'licensing'},
+      {code:'L6',title:'Transport / PSV Licence',tagline:'Passenger service vehicle and transport operator',desc:'Administrative support for passenger service vehicle and transport operator licensing requirements.',deliverables:['Licence category confirmed','Vehicle and operator documentation prepared','Application submitted on your behalf','Compliance calendar entries'],priceZm:'K650',priceUsd:'$65',timeline:'Varies',serviceKey:'licensing'},
+      {code:'L7',title:'Licence & Permit Renewal',tagline:'Renew before it lapses',desc:'Administrative support to renew business licences, permits and registrations — starting 60 days before expiry so there is no gap.',deliverables:['Licence register built','Renewal started 60 days ahead','Updated supporting documents','Renewal submitted on your behalf','Next renewal reminder set'],priceZm:'K300',priceUsd:'$30',timeline:'Start 60 days before expiry',serviceKey:'licensing'}
+    ]
+  },
+  /* ============= COMPLIANCE DESK ============= */
+  {
+    id:'compliance', code:'5', title:'Compliance Desk', subtitle:'Ongoing filings, renewals & coordination',
+    authority:'Cross-desk administrative coordination',
+    color:'#0E7C7B', icon:'fa-calendar-check',
+    actsOn:'StartEasy coordinates your ongoing administrative obligations across PACRA, ZRA, NAPSA and licensing. We act on your behalf. We are not a regulator.',
+    intro:'A customized compliance calendar, document vault, renewal alerts and cross-desk coordination — so filings and statutory deadlines stay visible and on time.',
     recurring:true,
     services:[
-      {
-        code:'B1',
-        title:'Compliance Calendar Setup',
-        tagline:'Every obligation, on one calendar',
-        desc:'We inventory every filing, return, renewal and reporting obligation that applies to your business and load it onto a single administrative calendar.',
-        deliverables:['Full obligation inventory','Frequency and due dates recorded','Named owner per obligation','Reminders at 60 / 30 / 7 days','Quarterly review'],
-        priceZm:'K250', priceUsd:'$25', timeline:'Set up within 24 hours', serviceKey:'compliance'
-      },
-      {
-        code:'B2',
-        title:'Annual Compliance Support',
-        tagline:'Annual returns prepared and filed on time',
-        desc:'We prepare your annual return against your current statutory registers, reconcile the figures and keep a record of every acknowledgement.',
-        deliverables:['Statutory registers updated','Annual return prepared','Figure reconciliation','Filing acknowledgement retained','Next filing scheduled'],
-        priceZm:'K600', priceUsd:'$60', timeline:'Filed within the statutory window', serviceKey:'compliance'
-      },
-      {
-        code:'B3',
-        title:'Statutory Registration Coordination',
-        tagline:'One desk coordinating across institutions',
-        desc:'Where applicable, StartEasy coordinates administrative processes involving PACRA, ZRA, NAPSA, the Workers\' Compensation Fund Control Board, local authorities, sector regulators and other government agencies.',
-        deliverables:['Cross-institution coordination','Document pack per authority','Reference tracking','Plain-language query handling'],
-        priceZm:'From K400', priceUsd:'From $40', timeline:'Varies by matter', serviceKey:'compliance'
-      },
-      {
-        code:'B4',
-        title:'Business Compliance Subscription',
-        tagline:'Ongoing administrative relationship',
-        desc:'A continuing engagement: compliance calendar, document vault, renewal alerts, regulatory monitoring and ongoing administrative support — billed monthly.',
-        deliverables:['Compliance calendar','Document vault','Renewal alerts','Regulatory monitoring','Ongoing support','Monthly compliance summary'],
-        priceZm:'K250 / month', priceUsd:'$25 / month', timeline:'Active immediately', serviceKey:'compliance', popular:true, subscription:true
-      }
-    ]
-  },
-  {
-    id:'tax',
-    code:'C',
-    title:'Tax & Employment Desk',
-    subtitle:'Registrations and recurring administration',
-    color:'#1B6CA8',
-    icon:'fa-file-invoice-dollar',
-    intro:'Administrative coordination for tax and employment registrations — without representing StartEasy as a tax or legal practice unless appropriately licensed.',
-    services:[
-      {
-        code:'C1',
-        title:'TPIN Registration',
-        tagline:'Your Taxpayer Identification Number',
-        desc:'Administrative preparation and submission support to obtain a Taxpayer Identification Number — the foundation of every tax obligation in Zambia.',
-        deliverables:['Identification documents verified','Exact-name consistency check','Registration submitted','TPIN recorded and stored','Tax calendar started'],
-        priceZm:'K350', priceUsd:'$35', timeline:'1–10 working days', serviceKey:'tax', popular:true
-      },
-      {
-        code:'C2',
-        title:'VAT Registration',
-        tagline:'Register for Value Added Tax correctly',
-        desc:'Administrative support for VAT registration once turnover reaches the applicable threshold, or voluntarily where that suits your model.',
-        deliverables:['Threshold assessment','Turnover evidence pack','Application prepared and submitted','VAT returns added to your calendar'],
-        priceZm:'K450', priceUsd:'$45', timeline:'Varies', serviceKey:'tax'
-      },
-      {
-        code:'C3',
-        title:'PAYE Employer Registration',
-        tagline:'Register as an employer for PAYE',
-        desc:'Administrative support to register as an employer for Pay As You Earn and set up payroll deduction procedures.',
-        deliverables:['Employer registration submitted','Employee particulars compiled','Payroll cycle documented','Monthly PAYE returns diarised'],
-        priceZm:'K450', priceUsd:'$45', timeline:'Varies', serviceKey:'tax'
-      },
-      {
-        code:'C4',
-        title:'NAPSA Employer Registration',
-        tagline:'Statutory social security for your staff',
-        desc:'Administrative support to register as an employer with NAPSA and set up the monthly contribution cycle.',
-        deliverables:['Employer registration submitted','Employee schedule prepared','Employer number recorded','Contribution calendar set'],
-        priceZm:'K450', priceUsd:'$45', timeline:'Varies', serviceKey:'tax', popular:true
-      },
-      {
-        code:'C5',
-        title:'Tax Clearance Support',
-        tagline:'Get your tax account in order',
-        desc:'Administrative support for obtaining tax clearance — including a full account sweep, regularising outstanding returns and preparing the application.',
-        deliverables:['Tax account position reviewed','Outstanding returns identified','Regularisation support','Clearance application prepared','Expiry reminder set'],
-        priceZm:'K400', priceUsd:'$40', timeline:'Varies depending on account status', serviceKey:'tax'
-      },
-      {
-        code:'C6',
-        title:'Employee Registration & Contributions Setup',
-        tagline:'Register each employee, correctly',
-        desc:'Administrative support to register individual employees and set up accurate monthly contribution administration and reconciliation.',
-        deliverables:['Employee registration','Identification verification','Contribution rate documentation','Monthly reconciliation template'],
-        priceZm:'K500', priceUsd:'$50', timeline:'Ongoing monthly', serviceKey:'tax'
-      }
-    ]
-  },
-  {
-    id:'licensing',
-    code:'D',
-    title:'Licensing & Permits Desk',
-    subtitle:'Trading legally, from day one',
-    color:'#E8730F',
-    icon:'fa-id-card',
-    intro:'Local authority business licences, health and food handling permits, premises and zoning approvals, and sector regulator licences.',
-    services:[
-      {
-        code:'D1',
-        title:'Council Business Licence',
-        tagline:'The trading licence for your location',
-        desc:'Administrative support to obtain or renew the trading licence issued by the local authority covering your physical location.',
-        deliverables:['Correct licence category confirmed','Premises and registration documents prepared','Inspection coordination','Fee payment guidance','Licence collection and display guidance','Renewal date diarised'],
-        priceZm:'K500', priceUsd:'$50', timeline:'5–21 working days', serviceKey:'licence', popular:true
-      },
-      {
-        code:'D2',
-        title:'Health & Food Handling Permit',
-        tagline:'For restaurants, bars and food businesses',
-        desc:'Administrative support for health-related approval and staff food-handler medical certification.',
-        deliverables:['Health requirements confirmed','Premises inspection readiness checklist','Food handler certification tracker','Application pack prepared and submitted'],
-        priceZm:'K450', priceUsd:'$45', timeline:'Varies', serviceKey:'licence', popular:true
-      },
-      {
-        code:'D3',
-        title:'Premises, Zoning & Fire Requirements',
-        tagline:'Confirm the premises may lawfully be used',
-        desc:'Administrative support to confirm permitted use, prepare lease or ownership evidence, and obtain any planning or change-of-use consent.',
-        deliverables:['Zoning pre-check','Lease or title evidence prepared','Planning consent support','Fire safety screening','Approvals retained on file'],
-        priceZm:'K400', priceUsd:'$40', timeline:'Varies', serviceKey:'licence'
-      },
-      {
-        code:'D4',
-        title:'Sector Regulator Licence',
-        tagline:'Health, education, transport, finance, mining, agriculture',
-        desc:'Administrative support to identify the correct sector regulator, prepare the technical documentation and track the application.',
-        deliverables:['Correct regulator identified','Licensing requirements confirmed','Technical documentation pack','Submission support','Query response tracking','Renewal and reporting diarised'],
-        priceZm:'From K750', priceUsd:'From $75', timeline:'Varies by regulator', serviceKey:'licence'
-      },
-      {
-        code:'D5',
-        title:'Licence & Permit Renewal',
-        tagline:'Renew before it lapses',
-        desc:'Administrative support to renew business licences, permits and registrations — starting 60 days before expiry so there is no gap.',
-        deliverables:['Licence register built','Renewal started 60 days ahead','Updated supporting documents','Renewal submitted and reference recorded','Next renewal reminder set'],
-        priceZm:'K300', priceUsd:'$30', timeline:'Start 60 days before expiry', serviceKey:'licence'
-      }
+      {code:'C1',title:'Compliance Calendar Setup',tagline:'Every obligation, on one calendar',desc:'We inventory every filing, return, renewal and reporting obligation that applies to your business and load it onto a single administrative calendar.',deliverables:['Full obligation inventory','Frequency and due dates recorded','Named owner per obligation','Reminders at 60 / 30 / 7 days','Quarterly review'],priceZm:'K250',priceUsd:'$25',timeline:'Set up within 24 hours',serviceKey:'compliance'},
+      {code:'C2',title:'Annual Compliance Support',tagline:'Annual returns prepared and filed on time',desc:'We coordinate your annual returns across PACRA and other authorities, keep statutory registers current, and diarise the next filing window.',deliverables:['Statutory registers updated','Annual return prepared','Figure reconciliation','Filing on your behalf','Acknowledgement retained','Next filing scheduled'],priceZm:'K600',priceUsd:'$60',timeline:'Filed within the statutory window',serviceKey:'compliance'},
+      {code:'C3',title:'Statutory Registration Coordination',tagline:'One desk coordinating across institutions',desc:'Where applicable, StartEasy coordinates administrative processes involving PACRA, ZRA, NAPSA, the Workers\' Compensation Fund Control Board, local authorities, sector regulators and other government agencies.',deliverables:['Cross-institution coordination','Document pack per authority','Reference tracking','Plain-language query handling','Milestone updates'],priceZm:'From K400',priceUsd:'From $40',timeline:'Varies by matter',serviceKey:'compliance'},
+      {code:'C4',title:'Document Vault Management',tagline:'Know what you hold, and where',desc:'We set up and maintain your document vault so certificates, clearances, filings and acknowledgements are stored and always findable.',deliverables:['Vault configured for your business type','Standard slots per authority','Expiry tracking','Periodic review'],priceZm:'K150 / month',priceUsd:'$15 / month',timeline:'Ongoing',serviceKey:'compliance'},
+      {code:'C5',title:'Regulatory Monitoring',tagline:'Know what has changed, and what to do',desc:'We monitor for changes to requirements that may affect your business and flag action items with clear next steps.',deliverables:['Change monitoring','Impact assessment','Action item list','Priority ranking'],priceZm:'K200 / month',priceUsd:'$20 / month',timeline:'Ongoing',serviceKey:'compliance'},
+      {code:'C6',title:'Business Compliance Subscription',tagline:'Ongoing administrative relationship',desc:'A continuing engagement: compliance calendar, document vault, renewal alerts, regulatory monitoring and ongoing administrative support — billed monthly.',deliverables:['Compliance calendar','Document vault','Renewal alerts','Regulatory monitoring','Ongoing administrative support','Monthly compliance summary'],priceZm:'K250 / month',priceUsd:'$25 / month',timeline:'Active immediately',serviceKey:'compliance',popular:true,subscription:true}
     ]
   }
 ];
 
 /* Flat service list + lookup */
-const ALL_SERVICES = SERVICE_GROUPS.flatMap(g => g.services.map(s => Object.assign({}, s, {group:g.id, groupTitle:g.title, color:g.color, icon:g.icon})));
+const ALL_SERVICES = SERVICE_GROUPS.flatMap(g => g.services.map(s => Object.assign({}, s, {group:g.id, groupTitle:g.title, color:g.color, icon:g.icon, authority:g.authority})));
 const findService = (code) => ALL_SERVICES.find(s => s.code === code);
 
-/* Solution finder — what a visitor actually needs */
+/* Solution finder */
 const SOLUTIONS = [
-  {icon:'fa-building', title:'Register a company', desc:'Private limited company incorporation, prepared and checked.', code:'A4', label:'From K850'},
-  {icon:'fa-tag', title:'Register a business name', desc:'Trading name registration with BN Form III prepared.', code:'A5', label:'From K450'},
-  {icon:'fa-search', title:'Check my proposed names', desc:'Name preparation, clearance support and tracking.', code:'A3', label:'From K250'},
-  {icon:'fa-notes-medical', title:'Get a TPIN', desc:'Taxpayer Identification Number registration support.', code:'C1', label:'From K350'},
-  {icon:'fa-receipt', title:'Register for VAT', desc:'VAT registration once you reach the threshold.', code:'C2', label:'From K450'},
-  {icon:'fa-users', title:'Employ my first staff', desc:'PAYE and NAPSA employer registration, correctly done.', code:'C4', label:'From K450'},
-  {icon:'fa-store', title:'Get a trading licence', desc:'Council business licence and premises requirements.', code:'D1', label:'From K500'},
-  {icon:'fa-utensils', title:'Open a food business', desc:'Health permit, food handler certification and licence.', code:'D2', label:'From K450'},
-  {icon:'fa-calendar-check', title:'Keep my business compliant', desc:'Compliance calendar, renewals and reminders.', code:'B4', label:'K250 / month'},
-  {icon:'fa-certificate', title:'Get tax clearance', desc:'Account sweep, regularisation and clearance support.', code:'C5', label:'From K400'},
-  {icon:'fa-sync-alt', title:'Renew a licence', desc:'Renew before it lapses — start 60 days ahead.', code:'D5', label:'From K300'},
+  {icon:'fa-building', title:'Register a company', desc:'Private limited company incorporation, prepared and submitted on your behalf.', code:'P4', label:'From K850'},
+  {icon:'fa-tag', title:'Register a business name', desc:'Trading name registration with BN Form III prepared.', code:'P5', label:'From K450'},
+  {icon:'fa-search', title:'Check my proposed names', desc:'Name preparation, clearance support and tracking.', code:'P3', label:'From K250'},
+  {icon:'fa-notes-medical', title:'Get a TPIN', desc:'Taxpayer Identification Number registration on your behalf.', code:'Z1', label:'From K350'},
+  {icon:'fa-receipt', title:'Register for VAT', desc:'VAT registration once you reach the threshold.', code:'Z2', label:'From K450'},
+  {icon:'fa-users', title:'Employ my first staff', desc:'NAPSA employer registration and contribution setup.', code:'N1', label:'From K450'},
+  {icon:'fa-store', title:'Get a trading licence', desc:'Council business licence and premises requirements.', code:'L1', label:'From K500'},
+  {icon:'fa-utensils', title:'Open a food business', desc:'Health permit, food handler certification and licence.', code:'L2', label:'From K450'},
+  {icon:'fa-calendar-check', title:'Keep my business compliant', desc:'Compliance calendar, renewals and reminders.', code:'C6', label:'K250 / month'},
+  {icon:'fa-certificate', title:'Get tax clearance', desc:'Account sweep, regularisation and clearance support.', code:'Z4', label:'From K400'},
+  {icon:'fa-sync-alt', title:'Renew a licence', desc:'Renew before it lapses — start 60 days ahead.', code:'L7', label:'From K300'},
   {icon:'fa-shield-alt', title:'Check names before submitting', desc:'Formal name readiness report with screening.', code:'NR', label:'K50 / $5'}
 ];
 
@@ -512,32 +403,12 @@ const SOLUTIONS = [
    ========================================================= */
 const ABOUT = {
   concept:{
-    title:'Executive concept',
     body:'StartEasy Administrative Services Desk is a professional administrative support service designed to help entrepreneurs, founders and SMEs establish, maintain and manage their businesses with fewer avoidable administrative errors, delays, omissions and compliance failures.',
     body2:'StartEasy addresses a common problem: many entrepreneurs understand their business idea but are unfamiliar with the administrative processes required to formalize, operate and maintain a business.',
     conclusion:'StartEasy\'s purpose is therefore not merely to "register businesses." Its purpose is to provide an administrative readiness and compliance-support system that helps clients get their business administration right from the beginning.'
   },
-  problems:[
-    'Incorrect or incomplete applications',
-    'Incorrect entity selection',
-    'Poorly prepared proposed names',
-    'Missing information',
-    'Inconsistent information between documents',
-    'Incorrect forms',
-    'Regulatory queries and reversions',
-    'Repeated submissions',
-    'Missed statutory deadlines',
-    'Failure to identify applicable registrations',
-    'Unnecessary administrative costs',
-    'Lost time and frustration'
-  ],
-  understand:[
-    'Business-name registration','Company incorporation','Company structures','Name clearance',
-    'Shareholding','Directors and officers','Company documentation','Tax registration',
-    'Employment-related registrations','Regulatory licences','Annual returns',
-    'Changes in registered particulars','Statutory records','Industry-specific requirements',
-    'Filing deadlines','Supporting documents'
-  ],
+  problems:['Incorrect or incomplete applications','Incorrect entity selection','Poorly prepared proposed names','Missing information','Inconsistent information between documents','Incorrect forms','Regulatory queries and reversions','Repeated submissions','Missed statutory deadlines','Failure to identify applicable registrations','Unnecessary administrative costs','Lost time and frustration'],
+  understand:['Business-name registration','Company incorporation','Company structures','Name clearance','Shareholding','Directors and officers','Company documentation','Tax registration','Employment-related registrations','Regulatory licences','Annual returns','Changes in registered particulars','Statutory records','Industry-specific requirements','Filing deadlines','Supporting documents'],
   promise:{
     headline:'Get it right before you submit.',
     body:'Rather than waiting for an institution to identify avoidable mistakes, StartEasy introduces an administrative quality-control step before submission. This becomes the core differentiator of the business.',
@@ -564,7 +435,7 @@ const ABOUT = {
   ],
   institutions:['PACRA','ZRA','NAPSA','Workers\' Compensation Fund Control Board','Local authorities','Sector regulators','Other government agencies'],
   roles:[
-    ['StartEasy','Administrative process: identification, preparation, registry screening, quality control, submission support, tracking, record keeping.'],
+    ['StartEasy','Administrative process: identification, preparation, registry screening, quality control, submission on your behalf, tracking, record keeping.'],
     ['Lawyer','Legal advice and legal documents.'],
     ['Accountant / tax professional','Professional accounting, tax advice and assurance.'],
     ['HR professional','Specialist employment and HR matters.'],
@@ -577,7 +448,6 @@ const ABOUT = {
    ========================================================= */
 const uid=(p='id')=>p+'_'+Math.random().toString(36).slice(2,9);
 const fmtDate=(d)=>{if(!d)return'—';const x=new Date(d);if(isNaN(x))return'—';return x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})};
-const pct=(a,b)=>b===0?0:Math.round((a/b)*100);
 function numberToWords(num){const ones=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];const tens=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];if(num===0)return'Zero';function chunk(n){if(n<20)return ones[n];if(n<100)return tens[Math.floor(n/10)]+(n%10?' '+ones[n%10]:'');if(n<1000)return ones[Math.floor(n/100)]+' Hundred'+(n%100?' '+chunk(n%100):'');if(n<1000000)return chunk(Math.floor(n/1000))+' Thousand'+(n%1000?' '+chunk(n%1000):'');return chunk(Math.floor(n/1000000))+' Million'+(n%1000000?' '+chunk(n%1000000):'')}return chunk(num)}
 function amountInWords(amountStr,currency){const num=parseFloat(String(amountStr).replace(/[^\d.]/g,''))||0;const words=numberToWords(Math.round(num));if(currency==='USD')return'US Dollars '+words+' Only';if(currency==='ZMW')return words+' Kwacha Only';return words+' Only'}
 
@@ -592,12 +462,12 @@ function Receipt({data,id}){
     <div id={id} className="se-receipt printable-receipt">
       <div className="nr-header"><div><div className="nr-brand">Start<em>Easy</em></div><div className="nr-brand-sub">Administrative Services Desk · Zambia</div></div><div><div className="nr-doc-type">PROVISIONAL PAYMENT RECEIPT</div><div className="nr-status status-pending">PENDING VERIFICATION</div></div></div>
       <div className="nr-meta"><div><span className="nr-lbl">Receipt No:</span> <strong>{data.receiptNo||'—'}</strong></div><div><span className="nr-lbl">Date &amp; Time:</span> <strong>{data.receiptDate||'—'}</strong></div></div>
-      <div className="nr-highlight-amount"><div className="nr-ha-lbl">Amount Received</div><div className="nr-ha-val">{data.amount||'—'}</div><div className="nr-amount-words">{amountInWords(data.amount,currency)}</div></div>
+      <div className="nr-highlight-amount"><div className="nr-ha-lbl">Amount received — StartEasy service fee</div><div className="nr-ha-val">{data.amount||'—'}</div><div className="nr-amount-words">{amountInWords(data.amount,currency)}</div></div>
       <div className="nr-section"><div className="nr-section-title">From — Payer / Sender</div><div className="nr-grid-2"><div><span className="nr-lbl">Name:</span> <strong>{data.senderName||'—'}</strong></div><div><span className="nr-lbl">Contact:</span> <strong>{data.senderContact||'—'}</strong></div></div></div>
       <div className="nr-section"><div className="nr-section-title">To — Recipient</div><div className="nr-grid-2"><div><span className="nr-lbl">Recipient:</span> <strong>Mwaba Lewis</strong></div><div><span className="nr-lbl">On behalf of:</span> <strong>StartEasy Administrative Services Desk</strong></div><div><span className="nr-lbl">Account:</span> <strong>{data.recipientAccount||'—'}</strong></div></div></div>
       <div className="nr-section"><div className="nr-section-title">Payment Details</div><div className="nr-grid-2"><div><span className="nr-lbl">Method:</span> <strong>{data.method||'—'}</strong></div><div><span className="nr-lbl">Transaction ID:</span> <strong>{data.transactionRef||'—'}</strong></div><div><span className="nr-lbl">Purpose:</span> <strong>{data.purpose||'—'}</strong></div><div><span className="nr-lbl">Status:</span> <strong style={{color:'#856404'}}>Pending Verification</strong></div></div></div>
       <div className="nr-qr-block"><div className="nr-qr-canvas-wrap"><canvas ref={canvasRef} width="184" height="184" aria-label="Receipt verification QR code"></canvas></div><div className="nr-qr-text"><strong><i className="fas fa-qrcode"></i> Verify this receipt</strong>Scan the code, or visit the URL below, to check this receipt status.<code>{VERIFY_BASE_URL}/{data.receiptNo||'…'}</code></div></div>
-      <div className="nr-footer"><div style={{fontStyle:'italic',marginBottom:8,lineHeight:1.5}}><strong>This is a PROVISIONAL receipt.</strong> A final receipt will be issued once the payment has been verified against our records.</div><div className="nr-signature"><div className="nr-sig-block"><div className="nr-sig-line"></div><div className="nr-sig-lbl">Authorised Signature</div></div><div className="nr-sig-block"><div className="nr-sig-line"></div><div className="nr-sig-lbl">Date</div></div></div><div style={{marginTop:14,fontSize:10.5,color:'#333'}}><strong>StartEasy Administrative Services Desk</strong><br/>Lusaka, Zambia · {CONTACT_EMAIL} · +260 768 526 191</div></div>
+      <div className="nr-footer"><div style={{fontStyle:'italic',marginBottom:8,lineHeight:1.5}}><strong>This is a PROVISIONAL receipt.</strong> A final receipt will be issued once the payment has been verified against our records. This fee is for StartEasy administrative service only and does not include any government or regulator fee.</div><div className="nr-signature"><div className="nr-sig-block"><div className="nr-sig-line"></div><div className="nr-sig-lbl">Authorised Signature</div></div><div className="nr-sig-block"><div className="nr-sig-line"></div><div className="nr-sig-lbl">Date</div></div></div><div style={{marginTop:14,fontSize:10.5,color:'#333'}}><strong>StartEasy Administrative Services Desk</strong><br/>Lusaka, Zambia · {CONTACT_EMAIL} · +260 768 526 191</div></div>
     </div>
   );
 }
@@ -615,8 +485,8 @@ function ServiceFulfilment({serviceKey,receiptData,onGoToDesk}){
         <div style={{position:'absolute',top:-60,right:-60,width:200,height:200,background:'radial-gradient(circle,rgba(245,166,35,.2),transparent 65%)',pointerEvents:'none'}}/>
         <div style={{position:'relative',zIndex:1}}>
           <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}><span style={{width:10,height:10,borderRadius:'50%',background:'#4CB050',boxShadow:'0 0 12px #4CB050'}}></span><span style={{fontSize:10.5,letterSpacing:'.18em',textTransform:'uppercase',fontWeight:800,color:'#7DD957'}}>Service underway</span></div>
-          <h2 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:'clamp(1.5rem,3.5vw,2rem)',color:'#fff',lineHeight:1.15,marginBottom:8,fontWeight:700}}>Your engagement has started.</h2>
-          <p style={{fontSize:13.5,color:'rgba(255,255,255,.65)',lineHeight:1.6,maxWidth:'60ch',marginBottom:18}}>{cfg.name} is now active. Below is exactly what StartEasy does next, what you need to do, and how to track progress.</p>
+          <h2 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:'clamp(1.5rem,3.5vw,2rem)',color:'#fff',lineHeight:1.15,marginBottom:8,fontWeight:700}}>We are working on your behalf.</h2>
+          <p style={{fontSize:13.5,color:'rgba(255,255,255,.65)',lineHeight:1.6,maxWidth:'60ch',marginBottom:18}}>{cfg.name} is now active. StartEasy acts on your behalf with the relevant authority. Below is exactly what we do next, what you need to do, and how to track progress.</p>
           <div style={{display:'flex',flexWrap:'wrap',gap:10}}>
             <div style={{background:'rgba(255,255,255,.06)',border:'1px solid rgba(255,255,255,.12)',borderRadius:10,padding:'10px 14px'}}><div style={{fontSize:9.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(255,255,255,.45)',marginBottom:3}}>Tracking reference</div><div style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:16,color:'#F5A623',fontWeight:800,letterSpacing:'.04em'}}>{trackingRef}</div></div>
             <div style={{background:'rgba(255,255,255,.06)',border:'1px solid rgba(255,255,255,.12)',borderRadius:10,padding:'10px 14px'}}><div style={{fontSize:9.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(255,255,255,.45)',marginBottom:3}}>Service level</div><div style={{fontSize:13.5,color:'#fff',fontWeight:700}}>{cfg.sla}</div></div>
@@ -728,7 +598,7 @@ function PaymentFlow({amount,currency,purpose,purposeDetail,receiptPrefix,servic
             <Receipt data={receiptData} id="seReceipt"/>
             <div className="receipt-check">
               <h6><i className="fas fa-search"></i> Check receipt status later</h6>
-              <div className="receipt-check-row"><input type="text" value={checkRef} onChange={e=>setCheckRef(e.target.value)} placeholder="Enter your Receipt No (e.g. SE-A4-2026-00001)"/><button type="button" onClick={lookupReceipt} style={{padding:'10px 18px',background:'#1E7B3C',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>Check</button></div>
+              <div className="receipt-check-row"><input type="text" value={checkRef} onChange={e=>setCheckRef(e.target.value)} placeholder="Enter your Receipt No (e.g. SE-P4-2026-00001)"/><button type="button" onClick={lookupReceipt} style={{padding:'10px 18px',background:'#1E7B3C',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>Check</button></div>
               {checkResult&&<div className="receipt-check-result show">{checkResult}</div>}
             </div>
           </div>
@@ -742,8 +612,8 @@ function PaymentFlow({amount,currency,purpose,purposeDetail,receiptPrefix,servic
   const m=method?PAYMENT_METHODS[method]:null;
   return(
     <div>
-      <div className="pay-amount-banner"><div><div className="pab-label">Amount due</div><div className="pab-amount">{amount}</div><div className="pab-context">{purposeDetail||purpose}</div></div><i className="fas fa-shield-alt pab-icon"></i></div>
-      <div className="fee-tier-note"><i className="fas fa-info-circle"></i><div><strong>Purpose:</strong> {purpose}. Choose the payment method that works for you. Every payment is verified before your request proceeds.</div></div>
+      <div className="pay-amount-banner"><div><div className="pab-label">StartEasy service fee</div><div className="pab-amount">{amount}</div><div className="pab-context">{purposeDetail||purpose}</div></div><i className="fas fa-shield-alt pab-icon"></i></div>
+      <div className="fee-tier-note"><i className="fas fa-info-circle"></i><div><strong>Purpose:</strong> {purpose}. This is a StartEasy administrative service fee — separate from any government or regulator fee. Choose the payment method that works for you. Every payment is verified before your request proceeds.</div></div>
       <div className="pay-methods-grid" role="radiogroup" aria-label="Payment method">
         {Object.entries(PAYMENT_METHODS).map(([key,pm])=>{const isSelected=method===key;return(<button key={key} type="button" role="radio" aria-checked={isSelected} className={`pay-method-card pm-${key} ${isSelected?'selected':''}`} onClick={()=>setMethod(key)}><div className="pm-logo">{key==='airtel'?'airtel':key==='mtn'?'MTN':key==='bank'?<i className="fas fa-university"></i>:key==='paypal'?<i className="fab fa-paypal"></i>:<i className="fab fa-bitcoin"></i>}</div><div className="pm-name">{pm.label}</div><div className="pm-desc">{pm.sub}</div></button>)})}
       </div>
@@ -770,7 +640,7 @@ function ModalShell({open,onClose,title,eyebrow,children,maxWidth}){
             <span className="text-[10.5px] tracking-[0.2em] uppercase font-bold text-[#F5A623] truncate">{eyebrow||'StartEasy'}</span>
           </div>
           <div className="flex items-center gap-4">
-            {title&&<span className="hidden sm:block text-[12px] font-semibold text-white/70">{title}</span>}
+            {title&&<span className="hidden sm:block text-[12px] font-semibold text-white/70 truncate max-w-md">{title}</span>}
             <button onClick={onClose} style={{background:'none',border:'none',color:'rgba(255,255,255,.5)',cursor:'pointer'}} aria-label="Close"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg></button>
           </div>
         </div>
@@ -783,7 +653,7 @@ function ModalShell({open,onClose,title,eyebrow,children,maxWidth}){
 function ServiceDetailModal({service,onClose,onRequest}){
   if(!service) return null;
   return(
-    <ModalShell open={!!service} onClose={onClose} eyebrow={'Service '+service.code} title={service.groupTitle} maxWidth="44rem">
+    <ModalShell open={!!service} onClose={onClose} eyebrow={'Service '+service.code} title={service.groupTitle} maxWidth="46rem">
       <div className="fadein">
         <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:18}}>
           <span style={{width:52,height:52,borderRadius:14,background:service.color+'18',color:service.color,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className={'fas '+service.icon} style={{fontSize:20}}></i></span>
@@ -796,15 +666,23 @@ function ServiceDetailModal({service,onClose,onRequest}){
 
         <div className="grid sm:grid-cols-2 gap-4 mb-6">
           <div className="bg-white rounded-sm border border-[#0A1F12]/8 p-4">
-            <div className="text-[10.5px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/40 mb-2">Investment</div>
+            <div className="text-[10.5px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/40 mb-2">StartEasy service fee</div>
             <div className="serif text-[24px] font-bold text-[#E8730F] leading-none">{service.priceZm}</div>
-            <div className="text-[12px] text-[#0A1F12]/45 mt-1">{service.priceUsd} equivalent</div>
+            <div className="text-[12px] text-[#0A1F12]/45 mt-1">{service.priceUsd} equivalent · separate from any government or regulator fee</div>
           </div>
           <div className="bg-white rounded-sm border border-[#0A1F12]/8 p-4">
             <div className="text-[10.5px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/40 mb-2">Timeline</div>
             <div className="text-[14px] font-semibold text-[#0A1F12] leading-snug">{service.timeline}</div>
           </div>
         </div>
+
+        {service.authority&&(<div className="bg-[#0A1F12] text-white rounded-sm p-4 mb-6" style={{position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',top:-40,right:-40,width:140,height:140,background:'radial-gradient(circle, '+service.color+'55, transparent 65%)',pointerEvents:'none'}}/>
+          <div className="relative" style={{display:'flex',alignItems:'center',gap:12}}>
+            <span style={{width:34,height:34,borderRadius:9,background:'rgba(245,166,35,.2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className="fas fa-handshake" style={{color:'#F5A623',fontSize:14}}></i></span>
+            <div><div style={{fontSize:9.5,letterSpacing:'.16em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:2}}>We act on your behalf</div><p style={{fontSize:12.5,color:'rgba(255,255,255,.75)',lineHeight:1.5}}>StartEasy is not {service.authority} or any regulator. We prepare, check and submit your application on your behalf, and track your case to outcome.</p></div>
+          </div>
+        </div>)}
 
         <div className="bg-white rounded-sm border border-[#0A1F12]/8 p-5 mb-6">
           <span className="micro text-[#0A1F12]/50 block mb-4">What you get</span>
@@ -819,7 +697,7 @@ function ServiceDetailModal({service,onClose,onRequest}){
         </div>
 
         <div className="bg-[#0A1F12]/5 border border-[#0A1F12]/10 rounded-sm p-4 mb-6">
-          <p className="text-[12px] text-[#0A1F12]/65 leading-relaxed"><strong className="text-[#0A1F12]">Scope note.</strong> StartEasy provides administrative process support. Where a matter crosses into legal, tax, accounting or other regulated professional advice, we will refer you to an appropriately qualified professional. Fees are for StartEasy service and never buy government approval.</p>
+          <p className="text-[12px] text-[#0A1F12]/65 leading-relaxed"><strong className="text-[#0A1F12]">Scope note.</strong> StartEasy provides administrative process support and acts on your behalf with the relevant authority. We are not a government authority or regulator. Where a matter crosses into legal, tax, accounting or other regulated professional advice, we will refer you to an appropriately qualified professional. The fee shown is a StartEasy service fee and never buys government approval or replaces any authority fee.</p>
         </div>
 
         <div className="flex flex-wrap gap-3">
@@ -867,7 +745,7 @@ function StartEasyMark({size=36}){
 /* =========================================================
    NAV / FOOTER
    ========================================================= */
-const NAV_LINKS=[['home','Home'],['solutions','Services'],['compliance','Compliance Desk'],['pricing','Pricing'],['about','About Us']];
+const NAV_LINKS=[['home','Home'],['desks','Desks'],['services','Services'],['compliance','Compliance Desk'],['pricing','Pricing'],['about','About Us']];
 function Nav({route,go}){
   const [open,setOpen]=useState(false);
   const nav=(r)=>{setOpen(false);go(r)};
@@ -882,11 +760,11 @@ function Nav({route,go}){
               <span className="block text-[15px] font-bold tracking-[-0.02em] text-white">Start<em style={{fontStyle:'normal',color:'#F5A623'}}>Easy</em></span>
             </span>
           </button>
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-6">
             {NAV_LINKS.map(([r,label])=>(<button key={r} onClick={()=>nav(r)} className={`text-[12.5px] tracking-wide transition-all duration-200 relative py-1 ${route===r?'text-[#F5A623]':'text-white/55 hover:text-white'}`} style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit'}}>{label}{route===r&&<span className="absolute -bottom-0.5 left-0 right-0 h-[2px] bg-[#F5A623] rounded-full"/>}</button>))}
           </nav>
           <div className="flex items-center gap-3">
-            <Btn size="sm" variant="primary" onClick={()=>nav('solutions')} className="hidden sm:inline-flex">See all services <Arrow/></Btn>
+            <Btn size="sm" variant="primary" onClick={()=>nav('services')} className="hidden sm:inline-flex">See all services <Arrow/></Btn>
             <button onClick={()=>setOpen(!open)} className="lg:hidden w-9 h-9 flex flex-col items-center justify-center gap-[5px]" style={{background:'none',border:'none',cursor:'pointer'}} aria-label="Menu">
               <span className={`block w-5 h-[2px] bg-white transition-transform rounded-full ${open?'rotate-45 translate-y-[3.5px]':''}`}/>
               <span className={`block w-5 h-[2px] bg-white transition-transform rounded-full ${open?'-rotate-45 -translate-y-[3.5px]':''}`}/>
@@ -894,7 +772,7 @@ function Nav({route,go}){
           </div>
         </div>
       </div>
-      {open&&(<div className="lg:hidden border-t border-white/10 bg-[#0A1F12] fadein-s"><div className="px-6 py-4 max-h-[70vh] overflow-y-auto">{NAV_LINKS.map(([r,label])=>(<button key={r} onClick={()=>nav(r)} className="w-full flex items-center gap-4 py-3.5 border-b border-white/5 last:border-0 text-left" style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit'}}><span className={`text-[14px] ${route===r?'text-[#F5A623]':'text-white/60'}`}>{label}</span></button>))}<Btn size="sm" variant="primary" onClick={()=>nav('solutions')} className="w-full mt-4">See all services <Arrow/></Btn></div></div>)}
+      {open&&(<div className="lg:hidden border-t border-white/10 bg-[#0A1F12] fadein-s"><div className="px-6 py-4 max-h-[70vh] overflow-y-auto">{NAV_LINKS.map(([r,label])=>(<button key={r} onClick={()=>nav(r)} className="w-full flex items-center gap-4 py-3.5 border-b border-white/5 last:border-0 text-left" style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit'}}><span className={`text-[14px] ${route===r?'text-[#F5A623]':'text-white/60'}`}>{label}</span></button>))}<Btn size="sm" variant="primary" onClick={()=>nav('services')} className="w-full mt-4">See all services <Arrow/></Btn></div></div>)}
     </header>
   );
 }
@@ -906,13 +784,13 @@ function Footer({go}){
           <div>
             <div className="flex items-center gap-3 mb-4"><StartEasyMark size={40}/><div className="leading-none"><span className="block text-[9.5px] tracking-[0.18em] uppercase font-bold text-white/35 mb-1">Administrative Services Desk</span><span className="block text-[15px] font-bold text-white">Start<em style={{fontStyle:'normal',color:'#F5A623'}}>Easy</em></span></div></div>
             <p className="text-[11px] tracking-[0.16em] uppercase text-[#F5A623] font-bold mb-5">Start Right. Stay Compliant. Grow with Confidence.</p>
-            <p className="text-[13px] leading-relaxed text-white/50 max-w-xs">Administrative, regulatory-navigation and compliance-support services for entrepreneurs, founders, businesses and SMEs in Zambia.</p>
+            <p className="text-[13px] leading-relaxed text-white/50 max-w-xs">Administrative, regulatory-navigation and compliance-support services for entrepreneurs, founders, businesses and SMEs in Zambia. We act on your behalf — we are not a regulator.</p>
           </div>
-          <div><span className="micro text-[#F5A623] block mb-5">Services</span><div className="space-y-3">{SERVICE_GROUPS.map(g=>(<button key={g.id} onClick={()=>go('solutions')} className="block text-[13px] text-white/50 hover:text-[#F5A623] transition-colors text-left" style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',padding:0}}>{g.title}</button>))}</div></div>
-          <div><span className="micro text-[#F5A623] block mb-5">StartEasy</span><div className="space-y-3">{[['about','About Us'],['compliance','Compliance Desk'],['pricing','Pricing'],['solutions','All Services']].map(([r,l])=>(<button key={r} onClick={()=>go(r)} className="block text-[13px] text-white/50 hover:text-[#F5A623] transition-colors text-left" style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',padding:0}}>{l}</button>))}</div></div>
+          <div><span className="micro text-[#F5A623] block mb-5">Desks</span><div className="space-y-3">{SERVICE_GROUPS.map(g=>(<button key={g.id} onClick={()=>go('desks')} className="block text-[13px] text-white/50 hover:text-[#F5A623] transition-colors text-left" style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',padding:0}}>{g.title}</button>))}</div></div>
+          <div><span className="micro text-[#F5A623] block mb-5">StartEasy</span><div className="space-y-3">{[['about','About Us'],['compliance','Compliance Desk'],['pricing','Pricing'],['services','All Services']].map(([r,l])=>(<button key={r} onClick={()=>go(r)} className="block text-[13px] text-white/50 hover:text-[#F5A623] transition-colors text-left" style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',padding:0}}>{l}</button>))}</div></div>
           <div><span className="micro text-[#F5A623] block mb-5">Contact</span><div className="space-y-3 text-[13px] text-white/50"><p>{CONTACT_EMAIL}</p><p>+260 768 526 191</p><p className="text-white/35 text-[12px] leading-relaxed">Lusaka, Zambia</p></div></div>
         </div>
-        <div className="mt-14 pt-8 border-t border-white/10"><p className="text-[11px] text-white/35 leading-relaxed max-w-4xl"><strong className="text-white/55">Important:</strong> StartEasy assists clients in navigating administrative and regulatory processes. It does not guarantee regulatory approval and does not represent itself as a government authority. Where a matter crosses into legal, tax, accounting or other regulated professional advice, StartEasy involves appropriately qualified professionals. Requirements, fees and timelines change: always confirm current requirements with the relevant authority.</p><p className="text-[11px] text-white/30 mt-6">© {new Date().getFullYear()} StartEasy Administrative Services Desk · Zambia.</p></div>
+        <div className="mt-14 pt-8 border-t border-white/10"><p className="text-[11px] text-white/35 leading-relaxed max-w-4xl"><strong className="text-white/55">Important:</strong> StartEasy is an administrative services desk. We act on your behalf with PACRA, ZRA, NAPSA, councils, sector regulators and other government agencies — but we are not a government authority or a regulator, and we do not guarantee regulatory approval. Where a matter crosses into legal, tax, accounting or other regulated professional advice, StartEasy involves appropriately qualified professionals. Requirements, fees and timelines change: always confirm current requirements with the relevant authority. The service fees shown are for StartEasy administrative work and are separate from any government or regulator fee.</p><p className="text-[11px] text-white/30 mt-6">© {new Date().getFullYear()} StartEasy Administrative Services Desk · Zambia.</p></div>
       </div>
     </footer>
   );
@@ -934,7 +812,8 @@ function ServiceCard({service,onOpen}){
         <p className="text-[12.5px] text-[#0A1F12]/55 leading-relaxed mb-5 flex-1">{service.tagline}</p>
         <div className="pt-4 border-t border-[#0A1F12]/6 flex items-end justify-between gap-3">
           <div>
-            <div className="serif text-[22px] font-bold text-[#E8730F] leading-none">{service.priceZm}</div>
+            <div className="text-[10px] tracking-[0.12em] uppercase font-bold text-[#0A1F12]/40 mb-1">Service fee</div>
+            <div className="serif text-[21px] font-bold text-[#E8730F] leading-none">{service.priceZm}</div>
             <div className="text-[10.5px] text-[#0A1F12]/40 mt-1">{service.priceUsd} · {service.timeline}</div>
           </div>
           <span className="flex items-center gap-1.5 text-[10.5px] tracking-[0.12em] uppercase font-bold shrink-0" style={{color:service.color}}>Details <Arrow className="group-hover:translate-x-1 transition-transform"/></span>
@@ -945,13 +824,34 @@ function ServiceCard({service,onOpen}){
 }
 
 /* =========================================================
+   NOT-A-REGULATOR BANNER
+   ========================================================= */
+function NotRegulatorStrip({tone='light'}){
+  return(
+    <div style={{
+      background: tone==='dark' ? 'rgba(255,255,255,.05)' : 'linear-gradient(135deg,#FFF4E0 0%,#FFF9EE 100%)',
+      border: tone==='dark' ? '1px solid rgba(245,166,35,.3)' : '1px solid #E8730F',
+      borderRadius:12, padding:'14px 18px', display:'flex', gap:14, alignItems:'flex-start'
+    }}>
+      <span style={{width:34,height:34,borderRadius:9,background: tone==='dark' ? 'rgba(245,166,35,.2)' : '#E8730F', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0}}>
+        <i className="fas fa-info-circle" style={{color: tone==='dark' ? '#F5A623' : '#fff', fontSize:14}}></i>
+      </span>
+      <div>
+        <p style={{fontSize:12.5, fontWeight:800, letterSpacing:'.04em', color: tone==='dark' ? '#F5A623' : '#8A6828', marginBottom:4, textTransform:'uppercase'}}>We act on your behalf — we are not a regulator</p>
+        <p style={{fontSize:12.5, lineHeight:1.55, color: tone==='dark' ? 'rgba(255,255,255,.7)' : 'rgba(10,31,18,.7)'}}>StartEasy is a private administrative services desk in Zambia. We prepare, check, submit and track your applications with PACRA, ZRA, NAPSA, councils and sector regulators — but we are not a government authority or a regulatory body. Approval decisions always rest with the relevant authority.</p>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
    HOME
    ========================================================= */
 function Home({go,onOpenService}){
-  const featured=['A4','A3','B4','D1','C1','A5'].map(findService).filter(Boolean);
+  const featured=['P4','P3','Z1','L1','C6','P5'].map(findService).filter(Boolean);
   const handleSolution=(code)=>{
     if(code==='NR'){
-      onOpenService({code:'NR',title:'Name Readiness Report',tagline:'Formal screening before you submit',desc:'A formal PDF report with detailed screening, saturation analysis and recommended submission order — delivered within 2 business days.',deliverables:['Protected-term check','Similarity analysis','Saturation review','Recommended submission order','Delivered as a PDF to your email'],priceZm:'K50',priceUsd:'$5',timeline:'Delivered within 2 business days',serviceKey:'nameReport',groupTitle:'Name Services',color:'#E8730F',icon:'fa-shield-alt'});
+      onOpenService({code:'NR',title:'Name Readiness Report',tagline:'Formal screening before you submit',desc:'A formal PDF report with detailed screening, saturation analysis and recommended submission order — delivered within 2 business days. Prepared by the PACRA Desk.',deliverables:['Protected-term check','Similarity analysis','Saturation review','Recommended submission order','Delivered as a PDF to your email'],priceZm:'K50',priceUsd:'$5',timeline:'Delivered within 2 business days',serviceKey:'nameReport',groupTitle:'PACRA Desk · Name Services',color:'#2E9C4A',icon:'fa-shield-alt',authority:'PACRA'});
       return;
     }
     const s=findService(code);
@@ -959,31 +859,73 @@ function Home({go,onOpenService}){
   };
   return(
     <div className="fadein bg-[#F5FAF6]">
-      {/* HERO — solution-oriented */}
-      <section className="bg-[#0A1F12] text-white pt-16 lg:pt-24 pb-16 lg:pb-20 relative overflow-hidden">
+      {/* HERO */}
+      <section className="bg-[#0A1F12] text-white pt-16 lg:pt-24 pb-14 lg:pb-20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#E8730F]/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"/>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#2E9C4A]/5 rounded-full blur-[120px] translate-y-1/3 -translate-x-1/3 pointer-events-none"/>
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 relative z-10">
           <span className="micro text-[#F5A623] block mb-7">Administrative Services Desk · Zambia</span>
-          <h1 className="serif text-[clamp(2.4rem,6.5vw,4.2rem)] leading-[1.05] text-white max-w-4xl mb-7">What do you need to get done?</h1>
-          <p className="text-[16px] lg:text-[18px] leading-relaxed text-white/60 max-w-2xl mb-10">Choose the service that matches your objective. Every service is priced up front, prepared to the standard the regulator expects, and quality-checked before submission.</p>
+          <h1 className="serif text-[clamp(2.4rem,6.5vw,4.2rem)] leading-[1.05] text-white max-w-4xl mb-7">We handle the paperwork. You run the business.</h1>
+          <p className="text-[16px] lg:text-[18px] leading-relaxed text-white/60 max-w-2xl mb-10">StartEasy is an administrative services desk that acts on your behalf with PACRA, ZRA, NAPSA, councils and sector regulators. Choose a desk, pick the service you need — we prepare, check and submit on your behalf, and track it through to outcome.</p>
           <div className="flex flex-wrap gap-3">
-            <Btn size="lg" variant="primary" onClick={()=>go('solutions')}>Browse all services <Arrow/></Btn>
-            <Btn size="lg" variant="ghostLight" onClick={()=>go('compliance')}>Ongoing compliance support</Btn>
+            <Btn size="lg" variant="primary" onClick={()=>go('desks')}>Browse by desk <Arrow/></Btn>
+            <Btn size="lg" variant="ghostLight" onClick={()=>go('services')}>See all services &amp; fees</Btn>
+          </div>
+        </div>
+      </section>
+
+      {/* NOT-A-REGULATOR BANNER */}
+      <section className="bg-[#F5FAF6]">
+        <div className="max-w-[1320px] mx-auto px-6 lg:px-10 pt-10"><NotRegulatorStrip/></div>
+      </section>
+
+      {/* DESKS GRID */}
+      <section className="bg-[#F5FAF6]">
+        <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
+          <SectionHead eyebrow="Five desks, one administrative partner" title="Pick the desk that matches your matter." sub="Each desk handles a defined set of services with the relevant authority. StartEasy acts on your behalf — we are not the authority." className="mb-10 max-w-2xl"/>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {SERVICE_GROUPS.map(g=>(
+              <button key={g.id} onClick={()=>go('services')} className="group bg-white rounded-sm border border-[#0A1F12]/8 p-6 lg:p-7 text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col" style={{cursor:'pointer',fontFamily:'inherit',borderTopWidth:4,borderTopColor:g.color}}>
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-25 group-hover:opacity-50 transition-opacity" style={{background:g.color}}/>
+                <div className="relative z-10 flex flex-col flex-1">
+                  <div className="flex items-center justify-between gap-3 mb-5">
+                    <span className="w-12 h-12 rounded-xl flex items-center justify-center" style={{background:g.color+'18',color:g.color}}><i className={'fas '+g.icon} style={{fontSize:20}}></i></span>
+                    <span className="text-[10px] tracking-[0.14em] uppercase font-bold px-2.5 py-1 rounded-full" style={{background:g.color+'18',color:g.color}}>{g.services.length} services</span>
+                  </div>
+                  <h3 className="serif text-[22px] text-[#0A1F12] leading-tight mb-1">{g.title}</h3>
+                  <p className="text-[11.5px] tracking-[0.04em] text-[#0A1F12]/50 font-semibold mb-3">{g.subtitle}</p>
+                  <p className="text-[12.5px] text-[#0A1F12]/55 leading-relaxed mb-5 flex-1">{g.actsOn}</p>
+                  <div className="pt-4 border-t border-[#0A1F12]/6 flex items-center justify-between">
+                    <span className="text-[10.5px] text-[#0A1F12]/40 font-semibold uppercase tracking-wider">Authority: {g.authority}</span>
+                    <span className="flex items-center gap-1.5 text-[10.5px] tracking-[0.12em] uppercase font-bold" style={{color:g.color}}>Open <Arrow className="group-hover:translate-x-1 transition-transform"/></span>
+                  </div>
+                </div>
+              </button>
+            ))}
+            {/* Filler card: Guidance */}
+            <div className="bg-[#0A1F12] rounded-sm border border-[#F5A623]/30 p-6 lg:p-7 text-white relative overflow-hidden flex flex-col">
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-25" style={{background:'#F5A623'}}/>
+              <div className="relative z-10 flex flex-col flex-1">
+                <span className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{background:'rgba(245,166,35,.2)',color:'#F5A623'}}><i className="fas fa-compass" style={{fontSize:20}}></i></span>
+                <h3 className="serif text-[22px] text-white leading-tight mb-3">Not sure which desk?</h3>
+                <p className="text-[12.5px] text-white/60 leading-relaxed mb-5 flex-1">Tell us what you are trying to achieve and we will route it to the right desk — even if it spans more than one.</p>
+                <a href={'https://wa.me/'+ADMIN_WHATSAPP+'?text='+encodeURIComponent('Hello StartEasy — I need help choosing the right desk for my matter.')} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8,padding:'11px 16px',background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',borderRadius:8,fontSize:12.5,fontWeight:700,textDecoration:'none',width:'100%'}}><i className="fab fa-whatsapp"></i> Ask us on WhatsApp</a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* SOLUTION FINDER */}
-      <section className="bg-[#F5FAF6]">
-        <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-16 lg:py-20">
+      <section className="bg-white">
+        <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
           <div className="flex flex-wrap items-end justify-between gap-6 mb-10">
-            <SectionHead eyebrow="Start here" title="Pick the outcome you want." sub="Tap any card to see exactly what you get, what it costs and how long it takes." className="max-w-2xl"/>
-            <button onClick={()=>go('solutions')} className="text-[12px] tracking-[0.14em] uppercase font-bold text-[#E8730F] inline-flex items-center gap-2 hover:gap-3 transition-all" style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit'}}>Full list <Arrow/></button>
+            <SectionHead eyebrow="Start here" title="Or pick the outcome you want." sub="Tap any card to see exactly what you get, what it costs and how long it takes." className="max-w-2xl"/>
+            <button onClick={()=>go('services')} className="text-[12px] tracking-[0.14em] uppercase font-bold text-[#E8730F] inline-flex items-center gap-2 hover:gap-3 transition-all" style={{background:'none',border:'none',cursor:'pointer',fontFamily:'inherit'}}>Full list <Arrow/></button>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {SOLUTIONS.map((s,i)=>(
-              <button key={i} onClick={()=>handleSolution(s.code)} className="group bg-white rounded-sm border border-[#0A1F12]/8 p-5 text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col" style={{cursor:'pointer',fontFamily:'inherit'}}>
+              <button key={i} onClick={()=>handleSolution(s.code)} className="group bg-[#F5FAF6] rounded-sm border border-[#0A1F12]/8 p-5 text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col" style={{cursor:'pointer',fontFamily:'inherit'}}>
                 <span className="w-11 h-11 rounded-xl bg-[#E8730F]/10 text-[#E8730F] flex items-center justify-center mb-4 group-hover:bg-[#E8730F] group-hover:text-white transition-colors"><i className={'fas '+s.icon} style={{fontSize:17}}></i></span>
                 <h3 className="serif text-[16.5px] text-[#0A1F12] leading-tight mb-2">{s.title}</h3>
                 <p className="text-[12px] text-[#0A1F12]/55 leading-relaxed mb-4 flex-1">{s.desc}</p>
@@ -995,22 +937,26 @@ function Home({go,onOpenService}){
       </section>
 
       {/* FEATURED SERVICES */}
-      <section className="bg-white">
-        <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-16 lg:py-20">
+      <section className="bg-[#F5FAF6]">
+        <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
           <SectionHead eyebrow="Most requested" title="Featured services." sub="Priced, scoped and ready to request. Click any service to see the full deliverable list." className="mb-12 max-w-2xl"/>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {featured.map(s=>(<ServiceCard key={s.code} service={s} onOpen={onOpenService}/>))}
           </div>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Btn size="lg" variant="primary" onClick={()=>go('services')}>See the full service list <Arrow/></Btn>
+            <Btn size="lg" variant="ghost" onClick={()=>go('pricing')}>See pricing</Btn>
+          </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS — practical strip */}
+      {/* HOW IT WORKS */}
       <section className="bg-[#0A1F12] text-white">
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-16 lg:py-20">
           <div className="grid lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-16 items-start">
             <div>
               <span className="micro text-[#F5A623] block mb-5">How StartEasy works</span>
-              <h2 className="serif text-[clamp(1.8rem,4vw,2.6rem)] leading-[1.1] text-white mb-5">Get it right before you submit.</h2>
+              <h2 className="serif text-[clamp(1.8rem,4vw,2.6rem)] leading-[1.1] text-white mb-5">Prepared to the standard the authority expects.</h2>
               <p className="text-[15px] leading-relaxed text-white/55">Rather than waiting for an institution to identify avoidable mistakes, StartEasy introduces an administrative quality-control step before submission.</p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 rounded-sm overflow-hidden">
@@ -1047,23 +993,46 @@ function Home({go,onOpenService}){
           </div>
         </div>
       </section>
+    </div>
+  );
+}
 
-      {/* TRUST / BOUNDARY */}
-      <section className="bg-white">
-        <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-16 lg:py-20">
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {icon:'fa-shield-alt',t:'Quality-controlled',d:'Every pack is checked for completeness, consistency and legibility before submission.'},
-              {icon:'fa-route',t:'Officially channelled',d:'Submissions go through the correct official channel — never outside the system.'},
-              {icon:'fa-handshake',t:'Honest boundaries',d:'We provide administrative support. Where regulated advice is needed, we refer you to a qualified professional.'}
-            ].map((x,i)=>(
-              <div key={i} className="bg-[#F5FAF6] rounded-sm border border-[#0A1F12]/8 p-6 lg:p-7">
-                <span className="w-11 h-11 rounded-xl bg-[#1E7B3C]/10 text-[#1E7B3C] flex items-center justify-center mb-4"><i className={'fas '+x.icon} style={{fontSize:17}}></i></span>
-                <h3 className="serif text-[19px] text-[#0A1F12] mb-2">{x.t}</h3>
-                <p className="text-[13px] text-[#0A1F12]/55 leading-relaxed">{x.d}</p>
+/* =========================================================
+   DESKS INDEX PAGE
+   ========================================================= */
+function DesksPage({go}){
+  return(
+    <div className="fadein bg-[#F5FAF6]">
+      <section className="bg-[#0A1F12] text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#E8730F]/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"/>
+        <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20 relative z-10">
+          <span className="micro text-[#F5A623] block mb-6">Five specialist desks</span>
+          <h1 className="serif text-[clamp(2rem,5.5vw,3.4rem)] leading-[1.08] text-white mb-6 max-w-3xl">Pick the desk that matches your matter.</h1>
+          <p className="text-[16px] lg:text-[17px] leading-relaxed text-white/60 max-w-3xl mb-8">Each desk handles a defined set of administrative services with the relevant authority. We act on your behalf — we are not the authority.</p>
+          <NotRegulatorStrip tone="dark"/>
+        </div>
+      </section>
+
+      <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {SERVICE_GROUPS.map(g=>(
+            <button key={g.id} onClick={()=>go('services')} className="group bg-white rounded-sm border border-[#0A1F12]/8 p-6 lg:p-7 text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col" style={{cursor:'pointer',fontFamily:'inherit',borderTopWidth:4,borderTopColor:g.color}}>
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-25 group-hover:opacity-50 transition-opacity" style={{background:g.color}}/>
+              <div className="relative z-10 flex flex-col flex-1">
+                <div className="flex items-center justify-between gap-3 mb-5">
+                  <span className="w-12 h-12 rounded-xl flex items-center justify-center" style={{background:g.color+'18',color:g.color}}><i className={'fas '+g.icon} style={{fontSize:20}}></i></span>
+                  <span className="text-[10px] tracking-[0.14em] uppercase font-bold px-2.5 py-1 rounded-full" style={{background:g.color+'18',color:g.color}}>{g.services.length} services</span>
+                </div>
+                <h3 className="serif text-[22px] text-[#0A1F12] leading-tight mb-1">{g.title}</h3>
+                <p className="text-[11.5px] tracking-[0.04em] text-[#0A1F12]/50 font-semibold mb-3">{g.subtitle}</p>
+                <p className="text-[12.5px] text-[#0A1F12]/55 leading-relaxed mb-5 flex-1">{g.intro}</p>
+                <div className="pt-4 border-t border-[#0A1F12]/6 flex items-center justify-between gap-3">
+                  <span className="text-[10.5px] text-[#0A1F12]/40 font-semibold uppercase tracking-wider">Authority: {g.authority}</span>
+                  <span className="flex items-center gap-1.5 text-[10.5px] tracking-[0.12em] uppercase font-bold" style={{color:g.color}}>View <Arrow className="group-hover:translate-x-1 transition-transform"/></span>
+                </div>
               </div>
-            ))}
-          </div>
+            </button>
+          ))}
         </div>
       </section>
     </div>
@@ -1071,9 +1040,9 @@ function Home({go,onOpenService}){
 }
 
 /* =========================================================
-   SOLUTIONS PAGE — full service catalogue
+   SERVICES PAGE
    ========================================================= */
-function SolutionsPage({onOpenService}){
+function ServicesPage({onOpenService}){
   const [filter,setFilter]=useState('all');
   const [query,setQuery]=useState('');
   const groups=filter==='all'?SERVICE_GROUPS:SERVICE_GROUPS.filter(g=>g.id===filter);
@@ -1084,13 +1053,13 @@ function SolutionsPage({onOpenService}){
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#E8730F]/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"/>
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20 relative z-10">
           <span className="micro text-[#F5A623] block mb-6">Services &amp; Solutions</span>
-          <h1 className="serif text-[clamp(2rem,5.5vw,3.4rem)] leading-[1.08] text-white mb-6 max-w-3xl">Everything StartEasy does — scoped and priced.</h1>
-          <p className="text-[16px] lg:text-[17px] leading-relaxed text-white/60 max-w-3xl">Four desks covering business startup, ongoing compliance, tax &amp; employment, and licensing. Pick a service to see exactly what you get, what it costs and how long it takes.</p>
+          <h1 className="serif text-[clamp(2rem,5.5vw,3.4rem)] leading-[1.08] text-white mb-6 max-w-3xl">Every service StartEasy provides — scoped and priced.</h1>
+          <p className="text-[16px] lg:text-[17px] leading-relaxed text-white/60 max-w-3xl mb-8">Organised by desk. Each service shows what you get, what it costs and how long it takes. Pick a service to request it.</p>
+          <NotRegulatorStrip tone="dark"/>
         </div>
       </section>
 
       <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-12 lg:py-16">
-        {/* Filters */}
         <div className="bg-white rounded-sm border border-[#0A1F12]/8 p-5 mb-10">
           <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search services — e.g. company, TPIN, licence, renewal, name…" className={inputCls} style={{paddingLeft:20,paddingTop:14,paddingBottom:14,fontSize:15}}/>
           <div className="flex flex-wrap gap-2 mt-4">
@@ -1103,17 +1072,18 @@ function SolutionsPage({onOpenService}){
 
         {filtered.map(group=>(
           <div key={group.id} className="mb-14">
-            <div className="flex flex-wrap items-start gap-5 mb-8 pb-6 border-b border-[#0A1F12]/10">
+            <div className="flex flex-wrap items-start gap-5 mb-6 pb-6 border-b border-[#0A1F12]/10">
               <span className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0" style={{background:group.color+'18',color:group.color}}><i className={'fas '+group.icon} style={{fontSize:22}}></i></span>
               <div className="flex-1 min-w-[220px]">
-                <span className="text-[10.5px] tracking-[0.14em] uppercase font-bold block mb-1" style={{color:group.color}}>Desk {group.code}</span>
+                <span className="text-[10.5px] tracking-[0.14em] uppercase font-bold block mb-1" style={{color:group.color}}>Desk {group.code} · {group.authority}</span>
                 <h2 className="serif text-[clamp(1.5rem,3.2vw,2rem)] leading-tight text-[#0A1F12] mb-2">{group.title}</h2>
                 <p className="text-[13.5px] text-[#0A1F12]/55 leading-relaxed max-w-2xl">{group.intro}</p>
               </div>
               {group.recurring&&<span className="text-[10px] tracking-[0.12em] uppercase font-bold px-3 py-1.5 rounded-full bg-[#E8730F]/10 text-[#8A6828] flex-shrink-0">Recurring</span>}
             </div>
+            <div className="mb-6"><NotRegulatorStrip/></div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {group.services.map(s=>(<ServiceCard key={s.code} service={Object.assign({},s,{group:group.id,groupTitle:group.title,color:group.color,icon:group.icon})} onOpen={onOpenService}/>))}
+              {group.services.map(s=>(<ServiceCard key={s.code} service={Object.assign({},s,{group:group.id,groupTitle:group.title,color:group.color,icon:group.icon,authority:group.authority})} onOpen={onOpenService}/>))}
             </div>
           </div>
         ))}
@@ -1161,14 +1131,15 @@ function CompliancePage({openServiceModal,openPayment}){
   };
 
   const subscribe=()=>{
-    const sub=findService('B4');
-    openPayment({amount:sub.priceZm.replace(' / month',''),currency:'ZMW',purpose:'Business Compliance Subscription — Monthly',purposeDetail:'Compliance calendar, document vault, renewal alerts, regulatory monitoring and ongoing administrative support.',receiptPrefix:'SE-CMP',serviceKey:'compliance'});
+    const sub=findService('C6');
+    openPayment({amount:'K250',currency:'ZMW',purpose:'Business Compliance Subscription — Monthly',purposeDetail:'Compliance calendar, document vault, renewal alerts, regulatory monitoring and ongoing administrative support.',receiptPrefix:'SE-C6',serviceKey:'compliance'});
   };
 
   const alerts=[];
   renewals.forEach(r=>{const d=Math.ceil((new Date(r.date)-Date.now())/864e5);if(d<0)alerts.push({level:'bad',text:r.name+' expired '+Math.abs(d)+' day(s) ago.'});else if(d<=60)alerts.push({level:'warn',text:r.name+' is due in '+d+' day(s) — '+fmtDate(r.date)+'.'})});
 
-  const complianceServices=SERVICE_GROUPS.find(g=>g.id==='compliance').services;
+  const complianceGroup=SERVICE_GROUPS.find(g=>g.id==='compliance');
+  const complianceServices=complianceGroup.services;
 
   return(
     <div className="fadein bg-[#F5FAF6]">
@@ -1177,23 +1148,22 @@ function CompliancePage({openServiceModal,openPayment}){
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20 relative z-10">
           <span className="micro text-[#F5A623] block mb-6">Compliance Desk</span>
           <h1 className="serif text-[clamp(2rem,5.5vw,3.4rem)] leading-[1.08] text-white mb-6 max-w-3xl">Stay compliant, month after month.</h1>
-          <p className="text-[16px] lg:text-[17px] leading-relaxed text-white/60 max-w-3xl mb-8">Filings, renewals, statutory deadlines and records — on one calendar, with reminders at 60, 30 and 7 days so nothing lapses. Plus a document vault so you always know what you hold.</p>
-          <div className="flex flex-wrap gap-3">
+          <p className="text-[16px] lg:text-[17px] leading-relaxed text-white/60 max-w-3xl mb-8">Filings, renewals, statutory deadlines and records — on one calendar, with reminders at 60, 30 and 7 days so nothing lapses. We coordinate across PACRA, ZRA, NAPSA and licensing on your behalf.</p>
+          <div className="flex flex-wrap gap-3 mb-8">
             <Btn size="lg" variant="primary" onClick={subscribe}>Subscribe — K250 / month <Arrow/></Btn>
-            <Btn size="lg" variant="ghostLight" onClick={()=>openServiceModal(findService('B4'))}>What's included</Btn>
+            <Btn size="lg" variant="ghostLight" onClick={()=>openServiceModal(findService('C6'))}>What's included</Btn>
           </div>
+          <NotRegulatorStrip tone="dark"/>
         </div>
       </section>
 
-      {/* Compliance services */}
       <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-18">
-        <SectionHead eyebrow="Services" title="Compliance services." className="mb-10 max-w-2xl"/>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {complianceServices.map(s=>(<ServiceCard key={s.code} service={Object.assign({},s,{group:'compliance',groupTitle:'Business Compliance Desk',color:'#0E7C7B',icon:'fa-calendar-check'})} onOpen={openServiceModal}/>))}
+        <SectionHead eyebrow="Services" title="Compliance desk services." className="mb-10 max-w-2xl"/>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {complianceServices.map(s=>(<ServiceCard key={s.code} service={Object.assign({},s,{group:'compliance',groupTitle:'Compliance Desk',color:'#0E7C7B',icon:'fa-calendar-check',authority:complianceGroup.authority})} onOpen={openServiceModal}/>))}
         </div>
       </section>
 
-      {/* Tools: renewals + vault */}
       <section className="bg-white">
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-18">
           <SectionHead eyebrow="Your tools" title="Track renewals and keep documents in one place." sub="Saved to this device only — nothing is uploaded unless you send it to us." className="mb-10 max-w-2xl"/>
@@ -1232,7 +1202,6 @@ function CompliancePage({openServiceModal,openPayment}){
         </div>
       </section>
 
-      {/* Assistance request */}
       <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-18">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           <div>
@@ -1252,7 +1221,7 @@ function CompliancePage({openServiceModal,openPayment}){
               <div className="p-6">{tickets.length===0?(<p className="text-[13px] text-[#0A1F12]/45 italic">No requests logged. Use the form to open a support matter.</p>):tickets.map(t=>(<div key={t.id} className="py-4 border-b border-[#0A1F12]/6 last:border-0"><div className="flex items-start justify-between gap-3 mb-2"><span className="text-[13.5px] font-semibold text-[#0A1F12]">{t.subject}</span><span className={'text-[10px] tracking-[0.1em] uppercase font-bold px-2 py-1 rounded-full shrink-0 '+(t.status==='Resolved'?'bg-[#1E7B3C]/15 text-[#1E7B3C]':'bg-[#F5A623]/20 text-[#8A6828]')}>{t.status}</span></div><div className="text-[11.5px] text-[#0A1F12]/45 mb-2">{t.service||'General'} · Ref {t.ref} · {fmtDate(t.createdAt)}</div>{t.detail&&<p className="text-[12px] text-[#0A1F12]/60 leading-relaxed">{t.detail}</p>}</div>))}</div>
             </div>
             <div className="bg-white rounded-sm border border-[#0A1F12]/8 overflow-hidden">
-              <div className="px-6 py-4 border-b border-[#0A1F12]/6 bg-[#FBFDFB]"><span className="text-[14px] font-semibold text-[#0A1F12]">What the desk coordinates with</span></div>
+              <div className="px-6 py-4 border-b border-[#0A1F12]/6 bg-[#FBFDFB]"><span className="text-[14px] font-semibold text-[#0A1F12]">We coordinate across</span></div>
               <div className="p-6">
                 <ul className="space-y-2.5">{ABOUT.institutions.map((x,i)=>(<li key={i} className="flex items-start gap-2.5 text-[13px] text-[#0A1F12]/65 leading-relaxed"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0E7C7B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mt-1 shrink-0"><path d="M20 6L9 17l-5-5"/></svg>{x}</li>))}</ul>
                 <p className="text-[11.5px] text-[#0A1F12]/45 italic leading-relaxed mt-5">Exact obligations are always determined by the client's business, legal structure, activities, employees and location.</p>
@@ -1268,30 +1237,33 @@ function CompliancePage({openServiceModal,openPayment}){
 /* =========================================================
    PRICING PAGE
    ========================================================= */
-function PricingPage({openServiceModal,openPayment}){
-  const tiers=[
-    {key:'diy',name:'Discover',tagline:'Explore what you need',priceZm:'Free',priceUsd:'Free',desc:'Access to the full service list, process guidance and readiness information.',feats:['Full service list with pricing','Process guidance','Readiness checklists','Official channel links'],who:'Exploring your options'},
-    {key:'nr',name:'Name Report',tagline:'Formal name readiness report',priceZm:'K50',priceUsd:'$5',desc:'A formal PDF report with detailed screening, saturation analysis and recommended submission order.',feats:['Protected-term check','Similarity analysis','Saturation review','Recommended submission order'],who:'Before name clearance',code:'NR'},
-    {key:'guided',name:'Guided',tagline:'Tell me exactly what to do',priceZm:'K150',priceUsd:'$15',desc:'A personalised action plan with document checklists and readiness scoring for your specific matter.',feats:['Personalised action plan','Document checklist per authority','Readiness checks','Process tracking'],who:'Wanting structure',code:'A3'},
-    {key:'assisted',name:'Assisted',tagline:'I need human help',priceZm:'K450',priceUsd:'$45',desc:'Everything in Guided, plus human review of your pack and help resolving queries or reversions.',feats:['Everything in Guided','Human document review','Support sessions','Reversion assistance'],who:'Facing a specific problem',highlight:true,code:'A4'},
-    {key:'managed',name:'Managed',tagline:'Handle it for me',priceZm:'K1,200',priceUsd:'$120',desc:'StartEasy handles the administrative process end to end, within defined support units.',feats:['StartEasy handles submission','Dedicated officer','Case tracking','Document management'],who:'Businesses with no time',code:'A4'},
-    {key:'subscription',name:'Compliance',tagline:'Ongoing support',priceZm:'K250 / month',priceUsd:'$25 / month',desc:'A continuing administrative relationship: compliance calendar, document vault, renewal alerts and support.',feats:['Compliance calendar','Document vault','Renewal alerts','Regulatory monitoring','Ongoing support'],who:'Established SMEs',code:'B4'}
-  ];
-  const handleTier=(t)=>{
-    if(t.key==='diy')return;
-    if(t.code)openServiceModal(findService(t.code));
-  };
+function PricingPage({openServiceModal}){
   return(
     <div className="fadein bg-[#F5FAF6]">
       <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
-        <SectionHead eyebrow="Pricing" title="Priced up front. No surprises." sub="Every service has a published price. Fees are for StartEasy service — they never buy government approval. Requirements and authority fees are separate and always confirmed before submission." className="mb-14 max-w-3xl"/>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-14">
-          {tiers.map(t=>(<div key={t.key} className={'bg-white rounded-sm border flex flex-col relative overflow-hidden '+(t.highlight?'border-[#E8730F] shadow-[0_0_40px_rgba(232,115,15,0.15)]':'border-[#0A1F12]/8')}>{t.highlight&&<div className="absolute top-0 right-0 bg-[#E8730F] text-white text-[10px] tracking-[0.14em] uppercase font-bold px-3 py-1.5">Most requested</div>}<div className="p-6 lg:p-7 flex-1"><span className="text-[10.5px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/40 block mb-3">{t.who}</span><h3 className="serif text-[23px] text-[#0A1F12] mb-1">{t.name}</h3><div className="text-[12px] text-[#0A1F12]/45 mb-4">{t.tagline}</div><div className="mb-5"><span className="serif text-[27px] font-bold text-[#E8730F]">{t.priceZm}</span><span className="text-[12px] text-[#0A1F12]/40 ml-2">/ {t.priceUsd}</span></div><p className="text-[12.5px] leading-relaxed text-[#0A1F12]/55 mb-5">{t.desc}</p><ul className="space-y-2.5 mb-6">{t.feats.map((f,i)=>(<li key={i} className="flex items-start gap-2.5 text-[12px] leading-relaxed text-[#0A1F12]/65"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#E8730F" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mt-1 shrink-0"><path d="M20 6L9 17l-5-5"/></svg>{f}</li>))}</ul></div><div className="p-5 pt-0"><button onClick={()=>handleTier(t)} disabled={t.key==='diy'} style={{width:'100%',padding:'12px 16px',background:t.highlight?'linear-gradient(135deg,#E8730F,#F5A623)':'#0A1F12',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:700,cursor:t.key==='diy'?'default':'pointer',fontFamily:'inherit',opacity:t.key==='diy'?.55:1}}>{t.key==='diy'?'Browse services':'See this option'}</button></div></div>))}
+        <SectionHead eyebrow="Pricing" title="Priced up front. No surprises." sub="Every service has a published StartEasy service fee. Fees are for StartEasy administrative work — they never buy government approval, and they are separate from any authority fee." className="mb-8 max-w-3xl"/>
+        <div className="mb-10"><NotRegulatorStrip/></div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-14">
+          {SERVICE_GROUPS.map(g=>{
+            const minPrice=g.services.reduce((min,s)=>{const n=parseFloat(String(s.priceZm).replace(/[^\d.]/g,''))||0;return (min===null||n<min)?n:min},null);
+            const fromPrice=g.services.some(s=>String(s.priceZm).startsWith('From'))?'From ':'';
+            return(
+              <button key={g.id} onClick={()=>openServiceModal(g.services[0])} className="group bg-white rounded-sm border border-[#0A1F12]/8 p-6 text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col" style={{cursor:'pointer',fontFamily:'inherit',borderTopWidth:3,borderTopColor:g.color}}>
+                <div className="flex items-center gap-3 mb-4"><span className="w-11 h-11 rounded-xl flex items-center justify-center" style={{background:g.color+'18',color:g.color}}><i className={'fas '+g.icon} style={{fontSize:18}}></i></span><div><span className="text-[10px] tracking-[0.14em] uppercase font-bold" style={{color:g.color}}>Desk {g.code}</span><h3 className="serif text-[18px] text-[#0A1F12] leading-tight">{g.title}</h3></div></div>
+                <p className="text-[12px] text-[#0A1F12]/55 leading-relaxed mb-5 flex-1">{g.services.length} services · authority: {g.authority}</p>
+                <div className="pt-4 border-t border-[#0A1F12]/6 flex items-end justify-between gap-3">
+                  <div><div className="text-[10px] tracking-[0.12em] uppercase font-bold text-[#0A1F12]/40 mb-1">From</div><div className="serif text-[20px] font-bold text-[#E8730F] leading-none">{fromPrice}K{minPrice}</div></div>
+                  <span className="flex items-center gap-1.5 text-[10.5px] tracking-[0.12em] uppercase font-bold" style={{color:g.color}}>View <Arrow className="group-hover:translate-x-1 transition-transform"/></span>
+                </div>
+              </button>
+            );
+          })}
         </div>
+
         <div className="bg-white rounded-sm border border-[#0A1F12]/8 overflow-hidden mb-10">
-          <div className="px-6 py-4 border-b border-[#0A1F12]/6 bg-[#FBFDFB]"><span className="text-[14px] font-semibold text-[#0A1F12]">Individual service prices</span></div>
-          <div className="overflow-x-auto"><table className="w-full border-collapse" style={{minWidth:640}}>
-            <thead><tr>{['Code','Service','Desk','Price','Timeline'].map(h=>(<th key={h} className="text-left py-3 px-4 bg-[#FBFDFB] border-b border-[#0A1F12]/6 text-[10.5px] tracking-[0.1em] uppercase font-bold text-[#0A1F12]/50">{h}</th>))}</tr></thead>
+          <div className="px-6 py-4 border-b border-[#0A1F12]/6 bg-[#FBFDFB]"><span className="text-[14px] font-semibold text-[#0A1F12]">Full service fee list</span></div>
+          <div className="overflow-x-auto"><table className="w-full border-collapse" style={{minWidth:720}}>
+            <thead><tr>{['Code','Service','Desk','StartEasy service fee','Timeline'].map(h=>(<th key={h} className="text-left py-3 px-4 bg-[#FBFDFB] border-b border-[#0A1F12]/6 text-[10.5px] tracking-[0.1em] uppercase font-bold text-[#0A1F12]/50">{h}</th>))}</tr></thead>
             <tbody>{ALL_SERVICES.map(s=>(
               <tr key={s.code} className="border-b border-[#0A1F12]/6 hover:bg-[#FBFDFB] cursor-pointer" onClick={()=>openServiceModal(s)}>
                 <td className="py-3 px-4 text-[11.5px] font-mono text-[#0A1F12]/50">{s.code}</td>
@@ -1303,7 +1275,7 @@ function PricingPage({openServiceModal,openPayment}){
             ))}</tbody>
           </table></div>
         </div>
-        <div className="p-4 rounded-sm max-w-3xl" style={{background:'#FFF4E5',borderLeft:'3px solid #FFC107',fontSize:12.5,color:'#7A5C10',lineHeight:1.6}}><strong>Pricing note.</strong> These figures are indicative service fees for StartEasy administrative work. They are separate from any government or regulator fee, which is always confirmed before submission. Requirements and timelines change — always confirm current requirements with the relevant authority.</div>
+        <div className="p-4 rounded-sm max-w-3xl" style={{background:'#FFF4E5',borderLeft:'3px solid #FFC107',fontSize:12.5,color:'#7A5C10',lineHeight:1.6}}><strong>Pricing note.</strong> These figures are StartEasy service fees for administrative work — preparing, checking, submitting and tracking on your behalf. They are separate from any government or regulator fee, which is always confirmed before submission. Requirements and timelines change — always confirm current requirements with the relevant authority.</div>
       </section>
     </div>
   );
@@ -1321,7 +1293,8 @@ function AboutPage({go}){
           <span className="micro text-[#F5A623] block mb-6">About Us</span>
           <h1 className="serif text-[clamp(2.2rem,5.5vw,3.6rem)] leading-[1.08] text-white mb-6 max-w-3xl">StartEasy Administrative Services Desk</h1>
           <p className="text-[11px] tracking-[0.18em] uppercase text-[#F5A623] font-bold mb-6">Start Right. Stay Compliant. Grow with Confidence.</p>
-          <p className="text-[16px] lg:text-[17px] leading-relaxed text-white/60 max-w-3xl">Location: Zambia · Administrative, regulatory-navigation and compliance-support services for entrepreneurs, founders, businesses and SMEs.</p>
+          <p className="text-[16px] lg:text-[17px] leading-relaxed text-white/60 max-w-3xl mb-8">Location: Zambia · Administrative, regulatory-navigation and compliance-support services for entrepreneurs, founders, businesses and SMEs.</p>
+          <NotRegulatorStrip tone="dark"/>
         </div>
       </section>
 
@@ -1332,14 +1305,14 @@ function AboutPage({go}){
           <div className="bg-white rounded-sm border border-[#0A1F12]/8 p-7 lg:p-9">
             <p className="text-[15px] leading-relaxed text-[#0A1F12]/70 mb-5">{ABOUT.concept.body}</p>
             <p className="text-[15px] leading-relaxed text-[#0A1F12]/70 mb-6">{ABOUT.concept.body2}</p>
-            <div className="border-l-3 border-[#E8730F] pl-5 py-1" style={{borderLeftWidth:3,borderLeftColor:'#E8730F'}}>
+            <div style={{borderLeft:'3px solid #E8730F',paddingLeft:20,paddingTop:4,paddingBottom:4}}>
               <p className="text-[14.5px] leading-relaxed text-[#0A1F12] font-medium">{ABOUT.concept.conclusion}</p>
             </div>
           </div>
           <div className="bg-white rounded-sm border border-[#0A1F12]/8 p-7 lg:p-9">
             <span className="micro text-[#0A1F12]/50 block mb-5">Business concept at a glance</span>
             <div className="space-y-4">
-              {[['Location','Zambia'],['Positioning','Administrative services desk'],['Primary focus','Administrative readiness & compliance support'],['Service categories','Startup · Compliance · Tax & Employment · Licensing'],['Model','Free discovery → guided → assisted → managed → ongoing support']].map(([k,v],i)=>(<div key={i} className="py-3 border-b border-[#0A1F12]/6 last:border-0"><div className="text-[10.5px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/40 mb-1">{k}</div><div className="text-[13.5px] text-[#0A1F12]/75 font-medium leading-snug">{v}</div></div>))}
+              {[['Location','Zambia'],['Positioning','Administrative services desk'],['Primary focus','Administrative readiness & compliance support'],['Desks','PACRA · ZRA · NAPSA · Licensing · Compliance'],['Model','Free discovery → guided → assisted → managed → ongoing support']].map(([k,v],i)=>(<div key={i} className="py-3 border-b border-[#0A1F12]/6 last:border-0"><div className="text-[10.5px] tracking-[0.14em] uppercase font-bold text-[#0A1F12]/40 mb-1">{k}</div><div className="text-[13.5px] text-[#0A1F12]/75 font-medium leading-snug">{v}</div></div>))}
             </div>
           </div>
         </div>
@@ -1408,25 +1381,26 @@ function AboutPage({go}){
         </div>
       </section>
 
-      {/* 6. Service catalogue reference */}
+      {/* 6. Service catalogue reference — the desks */}
       <section className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
-        <SectionHead eyebrow="6 · Service catalogue" title="The full service structure." sub="Six service categories across four desks. Every service line is scoped and priced — see the Services page for details and to request any of them." className="mb-12 max-w-3xl"/>
+        <SectionHead eyebrow="6 · Service catalogue" title="The desks and their services." sub="Five specialist desks. Every service line is scoped and priced — see the Services page for details and to request any of them." className="mb-12 max-w-3xl"/>
         <div className="space-y-8">
           {SERVICE_GROUPS.map(g=>(<div key={g.id} className="bg-white rounded-sm border border-[#0A1F12]/8 p-7 lg:p-9" style={{borderLeftWidth:4,borderLeftColor:g.color}}>
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-3">
               <span className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{background:g.color+'18',color:g.color}}><i className={'fas '+g.icon} style={{fontSize:19}}></i></span>
-              <div><span className="text-[10.5px] tracking-[0.14em] uppercase font-bold block mb-0.5" style={{color:g.color}}>Desk {g.code}</span><h3 className="serif text-[20px] text-[#0A1F12] leading-tight">{g.title}</h3></div>
+              <div><span className="text-[10.5px] tracking-[0.14em] uppercase font-bold block mb-0.5" style={{color:g.color}}>Desk {g.code} · {g.authority}</span><h3 className="serif text-[20px] text-[#0A1F12] leading-tight">{g.title}</h3></div>
             </div>
-            <ul className="space-y-3">{g.services.map(s=>(<li key={s.code} className="flex items-start gap-3 pb-3 border-b border-[#0A1F12]/6 last:border-0 last:pb-0"><span className="text-[11px] font-mono text-[#0A1F12]/40 shrink-0 mt-0.5">{s.code}</span><div><span className="block text-[13.5px] font-semibold text-[#0A1F12]">{s.title}</span><span className="block text-[12.5px] text-[#0A1F12]/55 leading-relaxed mt-0.5">{s.tagline}</span></div></li>))}</ul>
+            <p className="text-[12.5px] text-[#0A1F12]/55 leading-relaxed mb-5 italic">{g.actsOn}</p>
+            <ul className="space-y-3">{g.services.map(s=>(<li key={s.code} className="flex items-start gap-3 pb-3 border-b border-[#0A1F12]/6 last:border-0 last:pb-0"><span className="text-[11px] font-mono text-[#0A1F12]/40 shrink-0 mt-0.5">{s.code}</span><div className="flex-1"><span className="block text-[13.5px] font-semibold text-[#0A1F12]">{s.title}</span><span className="block text-[12.5px] text-[#0A1F12]/55 leading-relaxed mt-0.5">{s.tagline}</span></div><span className="text-[12px] font-bold text-[#E8730F] shrink-0 whitespace-nowrap">{s.priceZm}</span></li>))}</ul>
           </div>))}
         </div>
-        <div className="mt-8 flex flex-wrap gap-3"><Btn size="lg" variant="primary" onClick={()=>go('solutions')}>See all services with pricing <Arrow/></Btn></div>
+        <div className="mt-8 flex flex-wrap gap-3"><Btn size="lg" variant="primary" onClick={()=>go('services')}>See all services with fees <Arrow/></Btn></div>
       </section>
 
       {/* 7. Institutions */}
       <section className="bg-white">
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-14 lg:py-20">
-          <SectionHead eyebrow="7 · Coordination" title="Who StartEasy coordinates with." sub="Where applicable, StartEasy coordinates administrative processes involving the relevant institutions. The exact obligations should always be determined based on the client's business, legal structure, activities, employees and location." className="mb-10 max-w-3xl"/>
+          <SectionHead eyebrow="7 · Coordination" title="Who StartEasy coordinates with." sub="Where applicable, StartEasy coordinates administrative processes involving the relevant institutions. The exact obligations should always be determined based on the client's business, legal structure, activities, employees and location. We act on your behalf — we are not these institutions." className="mb-10 max-w-3xl"/>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             {ABOUT.institutions.map((x,i)=>(<div key={i} className="bg-[#F5FAF6] rounded-sm border border-[#0A1F12]/8 p-4 text-center"><span className="text-[12.5px] font-semibold text-[#0A1F12] leading-snug block">{x}</span></div>))}
           </div>
@@ -1445,15 +1419,14 @@ function AboutPage({go}){
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="bg-[#0A1F12]">
         <div className="max-w-[1320px] mx-auto px-6 lg:px-10 py-20 lg:py-28">
           <div className="max-w-3xl">
             <h2 className="serif text-[clamp(2rem,5vw,3.2rem)] leading-[1.1] text-white mb-6">Ready when you are.</h2>
-            <p className="text-[16px] leading-relaxed text-white/55 mb-10 max-w-2xl">Pick the service that matches your objective, or tell us what you are trying to achieve and we will route it to the right desk.</p>
+            <p className="text-[16px] leading-relaxed text-white/55 mb-10 max-w-2xl">Pick the desk that matches your matter, or tell us what you are trying to achieve and we will route it to the right one.</p>
             <div className="flex flex-wrap gap-4">
-              <Btn size="lg" variant="primary" onClick={()=>go('solutions')}>Browse all services <Arrow/></Btn>
-              <Btn size="lg" variant="ghostLight" onClick={()=>go('compliance')}>Compliance Desk</Btn>
+              <Btn size="lg" variant="primary" onClick={()=>go('desks')}>Browse the desks <Arrow/></Btn>
+              <Btn size="lg" variant="ghostLight" onClick={()=>go('services')}>All services</Btn>
             </div>
           </div>
         </div>
@@ -1476,8 +1449,8 @@ function FloatingAssistant(){
             <button onClick={()=>setOpen(false)} className="text-white/50 hover:text-white transition-colors" style={{background:'none',border:'none',cursor:'pointer'}} aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg></button>
           </div>
           <div className="p-5">
-            <p className="text-[12.5px] text-[#0A1F12]/65 leading-relaxed mb-4">Tell us what you are trying to do and we will point you to the right service — or you can message us directly.</p>
-            <a href={'https://wa.me/'+ADMIN_WHATSAPP+'?text='+encodeURIComponent('Hello StartEasy — I need help choosing the right service.')} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',justifyContent:'center',gap:9,background:'#25D366',color:'#fff',padding:'12px 18px',borderRadius:8,fontSize:13,fontWeight:700,textDecoration:'none'}}><i className="fab fa-whatsapp" style={{fontSize:16}}></i> Chat on WhatsApp</a>
+            <p className="text-[12.5px] text-[#0A1F12]/65 leading-relaxed mb-4">Tell us what you are trying to do and we will point you to the right desk — or you can message us directly.</p>
+            <a href={'https://wa.me/'+ADMIN_WHATSAPP+'?text='+encodeURIComponent('Hello StartEasy — I need help choosing the right service or desk.')} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',justifyContent:'center',gap:9,background:'#25D366',color:'#fff',padding:'12px 18px',borderRadius:8,fontSize:13,fontWeight:700,textDecoration:'none'}}><i className="fab fa-whatsapp" style={{fontSize:16}}></i> Chat on WhatsApp</a>
             <a href={'mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent('I need help choosing a StartEasy service')} style={{display:'flex',alignItems:'center',justifyContent:'center',gap:9,background:'#fff',color:'#0A1F12',padding:'12px 18px',borderRadius:8,fontSize:13,fontWeight:700,textDecoration:'none',marginTop:8,border:'1px solid rgba(10,31,18,.15)'}}><i className="fas fa-envelope" style={{fontSize:14}}></i> Email us</a>
             <p className="text-[11px] text-[#0A1F12]/40 leading-relaxed mt-4 text-center">Typical response within 4 working hours.</p>
           </div>
@@ -1524,9 +1497,10 @@ function App(){
 
   const view=()=>{
     switch(route){
-      case 'solutions': return <SolutionsPage onOpenService={setServiceModal}/>;
+      case 'desks': return <DesksPage go={go}/>;
+      case 'services': return <ServicesPage onOpenService={setServiceModal}/>;
       case 'compliance': return <CompliancePage openServiceModal={setServiceModal} openPayment={openPayment}/>;
-      case 'pricing': return <PricingPage openServiceModal={setServiceModal} openPayment={openPayment}/>;
+      case 'pricing': return <PricingPage openServiceModal={setServiceModal}/>;
       case 'about': return <AboutPage go={go}/>;
       default: return <Home go={go} onOpenService={setServiceModal}/>;
     }
