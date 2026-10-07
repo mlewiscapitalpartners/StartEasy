@@ -302,10 +302,10 @@ const INDUSTRIES=[
 
 /* ---------- LEGAL ENDINGS ---------- */
 const LEGAL_ENDINGS={
+  NONE:{key:'NONE',label:'No legal ending',display:'',
+    desc:'A statutory business name — and optionally a company limited by guarantee whose objects are charitable, educational, religious, scientific or otherwise for the public welfare — carries no legal ending.'},
   LIMITED:{key:'LIMITED',label:'LIMITED',display:'LIMITED',
     desc:'Standard statutory legal ending — confirms the entity is a body corporate with limited liability.'},
-  NONE:{key:'NONE',label:'No legal ending',display:'',
-    desc:'A guarantee company may be registered without the word LIMITED where its objects are charitable, educational, religious, scientific or otherwise for the public welfare, subject to PACRA approval.'},
   UNLIMITED:{key:'UNLIMITED',label:'UNLIMITED',display:'UNLIMITED',
     desc:'Members\' liability is not limited. Reserved for special cases where a guarantee company must be unlimited.'},
   PLC:{key:'PLC',label:'PLC',display:'PLC',
@@ -315,10 +315,10 @@ const LEGAL_ENDINGS={
 /* ---------- LEGAL STRUCTURES ---------- */
 const STRUCTURES=[
   {key:'bn',label:'Statutory Business Name',short:'Business Name',icon:'fa-store',
-   desc:'A business name registered with PACRA under the Registration of Business Names Act. The proprietor remains personally liable, and the registered name carries the statutory legal ending LIMITED.',
-   endings:['LIMITED'],endingRule:'fixed',
+   desc:'A trading name registered with PACRA under the Registration of Business Names Act. The proprietor trades under the registered name and remains personally liable for the business.',
+   endings:['NONE'],endingRule:'none',
    typical:['Sole traders','Small operations','Side businesses','One-person ventures','Informal-to-formal transitions'],
-   note:'PACRA statutory business names carry the legal ending LIMITED as part of the registered name.'},
+   note:'A PACRA statutory business name carries no legal ending. The word LIMITED is reserved for incorporated companies and cannot be part of a registered business name.'},
   {key:'ltd',label:'Private Company Limited by Shares',short:'Private Limited by Shares',icon:'fa-building',
    desc:'An incorporated company whose ownership is represented through shares. Shareholders\' liability is limited to any amount unpaid on their shares.',
    endings:['LIMITED'],endingRule:'fixed',rec:true,
@@ -343,7 +343,8 @@ const STRUCTURES=[
 
 /* Resolve the actual legal ending string for a chosen structure + ending option */
 function resolveLegalEnding(structure,choice){
-  if(!structure)return 'LIMITED';
+  if(!structure)return '';
+  if(structure.endingRule==='none')return '';
   if(structure.endingRule==='choice'){
     if(choice==='NONE')return '';
     if(choice==='UNLIMITED')return 'UNLIMITED';
@@ -405,9 +406,9 @@ function buildSixNames(distinctive,effectiveDescriptor,industryData,legalEnding)
   if(!distinctive||!distinctive.trim()||!effectiveDescriptor||!industryData)return[];
   const distinct=distinctive.trim().toUpperCase();
   const desc=effectiveDescriptor.toUpperCase().trim();
-  const ending=(legalEnding===undefined||legalEnding===null)?'LIMITED':String(legalEnding).trim();
+  const ending=(legalEnding===undefined||legalEnding===null)?'':String(legalEnding).trim();
   /* Compose: [DISTINCTIVE] [DESCRIPTOR] [LEGAL ENDING] — the ending is omitted entirely
-     when the guarantee company is registered without one. */
+     when the entity carries none (business name / guarantee without ending). */
   const compose=d=>[distinct,d,ending].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
   const out=[];
 
@@ -896,7 +897,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const [descriptor,setDescriptor]=useState(b.descriptor||'');
   const [customDescriptor,setCustomDescriptor]=useState(b.customDescriptor||'');
   const [structure,setStructure]=useState(b.structure||null);
-  const [legalEnding,setLegalEnding]=useState(b.legalEnding||'LIMITED');
+  const [legalEnding,setLegalEnding]=useState(typeof b.legalEnding==='string'?b.legalEnding:'');
   const [distinctive,setDistinctive]=useState(b.distinctive||'');
   const [restoredAt,setRestoredAt]=useState(boot.savedAt);
   const [showRestored,setShowRestored]=useState(!!boot.data);
@@ -912,14 +913,15 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     clearSnapshot();
     setStep(0);setScope(null);setIdea('');setPrimaryActivity('');setSecondaryActivities([]);
     setIndustry(null);setDescriptor('');setCustomDescriptor('');setStructure(null);
-    setLegalEnding('LIMITED');setDistinctive('');setShowRestored(false);setRestoredAt(null);
+    setLegalEnding('');setDistinctive('');setShowRestored(false);setRestoredAt(null);
   };
 
   useEffect(()=>{if(industry&&!descriptor&&!customDescriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0])}},[industry]);
-  /* Keep the legal ending aligned whenever a fixed-ending structure is chosen */
+  /* Keep the legal ending aligned whenever a fixed- or no-ending structure is chosen */
   useEffect(()=>{
     const sd=structure?STRUCTURES.find(x=>x.key===structure):null;
-    if(sd&&sd.endingRule!=='choice')setLegalEnding(sd.endings[0]||'');
+    if(sd&&sd.endingRule==='none')setLegalEnding('');
+    else if(sd&&sd.endingRule==='fixed')setLegalEnding(sd.endings[0]||'');
   },[structure]);
 
   const effectiveDescriptor=useMemo(()=>customDescriptor.trim()||descriptor,[customDescriptor,descriptor]);
@@ -1112,48 +1114,63 @@ function WStructure({structure,setStructure,legalEnding,setLegalEnding,idea,dist
      so we infer the likely structure from keywords in the business idea. */
   const recommend=useMemo(()=>{
     const t=(idea||'').toLowerCase();
-    if(/\b(public|listed|listing|ipo|stock exchange|offer shares|shares to the public|pre-ipo)\b/.test(t))return['plc'];
-    if(/\b(non[- ]?profit|nonprofit|charity|charitable|association|club|society|ngo|foundation|welfare|community|membership|church|mosque|cooperative|co-op)\b/.test(t))return['ltdg'];
-    if(/\b(sole trader|sole proprietor|freelance|one[- ]person|individual trader|informal|small shop|tuck shop|market stall)\b/.test(t))return['bn','ltd'];
-    return['ltd'];
+    if(/\b(public|listed|listing|ipo|stock exchange|offer shares|shares to the public|pre-ipo)\b/.test(t))return 'plc';
+    if(/\b(non[- ]?profit|nonprofit|charity|charitable|association|club|society|ngo|foundation|welfare|community|membership|church|mosque|cooperative|co-op)\b/.test(t))return 'ltdg';
+    if(/\b(sole trader|sole proprietor|freelance|one[- ]person|individual trader|informal|small shop|tuck shop|market stall)\b/.test(t))return 'bn';
+    return 'ltd';
   },[idea]);
 
   const sel=structure?STRUCTURES.find(s=>s.key===structure):null;
   const resolved=resolveLegalEnding(sel,legalEnding);
-  const preview=[distinctive?distinctive.toUpperCase():'[DISTINCTIVE]',descriptor?descriptor.toUpperCase():'[DESCRIPTOR]',resolved||'(no legal ending)'].join(' ');
+  const previewParts=[distinctive?distinctive.toUpperCase():'[DISTINCTIVE]',descriptor?descriptor.toUpperCase():'[DESCRIPTOR]',resolved].filter(Boolean);
+  const preview=previewParts.join(' ');
 
   return <div>
     <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 3 · Legal structure &amp; name clearance</div>
     <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Which structure should the name be cleared under?</h2>
     <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:660}}>Before we build your names, PACRA needs to know <strong>what kind of entity you are registering</strong> — because the <strong>legal ending</strong> (LIMITED, PLC, or none) forms part of the name itself. Choose the structure that matches what you are building. We recommend based on your business idea, and you can change this at any time.</p>
 
-    <div style={{display:'flex',flexDirection:'column',gap:12}}>
-      {STRUCTURES.map(s=>{const on=structure===s.key;const isRec=recommend.includes(s.key)&&s.key!=='unsure';return <button key={s.key} onClick={()=>setStructure(s.key)} className={`stile ${on?'sel':''}`}>
-        {isRec&&<span className="rec"><i className="fas fa-check" style={{marginRight:4,fontSize:9}}></i>Recommended</span>}
-        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
-          <span style={{width:34,height:34,borderRadius:9,background:'rgba(232,115,15,.1)',color:'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className={`fas ${s.icon}`} style={{fontSize:14}}></i></span>
-          <h4 style={{margin:0}}>{s.label}</h4>
-        </div>
-        <p>{s.desc}</p>
-        <div className="ends">
-          {s.endings.map(e=><span key={e}>{(LEGAL_ENDINGS[e]&&LEGAL_ENDINGS[e].display)||e||'NO ENDING'}</span>)}
-        </div>
-        <div style={{fontSize:11,color:'rgba(10,31,18,.5)',lineHeight:1.5}}><strong style={{color:'rgba(10,31,18,.6)'}}>Typical for:</strong> {s.typical.join(' · ')}</div>
-      </button>})}
+    {/* ----- Primary structure dropdown ----- */}
+    <div style={{maxWidth:640,marginBottom:20}}>
+      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Legal structure</label>
+      <select value={structure||''} onChange={e=>setStructure(e.target.value||null)} className="inp-select">
+        <option value="">— Choose the legal structure —</option>
+        {STRUCTURES.map(s=><option key={s.key} value={s.key}>{s.label}{recommend===s.key?'  (recommended)':''}</option>)}
+      </select>
+      {!structure&&recommend&&<div style={{marginTop:10,padding:'10px 14px',background:'rgba(30,123,60,.08)',border:'1px solid rgba(30,123,60,.25)',borderRadius:8,fontSize:12.5,color:'#0F5C2A',display:'flex',gap:10,alignItems:'flex-start'}}>
+        <i className="fas fa-lightbulb" style={{color:'#1E7B3C',fontSize:14,flexShrink:0,marginTop:2}}></i>
+        <span>Based on your business idea, we recommend <strong>{STRUCTURES.find(s=>s.key===recommend)?.label}</strong>. You can change this.</span>
+      </div>}
     </div>
 
-    {sel&&sel.endingRule==='choice'&&<div style={{marginTop:26,background:'#fff',border:'2px solid rgba(232,115,15,.35)',borderRadius:12,padding:'22px 24px'}}>
-      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Guarantee company · legal ending</div>
-      <p style={{fontSize:13,lineHeight:1.6,color:'rgba(10,31,18,.65)',marginBottom:16}}>A company limited by guarantee may be registered in any of these three forms. Choose the one that fits your objects and constitution.</p>
-      <div className="grid sm:grid-cols-3 gap-3">
-        {sel.endings.map(k=>{const le=LEGAL_ENDINGS[k];const on=legalEnding===k;return <button key={k} onClick={()=>setLegalEnding(k)} className={`stile ${on?'sel':''}`} style={{padding:'16px 18px'}}>
-          <h4 style={{fontFamily:'Consolas,monospace',fontSize:14,marginBottom:8,letterSpacing:'.02em'}}>{le.display||'NO ENDING'}</h4>
-          <p style={{fontSize:11.5,margin:0}}>{le.desc}</p>
-        </button>})}
+    {/* ----- Selected structure detail card ----- */}
+    {sel&&<div style={{background:'#fff',border:'2px solid rgba(232,115,15,.35)',borderRadius:12,padding:'22px 24px',marginBottom:22}}>
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:12}}>
+        <span style={{width:38,height:38,borderRadius:10,background:'rgba(232,115,15,.1)',color:'#E8730F',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className={`fas ${sel.icon}`} style={{fontSize:15}}></i></span>
+        <h4 className="serif" style={{fontSize:17,color:'#0A1F12',margin:0,lineHeight:1.3}}>{sel.label}</h4>
+      </div>
+      <p style={{fontSize:13,lineHeight:1.65,color:'rgba(10,31,18,.7)',marginBottom:14}}>{sel.desc}</p>
+      <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:14}}>
+        {sel.endings.map(e=>{const le=LEGAL_ENDINGS[e];return <span key={e} style={{fontFamily:'Consolas,monospace',fontSize:11,fontWeight:700,color:'rgba(10,31,18,.55)',background:'rgba(10,31,18,.06)',padding:'4px 10px',borderRadius:5}}>{le.display||'NO LEGAL ENDING'}</span>})}
+      </div>
+      <div style={{fontSize:12,color:'rgba(10,31,18,.55)',lineHeight:1.55,paddingTop:12,borderTop:'1px dashed rgba(10,31,18,.1)'}}>
+        <strong style={{color:'rgba(10,31,18,.7)'}}>Typical for:</strong> {sel.typical.join(' · ')}
       </div>
     </div>}
 
-    {sel&&<div style={{marginTop:22,background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:'24px 26px',color:'#fff'}}>
+    {/* ----- Guarantee company: legal ending sub-choice ----- */}
+    {sel&&sel.endingRule==='choice'&&<div style={{maxWidth:640,marginBottom:22}}>
+      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Legal ending for the guarantee company</label>
+      <select value={legalEnding||'LIMITED'} onChange={e=>setLegalEnding(e.target.value)} className="inp-select">
+        {sel.endings.map(k=>{const le=LEGAL_ENDINGS[k];return <option key={k} value={k}>{le.label}</option>})}
+      </select>
+      <div style={{marginTop:10,fontSize:12,lineHeight:1.6,color:'rgba(10,31,18,.65)',padding:'10px 14px',background:'rgba(232,115,15,.06)',border:'1px solid rgba(232,115,15,.2)',borderRadius:8}}>
+        <i className="fas fa-info-circle" style={{color:'#E8730F',marginRight:8}}></i>{LEGAL_ENDINGS[legalEnding]?.desc||LEGAL_ENDINGS.LIMITED.desc}
+      </div>
+    </div>}
+
+    {/* ----- Live name clearance format preview ----- */}
+    {sel&&<div style={{background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:'24px 26px',color:'#fff',marginBottom:22}}>
       <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:12}}>Name clearance format</div>
       <div style={{fontFamily:'Consolas,monospace',fontSize:'clamp(1rem,2.4vw,1.3rem)',fontWeight:700,color:'#fff',lineHeight:1.45,wordBreak:'break-word'}}>{preview}</div>
       <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid rgba(255,255,255,.15)',fontSize:12.5,lineHeight:1.6,color:'rgba(255,255,255,.65)'}}>
@@ -1162,7 +1179,7 @@ function WStructure({structure,setStructure,legalEnding,setLegalEnding,idea,dist
       <div style={{marginTop:10,fontSize:12,color:'rgba(255,255,255,.45)'}}>Legal ending applied: <strong style={{color:'#F5A623'}}>{resolved||'(none)'}</strong></div>
     </div>}
 
-    {!sel&&<div style={{marginTop:22,padding:'16px 20px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:10,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic'}}>Choose a structure above to see the legal ending and the name clearance format.</div>}
+    {!sel&&<div style={{padding:'16px 20px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:10,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic'}}>Choose a structure above to see the legal ending and the name clearance format.</div>}
   </div>;
 }
 
@@ -1332,7 +1349,7 @@ function WReport({scope,idea,primaryActivity,secondaryActivities,industryData,st
         <h5>2. Legal structure &amp; name clearance</h5>
         {structureData?<>
           <div className="row"><span className="k">Structure selected</span><span className="v">{structureData.label}</span></div>
-          <div className="row"><span className="k">Legal ending applied</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{legalEnding||'(no legal ending)'}</span></div>
+          <div className="row"><span className="k">Legal ending applied</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{legalEnding||'(none)'}</span></div>
           <div className={'flag ok'}><i className="fas fa-check-circle ic" style={{color:'#1E7B3C'}}></i><div>{structureData.note}</div></div>
         </>:<div className="row"><span className="k">Structure</span><span className="v">Not selected</span></div>}
 
@@ -1409,8 +1426,8 @@ function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryD
       <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:14}}>Live preview</div>
       <SideRow label="Scope" value={scope?{structure:'Structure',names:'Names',both:'Full advisory'}[scope]:'—'} done={!!scope}/>
       <SideRow label="Idea" value={idea?(idea.length>40?idea.slice(0,40)+'…':idea):'—'} done={!!idea}/>
-      {scope!=='names'&&<SideRow label="Structure" value={structureData?structureData.label:'—'} done={!!structureData}/>}
-      {scope!=='names'&&<SideRow label="Legal ending" value={structureData?(legalEnding||'(none)'):'—'} done={!!structureData}/>}
+      <SideRow label="Structure" value={structureData?structureData.label:'—'} done={!!structureData}/>
+      <SideRow label="Legal ending" value={structureData?(legalEnding||'(none)'):'—'} done={!!structureData}/>
       <SideRow label="Primary activity" value={primaryActivity||'—'} done={!!primaryActivity}/>
       <SideRow label="Secondary" value={secondaryActivities.length>0?secondaryActivities.length+' selected':'—'} done={secondaryActivities.length>0}/>
       {scope!=='structure'&&<SideRow label="Industry" value={industryData?industryData.label:'—'} done={!!industryData} color={industryData?.color}/>}
