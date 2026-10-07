@@ -158,17 +158,11 @@ input:focus,select:focus,textarea:focus{outline:none}
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useMemo, useCallback } = React;
 
-/* ============================================================
-   CONFIG
-   ============================================================ */
 const ADMIN_WHATSAPP='260768526191';
 const CONTACT_EMAIL='engagements@starteasy.zm';
 function isMobile(){return typeof navigator!=='undefined'&&/android|iphone|ipad|ipod|mobile/i.test((navigator.userAgent||'').toLowerCase());}
 function waUrl(msg,p){const phone=p||ADMIN_WHATSAPP;const e=encodeURIComponent(msg);return isMobile()?'whatsapp://send?phone='+phone+'&text='+e:'https://wa.me/'+phone+'?text='+e;}
 
-/* ============================================================
-   SERVICE FEE BANDS
-   ============================================================ */
 const SF={
   micro:{zm:'K25',usd:'$1.49',label:'Service Fee · Micro'},
   basic:{zm:'K250',usd:'$25',label:'Service Fee · Basic'},
@@ -183,9 +177,6 @@ const ONGOING={
   managed:{zm:'K1,200',usd:'$120',label:'Ongoing · Managed'}
 };
 
-/* ============================================================
-   PAYMENT METHODS
-   ============================================================ */
 const PAYMENT_METHODS={
   airtel:{label:'Airtel Money',cls:'pm-airtel',icon:'fa-mobile-alt',title:'Airtel Money',sub:'ZMW · Zambian Kwacha',recipient:'+260 975 914 001 (Airtel)',ussd:'*115#',ussdLbl:'Open Airtel',
     rows:[{l:'Recipient Name',v:'Mwaba Lewis',plain:true},{l:'Recipient Note',v:'On behalf of StartEasy',plain:true},{l:'Airtel Number',v:'+260 975 914 001',copy:'+260975914001'}],
@@ -209,23 +200,14 @@ const PAYMENT_METHODS={
     note:'Send the equivalent at the time of transfer.'}
 };
 
-/* ============================================================
-   PRIMARY ACTIVITIES
-   ============================================================ */
 const PRIMARY_ACTIVITIES=[
   'Advertising','Marketing','Management consulting','Financial advisory','Accounting','Research','Technology','Construction','Agriculture','Trading','Logistics','Manufacturing','Education','Professional services','Media & communications','Healthcare','Hospitality & tourism','Real estate','Energy','Retail','Wholesale & distribution','Transport','Agro-processing','Engineering','Software development','Legal services','Architecture','Insurance','Investment management','Other'
 ];
 
-/* ============================================================
-   SECONDARY ACTIVITIES
-   ============================================================ */
 const SECONDARY_ACTIVITIES=[
   'Advertising','Branding','Consulting','Research','Training','Distribution','Retail','Wholesale','Import','Export','Manufacturing','Assembly','Maintenance','Repair','Installation','Design','Publishing','Media production','Software licensing','Data analytics','IT support','Cloud services','Logistics','Warehousing','Transport','Courier services','Catering','Event management','Hospitality services','Real estate services','Property management','Financial services','Insurance services','Accounting services','Tax services','Legal services','HR services','Payroll services','Marketing services','PR & communications','Customer support','Other'
 ];
 
-/* ============================================================
-   INDUSTRIES
-   ============================================================ */
 const INDUSTRIES=[
   {key:'consulting',isic:'M',label:'Consulting & Professional Advisory',icon:'fa-user-tie',color:'#2E9C4A',blurb:'Professional advice, consulting, strategy and management.',
     descriptors:['Consulting','Advisory','Associates','Professionals','Management','Strategy','Solutions','Services','Corporate','Business','Partners','Consultancy','Group','Enterprises'],
@@ -274,9 +256,6 @@ const INDUSTRIES=[
     examples:['JIRANIHOOD SERVICES LIMITED','JIRANIHOOD ENTERPRISES LIMITED']}
 ];
 
-/* ============================================================
-   LEGAL STRUCTURES
-   ============================================================ */
 const STRUCTURES=[
   {key:'bn',label:'Business Name',desc:'A trading name registered under a proprietor. No separate legal personality.',endings:[],typical:['Sole traders','Small operations','Side businesses']},
   {key:'ltd',label:'Private Company Limited by Shares',desc:'An incorporated company whose ownership is represented through shares.',endings:['LIMITED','LTD'],typical:['SMEs','Trading companies','Consulting firms','Technology companies','Growth businesses','Companies bringing in investors'],rec:true},
@@ -285,9 +264,6 @@ const STRUCTURES=[
   {key:'unsure',label:'Not sure — help me decide',desc:'We will walk you through the choice based on what the organisation is intended to do.',endings:['LIMITED','LTD'],typical:['Founders weighing options']}
 ];
 
-/* ============================================================
-   NAME ANALYSIS
-   ============================================================ */
 const PATTERNS=['zambia','lusaka','ndola','kitwe','livingstone','kabwe','solwezi','africa','copperbelt','zambezi','luangwa','trading','investments','holdings','enterprises','services','general','dealers','group','global','international'];
 const PROTECTED=['bank','insurance','trust','microfinance','pension','securities','lottery','gaming','casino','university','national','government','ministry','municipal','council','chartered','royal','sacco','cooperative','revenue','customs'];
 const GENERIC=['business','enterprise','enterprises','company','services','service','trading','traders','investments','investment','holdings','group','general','dealers','suppliers','ventures','solutions','consultants','consulting'];
@@ -310,9 +286,46 @@ function analyseName(name){
 function label(s){if(s>=80)return'Strong';if(s>=60)return'Moderate';if(s>=40)return'Weak';return'Needs work'}
 function color(s){if(s>=80)return'#1E7B3C';if(s>=60)return'#E8730F';return'#B8564F'}
 
-/* ============================================================
-   SHARED UI
-   ============================================================ */
+/* ---- Descriptor validation helper ---- */
+function validateCustomDescriptor(text,industry){
+  const t=(text||'').trim();
+  if(!t) return {state:'empty'};
+  if(t.length<3) return {state:'too-short',message:'The descriptor is very short. Use at least 3 characters.'};
+  if(/^\d+$/.test(t)) return {state:'numeric',message:'A descriptor made only of numbers is not usable. Add real words.'};
+  const lower=t.toLowerCase();
+  // Check if the custom text contains or is related to any industry descriptor
+  const industryMatch = industry ? industry.descriptors.some(d=>lower.includes(d.toLowerCase())) : false;
+  // Detect industry keywords that signal a valid descriptive phrase
+  const industryKeywordBank = {
+    education:['institute','academy','school','college','university','training','learning','skills','education'],
+    financial:['financial','capital','investment','finance','wealth','asset','credit','fintech','bank','insurance'],
+    consulting:['consulting','advisory','management','strategy','professional'],
+    technology:['technology','digital','systems','software','solutions','innovations','labs','data','networks','platforms','cloud'],
+    health:['health','medical','clinic','wellness','diagnostics','care','pharmacy'],
+    marketing:['marketing','advertising','communications','creative','media','branding','digital'],
+    research:['research','scientific','technical','analytics','laboratory','engineering'],
+    trading:['trading','enterprises','merchants','supplies','distributors','retail','wholesale'],
+    construction:['construction','contractors','engineering','infrastructure','projects','builders'],
+    agriculture:['agriculture','agribusiness','farms','farming','agro','foods','produce','livestock'],
+    logistics:['logistics','transport','freight','haulage','couriers','supply chain','warehousing','cargo'],
+    realestate:['properties','property','realty','estates','developments'],
+    tourism:['tourism','hospitality','lodge','hotel','safari','travel','tours','resort']
+  };
+  const keywords=industry?industryKeywordBank[industry.key]||[]:[];
+  const keywordMatch=keywords.some(k=>lower.includes(k));
+  if(industryMatch||keywordMatch){
+    return {state:'valid',message:`Matches your chosen industry — the platform recognises this as a valid descriptive word.`};
+  }
+  // Any multi-word phrase with real words — allow it (user knows best)
+  const words=t.split(/\s+/).filter(Boolean);
+  if(words.length>=2){
+    return {state:'valid',message:'Accepted — you may proceed. Multi-word descriptive phrases are allowed when they clearly describe the business.'};
+  }
+  // Single word not in industry list — still allow, but flag lightly
+  return {state:'valid',message:'Accepted — you may proceed. Confirm this word is not already reserved by another business.'};
+}
+
+/* ---------- Shared UI ---------- */
 function Btn({children,onClick,variant='primary',size='md',className='',type='button',disabled}){
   const base='inline-flex items-center justify-center gap-2.5 transition-all duration-300 tracking-wide disabled:opacity-30 disabled:cursor-not-allowed rounded-sm font-semibold';
   const sizes={sm:'text-[12px] px-4 py-2.5',md:'text-[13px] px-6 py-3.5',lg:'text-[13.5px] px-8 py-4'};
@@ -327,17 +340,12 @@ function NotReg({tone='light'}){return <div style={{background:tone==='dark'?'rg
 </div>;}
 const INP={width:'100%',background:'#fff',border:'1px solid rgba(10,31,18,.15)',borderRadius:6,padding:'12px 14px',fontSize:14,color:'#0A1F12',fontFamily:'inherit'};
 function TIn({value,onChange,placeholder,type='text'}){return <input type={type} value={value||''} onChange={e=>onChange(e.target.value)} placeholder={placeholder} style={INP}/>;}
-function Head({eyebrow,title,sub,light,className='',style}){
-  return <div className={className} style={style}>
-    {eyebrow&&<div style={{display:'flex',alignItems:'center',gap:16,marginBottom:20}}><span className="micro" style={{color:light?'#F5A623':'rgba(10,31,18,.5)'}}>{eyebrow}</span></div>}
-    <h2 className="serif" style={{fontSize:'clamp(1.8rem,4.2vw,2.7rem)',lineHeight:1.1,color:light?'#fff':'#0A1F12'}}>{title}</h2>
-    {sub&&<p style={{marginTop:20,fontSize:15.5,lineHeight:1.6,maxWidth:'42rem',color:light?'rgba(255,255,255,.5)':'rgba(10,31,18,.55)'}}>{sub}</p>}
-  </div>;
-}
+function Head({eyebrow,title,sub,light,className='',style}){return <div className={className} style={style}>
+  {eyebrow&&<div style={{display:'flex',alignItems:'center',gap:16,marginBottom:20}}><span className="micro" style={{color:light?'#F5A623':'rgba(10,31,18,.5)'}}>{eyebrow}</span></div>}
+  <h2 className="serif" style={{fontSize:'clamp(1.8rem,4.2vw,2.7rem)',lineHeight:1.1,color:light?'#fff':'#0A1F12'}}>{title}</h2>
+  {sub&&<p style={{marginTop:20,fontSize:15.5,lineHeight:1.6,maxWidth:'42rem',color:light?'rgba(255,255,255,.5)':'rgba(10,31,18,.55)'}}>{sub}</p>}
+</div>;}
 
-/* ============================================================
-   DESKS
-   ============================================================ */
 const DESKS={
   pacra:{id:'pacra',code:'1',title:'PACRA Desk',subtitle:'Business Registration & Corporate Compliance',authority:'Patents and Companies Registration Agency',color:'#2E9C4A',icon:'fa-building',
     intro:'Register, amend and keep your company legally active — from name clearance through annual returns.',
@@ -419,9 +427,6 @@ const DESKS={
     ]}
 };
 
-/* ============================================================
-   SERVICES
-   ============================================================ */
 const S={
   p_structure:{code:'P0',desk:'pacra',title:'Business Structure Advisory',clientDesc:'Self-service wizard. Tell us about your business idea. Our platform recommends the right legal structure — Business Name, Private Company Limited by Shares, Company Limited by Guarantee, or another form — based on your activity and situation.',whatsCovered:['Guided question flow — no long forms','Industry classification against ISIC-aligned sectors','Primary and secondary activity capture','Legal structure recommendation with reasons','Referral to a qualified professional where legal advice is required','Instant assessment report','Formal StartEasy-branded report delivered within 1 hour'],service:'micro',timeline:'Done within 1 hour',wizardEntry:true,wizardScope:'structure',popular:true},
   p_name:{code:'P1',desk:'pacra',title:'Name Preparation & Clearance',clientDesc:'Self-service wizard. Our platform develops three fully-constructed candidate names aligned with your business activity, legal structure and PACRA naming requirements — with a name distinctiveness score for each. Then we prepare the clearance application, submit on your behalf and track the case through to outcome.',whatsCovered:['Descriptive word library dropdown','Three-name proposal in preference order','Real-time name distinctiveness score','Common pattern and protected-term detection','Consistency check across all names','Submission information pack','Submission on your behalf','Case tracking','Plain-language explanation of any query'],service:'micro',timeline:'Done within 1 hour',wizardEntry:true,wizardScope:'names',popular:true},
@@ -477,9 +482,6 @@ const ALL_SERVICES=Object.entries(S).map(([k,v])=>({key:k,...v}));
 const findServiceByKey=key=>S[key]?{key,...S[key]}:null;
 const getDesk=id=>DESKS[id];
 
-/* ============================================================
-   MODALS
-   ============================================================ */
 function Modal({open,onClose,eyebrow,title,children,maxWidth='46rem'}){
   useEffect(()=>{if(open)document.body.style.overflow='hidden';else document.body.style.overflow='';return()=>{document.body.style.overflow=''}},[open]);
   if(!open)return null;
@@ -758,7 +760,7 @@ function Payment({service,client,onClose,onDone}){
 }
 
 /* ============================================================
-   WIZARD — the star
+   WIZARD
    ============================================================ */
 function Wizard({initialScope,onExit,onOrderFormal}){
   const [step,setStep]=useState(0);
@@ -774,14 +776,12 @@ function Wizard({initialScope,onExit,onOrderFormal}){
 
   const toggleSecondary=a=>setSecondaryActivities(prev=>prev.includes(a)?prev.filter(x=>x!==a):[...prev,a]);
 
-  // Auto-set default descriptor and structure when industry picked
-  useEffect(()=>{if(industry&&!descriptor&&!customDescriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0])}},[industry,descriptor,customDescriptor]);
-  useEffect(()=>{if(industry&&!structure&&scope!=='names'){setStructure('ltd')}},[industry,scope,structure]);
+  useEffect(()=>{if(industry&&!descriptor&&!customDescriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0])}},[industry]);
+  useEffect(()=>{if(industry&&!structure&&scope!=='names'){setStructure('ltd')}},[industry,scope]);
 
-  // Effective descriptor — used across names, readiness, report, engagement
+  // Effective descriptor: custom word (if provided) takes priority
   const effectiveDescriptor=useMemo(()=>customDescriptor.trim()||descriptor,[customDescriptor,descriptor]);
 
-  // Step list depends on scope
   const stepsArr=useMemo(()=>{
     if(!scope)return['scope'];
     const s=['scope','idea','activity','secondary'];
@@ -796,7 +796,6 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const structureData=structure?STRUCTURES.find(x=>x.key===structure):null;
   const analysis=useMemo(()=>analyseName(distinctive),[distinctive]);
 
-  // Build three names
   const names=useMemo(()=>{
     if(!distinctive.trim()||!effectiveDescriptor||!industryData)return[];
     const distinct=distinctive.trim().toUpperCase();
@@ -808,7 +807,6 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     return out.filter(Boolean);
   },[distinctive,effectiveDescriptor,industryData,structureData]);
 
-  // Readiness
   const readiness=useMemo(()=>{
     let t=0;
     if(idea.trim().length>=20)t+=15;
@@ -834,7 +832,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     if(current==='secondary')return true;
     if(current==='industry')return!!industry;
     if(current==='structure')return!!structure;
-    if(current==='descriptor')return !!effectiveDescriptor && effectiveDescriptor.length>=3;
+    if(current==='descriptor')return !!effectiveDescriptor && effectiveDescriptor.length>=3; // FIX — checks custom too
     if(current==='distinctive')return distinctive.trim().length>=3;
     return true;
   };
@@ -923,9 +921,6 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   </div>;
 }
 
-/* ============================================================
-   WIZARD STEPS
-   ============================================================ */
 function WScope({scope,setScope}){
   const opts=[
     {v:'structure',icon:'fa-layer-group',t:'Help me choose the right structure',d:'Business Name vs Private Company vs Company Limited by Guarantee.',time:'~5 min · K25'},
@@ -1034,102 +1029,64 @@ function WIndustry({industry,setIndustry}){
   </div>;
 }
 
-/* ---------- IMPROVED DESCRIPTOR STEP ---------- */
+/* ---------- DESCRIPTOR STEP — original layout, fixed validation ---------- */
 function WDescriptor({industry,descriptor,setDescriptor,customDescriptor,setCustomDescriptor}){
   const ind=INDUSTRIES.find(i=>i.key===industry);
-  const [mode,setMode]=useState(customDescriptor?'custom':'library');
   if(!ind)return null;
-
-  const finalDescriptor=mode==='custom'?customDescriptor.trim():descriptor;
   const trimmed=customDescriptor.trim();
-  const words=trimmed?trimmed.split(/\s+/).length:0;
-  const hasAmpOrOf=/\b(of|&|and)\b/i.test(customDescriptor);
-  const isTooLong=words>3;
-  const isTooShort=trimmed.length>0&&trimmed.length<3;
-
+  const validation=validateCustomDescriptor(trimmed,ind);
+  const finalDescriptor=trimmed||descriptor;
   return <div>
     <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 7 · Descriptive word library</div>
     <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Choose your preferred descriptive word.</h2>
-    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>The <strong>descriptive word</strong> communicates the nature of the business. Pick one from the StartEasy Descriptive Word Library — filtered to your industry — or write your own.</p>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>The <strong>descriptive word</strong> communicates the nature of the business. Pick one from the StartEasy Descriptive Word Library — filtered to your industry — or write your own if none of them fits.</p>
 
     {ind.flag&&<div style={{background:'#FFF4E5',borderLeft:'4px solid #E8730F',borderRadius:8,padding:'14px 18px',marginBottom:24,display:'flex',gap:12}}>
       <i className="fas fa-info-circle" style={{color:'#E8730F',fontSize:16,flexShrink:0,marginTop:2}}></i>
       <div><div style={{fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#7A5C10',marginBottom:6}}>{ind.flag.title}</div><p style={{fontSize:12.5,lineHeight:1.6,color:'#7A5C10',margin:0}}>{ind.flag.body}</p></div>
     </div>}
 
-    <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
-      <button onClick={()=>setMode('library')} style={{display:'inline-flex',alignItems:'center',gap:9,padding:'11px 18px',borderRadius:99,border:mode==='library'?'none':'1.5px solid rgba(10,31,18,.15)',background:mode==='library'?'#0A1F12':'#fff',color:mode==='library'?'#fff':'rgba(10,31,18,.7)',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit',transition:'all .2s'}}>
-        <i className="fas fa-book"></i> From the library
-        {descriptor&&<span style={{fontSize:10,background:'rgba(255,255,255,.2)',padding:'2px 7px',borderRadius:99,fontWeight:800}}>1</span>}
-      </button>
-      <button onClick={()=>setMode('custom')} style={{display:'inline-flex',alignItems:'center',gap:9,padding:'11px 18px',borderRadius:99,border:mode==='custom'?'none':'1.5px solid rgba(10,31,18,.15)',background:mode==='custom'?'#0A1F12':'#fff',color:mode==='custom'?'#fff':'rgba(10,31,18,.7)',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit',transition:'all .2s'}}>
-        <i className="fas fa-pen"></i> Write my own
-        {trimmed&&<span style={{fontSize:10,background:'rgba(255,255,255,.2)',padding:'2px 7px',borderRadius:99,fontWeight:800}}>1</span>}
-      </button>
+    <div style={{maxWidth:640,marginBottom:20}}>
+      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>StartEasy Descriptive Word Library · <span style={{color:ind.color}}>filtered for {ind.label}</span></label>
+      <select value={descriptor} onChange={e=>{setDescriptor(e.target.value);setCustomDescriptor('')}} className="inp-select">
+        <option value="">— Choose from the library —</option>
+        {ind.descriptors.map(d=><option key={d} value={d}>{d}</option>)}
+      </select>
     </div>
 
-    {mode==='library'&&<>
-      <div style={{maxWidth:640,marginBottom:20}}>
-        <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>StartEasy Descriptive Word Library · <span style={{color:ind.color}}>filtered for {ind.label}</span></label>
-        <select value={descriptor} onChange={e=>{setDescriptor(e.target.value);setCustomDescriptor('')}} className="inp-select">
-          <option value="">— Choose from the library —</option>
-          {ind.descriptors.map(d=><option key={d} value={d}>{d}</option>)}
-        </select>
-      </div>
-      <div style={{maxWidth:640,marginBottom:20}}>
-        <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:10}}>Quick pick</div>
-        <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
-          {ind.descriptors.slice(0,10).map(d=><button key={d} onClick={()=>{setDescriptor(d);setCustomDescriptor('')}} className={`dchip ${descriptor===d&&!customDescriptor?'on':''}`}>{d}</button>)}
-        </div>
-      </div>
-      <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:10,padding:18,marginBottom:20,maxWidth:640}}>
-        <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:10}}>Real examples in this family</div>
-        <ul style={{listStyle:'none',padding:0,margin:0}}>{ind.examples.map((e,i)=><li key={i} style={{fontFamily:'Consolas,monospace',fontSize:12.5,color:'rgba(10,31,18,.7)',padding:'6px 0',borderBottom:i<ind.examples.length-1?'1px dashed rgba(10,31,18,.06)':'none'}}>{e}</li>)}</ul>
-      </div>
-    </>}
+    <div style={{maxWidth:640,marginBottom:16}}>
+      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Or type your own descriptive word</label>
+      <input value={customDescriptor} onChange={e=>{setCustomDescriptor(e.target.value);if(e.target.value.trim())setDescriptor('')}} placeholder="e.g. Institute of Global Business & Technology" style={{width:'100%',background:'#fff',border:'2px solid '+(trimmed?(validation.state==='valid'?'#E8730F':'#B8564F'):'rgba(10,31,18,.12)'),borderRadius:12,padding:'16px 20px',fontSize:14.5,color:'#0A1F12',fontFamily:'inherit',transition:'all .2s'}}/>
 
-    {mode==='custom'&&<>
-      <div style={{maxWidth:640,marginBottom:16}}>
-        <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Type your descriptive word</label>
-        <input value={customDescriptor} onChange={e=>{setCustomDescriptor(e.target.value);if(e.target.value.trim())setDescriptor('')}} placeholder="e.g. Ventures, Holdings, Group, Collective, Institute" style={{width:'100%',background:'#fff',border:'2px solid '+(trimmed?(isTooLong||isTooShort||hasAmpOrOf?'#E8730F':'#1E7B3C'):'rgba(10,31,18,.12)'),borderRadius:12,padding:'16px 20px',fontSize:14.5,color:'#0A1F12',fontFamily:'inherit',transition:'all .2s'}}/>
-        <div style={{display:'flex',justifyContent:'space-between',gap:12,marginTop:8,fontSize:11,color:'rgba(10,31,18,.5)'}}>
-          <span>{words>0?words+' word'+(words===1?'':'s'):'—'}</span>
-          <span>{trimmed.length} characters</span>
-        </div>
-      </div>
-
-      {trimmed&&(isTooLong||hasAmpOrOf)&&<div style={{maxWidth:640,marginBottom:16,padding:'12px 16px',background:'#FFF4E5',borderLeft:'3px solid #E8730F',borderRadius:8,fontSize:12.5,color:'#7A5C10',lineHeight:1.6,display:'flex',gap:10}}>
-        <i className="fas fa-lightbulb" style={{color:'#E8730F',fontSize:14,flexShrink:0,marginTop:2}}></i>
-        <div>
-          <strong style={{color:'#8A6828',display:'block',marginBottom:4}}>Tip — a descriptor works best as 1–3 words.</strong>
-          Words like <em>of</em>, <em>&amp;</em> or <em>and</em> usually signal a full name, not a descriptor. If you want a longer business name, keep the descriptor short here (e.g. <strong>Institute</strong> or <strong>Academy</strong>) — you can add the rest as part of your distinctive element or in the business activities description. <strong>You can still continue.</strong>
-        </div>
-      </div>}
-
-      {trimmed&&isTooShort&&<div style={{maxWidth:640,marginBottom:16,padding:'12px 16px',background:'#FFE8E5',borderLeft:'3px solid #B8564F',borderRadius:8,fontSize:12.5,color:'#7C2318',lineHeight:1.6,display:'flex',gap:10}}>
-        <i className="fas fa-exclamation-circle" style={{color:'#B8564F',fontSize:14,flexShrink:0,marginTop:2}}></i>
-        <div>The descriptor is very short. Use at least 3 characters.</div>
-      </div>}
-
-      {trimmed&&!isTooLong&&!isTooShort&&!hasAmpOrOf&&<div style={{maxWidth:640,marginBottom:16,padding:'12px 16px',background:'#EAF7EE',borderLeft:'3px solid #1E7B3C',borderRadius:8,fontSize:12.5,color:'#0F5C2A',lineHeight:1.6,display:'flex',gap:10}}>
+      {trimmed&&validation.state==='valid'&&<div style={{marginTop:10,padding:'10px 14px',background:'rgba(30,123,60,.08)',border:'1px solid rgba(30,123,60,.25)',borderRadius:8,fontSize:12.5,color:'#0F5C2A',display:'flex',gap:10,alignItems:'flex-start'}}>
         <i className="fas fa-check-circle" style={{color:'#1E7B3C',fontSize:14,flexShrink:0,marginTop:2}}></i>
-        <div><strong>Looks good.</strong> This is a strong descriptor for the name architecture.</div>
+        <span>{validation.message}</span>
       </div>}
 
-      <div style={{maxWidth:640,marginBottom:20}}>
-        <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:10}}>Or start from a library word</div>
-        <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
-          {ind.descriptors.slice(0,8).map(d=><button key={d} onClick={()=>{setCustomDescriptor(d);setDescriptor(d)}} className="dchip">{d}</button>)}
-        </div>
-      </div>
-    </>}
+      {trimmed&&validation.state!=='valid'&&<div style={{marginTop:10,padding:'10px 14px',background:'rgba(184,86,79,.08)',border:'1px solid rgba(184,86,79,.25)',borderRadius:8,fontSize:12.5,color:'#7C2318',display:'flex',gap:10,alignItems:'flex-start'}}>
+        <i className="fas fa-exclamation-circle" style={{color:'#B8564F',fontSize:14,flexShrink:0,marginTop:2}}></i>
+        <span>{validation.message}</span>
+      </div>}
 
-    {finalDescriptor&&<div style={{background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:'20px 24px',color:'#fff',maxWidth:640}}>
-      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:10}}>Your chosen descriptive word</div>
-      <div className="serif" style={{fontSize:'clamp(1.2rem,2.8vw,1.7rem)',fontWeight:800,color:'#F5A623',fontFamily:'Consolas,monospace',wordBreak:'break-word',lineHeight:1.25}}>{finalDescriptor.toUpperCase()}</div>
-      <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid rgba(255,255,255,.15)',fontSize:12,color:'rgba(255,255,255,.6)',fontFamily:'Consolas,monospace'}}>
-        → [distinctive] <span style={{color:'#F5A623'}}>{finalDescriptor.toUpperCase()}</span> [legal ending]
+      {trimmed&&<div style={{marginTop:10,fontSize:11.5,color:'rgba(10,31,18,.55)',fontStyle:'italic'}}>You are using a custom descriptor: <strong style={{fontFamily:'Consolas,monospace',color:'#0A1F12',fontStyle:'normal'}}>{trimmed.toUpperCase()}</strong></div>}
+    </div>
+
+    <div style={{maxWidth:640,marginBottom:20}}>
+      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:10}}>Quick pick from the library</div>
+      <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+        {ind.descriptors.slice(0,10).map(d=><button key={d} onClick={()=>{setDescriptor(d);setCustomDescriptor('')}} className={`dchip ${descriptor===d&&!trimmed?'on':''}`}>{d}</button>)}
       </div>
+    </div>
+
+    <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:10,padding:18,marginBottom:20,maxWidth:640}}>
+      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:10}}>Example names in this family</div>
+      <ul style={{listStyle:'none',padding:0,margin:0}}>{ind.examples.map((e,i)=><li key={i} style={{fontFamily:'Consolas,monospace',fontSize:12.5,color:'rgba(10,31,18,.7)',padding:'6px 0',borderBottom:i<ind.examples.length-1?'1px dashed rgba(10,31,18,.06)':'none'}}>{e}</li>)}</ul>
+    </div>
+
+    {finalDescriptor&&<div style={{background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:'22px 24px',color:'#fff',maxWidth:640}}>
+      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:10}}>Your chosen descriptive word</div>
+      <div className="serif" style={{fontSize:'clamp(1.3rem,3vw,1.8rem)',fontWeight:800,color:'#F5A623',fontFamily:'Consolas,monospace',wordBreak:'break-word',lineHeight:1.25,textTransform:'uppercase'}}>{finalDescriptor}</div>
+      <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid rgba(255,255,255,.15)',fontSize:12,color:'rgba(255,255,255,.6)',fontFamily:'Consolas,monospace'}}>→ [distinctive] <span style={{color:'#F5A623'}}>{finalDescriptor.toUpperCase()}</span> [legal ending]</div>
     </div>}
 
     {!finalDescriptor&&<div style={{padding:'16px 20px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:8,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic',maxWidth:640}}>Choose from the library above or type your own to continue.</div>}
@@ -1242,7 +1199,6 @@ function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryD
     </div>
   </aside>;
 }
-
 function SideRow({label,value,done,color:c}){
   return <div style={{display:'flex',justifyContent:'space-between',gap:12,padding:'10px 0',borderBottom:'1px dashed rgba(10,31,18,.06)',alignItems:'flex-start'}}>
     <span style={{fontSize:11.5,color:'rgba(10,31,18,.45)',fontWeight:600,flexShrink:0}}>{label}</span>
@@ -1276,7 +1232,6 @@ function Nav({route,go}){
     {open&&<div className="xl:hidden" style={{borderTop:'1px solid rgba(255,255,255,.1)',background:'#0A1F12'}}><div style={{padding:'16px 24px',maxHeight:'70vh',overflowY:'auto'}}>{NAV.map(([r,label])=><button key={r} onClick={()=>nav(r)} style={{width:'100%',display:'flex',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,.05)',textAlign:'left',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit'}}><span style={{fontSize:14,color:route===r?'#F5A623':'rgba(255,255,255,.6)'}}>{label}</span></button>)}</div></div>}
   </header>;
 }
-
 function Footer({go}){
   return <footer style={{background:'#0A1F12',color:'#fff',borderTop:'1px solid rgba(245,166,35,.1)'}}>
     <div style={{maxWidth:1240,margin:'0 auto',padding:'56px 24px'}}>
@@ -1319,9 +1274,6 @@ function ServiceCard({serviceKey,onClick}){
   </button>;
 }
 
-/* ============================================================
-   PAGES
-   ============================================================ */
 function Home({go}){
   const orientation=[
     {icon:'fa-compass',title:'Business Structure & Name',desc:'Self-service wizard — K25, done within 1 hour.',route:'wizard'},
@@ -1650,9 +1602,6 @@ function FloatingAssistant(){
   </div>;
 }
 
-/* ============================================================
-   APP
-   ============================================================ */
 function App(){
   const [route,setRoute]=useState('home');
   const [routeArg,setRouteArg]=useState(null);
