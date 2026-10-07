@@ -210,21 +210,21 @@ const PAYMENT_METHODS={
 };
 
 /* ============================================================
-   PRIMARY ACTIVITIES — dropdown options
+   PRIMARY ACTIVITIES
    ============================================================ */
 const PRIMARY_ACTIVITIES=[
   'Advertising','Marketing','Management consulting','Financial advisory','Accounting','Research','Technology','Construction','Agriculture','Trading','Logistics','Manufacturing','Education','Professional services','Media & communications','Healthcare','Hospitality & tourism','Real estate','Energy','Retail','Wholesale & distribution','Transport','Agro-processing','Engineering','Software development','Legal services','Architecture','Insurance','Investment management','Other'
 ];
 
 /* ============================================================
-   SECONDARY ACTIVITIES — multi-select options
+   SECONDARY ACTIVITIES
    ============================================================ */
 const SECONDARY_ACTIVITIES=[
   'Advertising','Branding','Consulting','Research','Training','Distribution','Retail','Wholesale','Import','Export','Manufacturing','Assembly','Maintenance','Repair','Installation','Design','Publishing','Media production','Software licensing','Data analytics','IT support','Cloud services','Logistics','Warehousing','Transport','Courier services','Catering','Event management','Hospitality services','Real estate services','Property management','Financial services','Insurance services','Accounting services','Tax services','Legal services','HR services','Payroll services','Marketing services','PR & communications','Customer support','Other'
 ];
 
 /* ============================================================
-   INDUSTRIES — Directory (ISIC classification)
+   INDUSTRIES
    ============================================================ */
 const INDUSTRIES=[
   {key:'consulting',isic:'M',label:'Consulting & Professional Advisory',icon:'fa-user-tie',color:'#2E9C4A',blurb:'Professional advice, consulting, strategy and management.',
@@ -327,6 +327,13 @@ function NotReg({tone='light'}){return <div style={{background:tone==='dark'?'rg
 </div>;}
 const INP={width:'100%',background:'#fff',border:'1px solid rgba(10,31,18,.15)',borderRadius:6,padding:'12px 14px',fontSize:14,color:'#0A1F12',fontFamily:'inherit'};
 function TIn({value,onChange,placeholder,type='text'}){return <input type={type} value={value||''} onChange={e=>onChange(e.target.value)} placeholder={placeholder} style={INP}/>;}
+function Head({eyebrow,title,sub,light,className='',style}){
+  return <div className={className} style={style}>
+    {eyebrow&&<div style={{display:'flex',alignItems:'center',gap:16,marginBottom:20}}><span className="micro" style={{color:light?'#F5A623':'rgba(10,31,18,.5)'}}>{eyebrow}</span></div>}
+    <h2 className="serif" style={{fontSize:'clamp(1.8rem,4.2vw,2.7rem)',lineHeight:1.1,color:light?'#fff':'#0A1F12'}}>{title}</h2>
+    {sub&&<p style={{marginTop:20,fontSize:15.5,lineHeight:1.6,maxWidth:'42rem',color:light?'rgba(255,255,255,.5)':'rgba(10,31,18,.55)'}}>{sub}</p>}
+  </div>;
+}
 
 /* ============================================================
    DESKS
@@ -493,7 +500,6 @@ function Modal({open,onClose,eyebrow,title,children,maxWidth='46rem'}){
   </div>;
 }
 
-/* Service detail */
 function ServiceDetail({service,onClose,onProceed,onWizard}){
   if(!service)return null;
   const s=service;
@@ -510,7 +516,6 @@ function ServiceDetail({service,onClose,onProceed,onWizard}){
         </div>
       </div>
       <p style={{fontSize:14.5,lineHeight:1.7,color:'rgba(10,31,18,.7)',marginBottom:22}}>{s.clientDesc}</p>
-
       {s.wizardEntry&&<div style={{background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:10,padding:22,marginBottom:20,color:'#fff'}}>
         <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
           <span style={{width:38,height:38,borderRadius:10,background:'rgba(245,166,35,.2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className="fas fa-wand-magic-sparkles" style={{color:'#F5A623',fontSize:16}}></i></span>
@@ -521,7 +526,6 @@ function ServiceDetail({service,onClose,onProceed,onWizard}){
           </div>
         </div>
       </div>}
-
       <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:10,padding:20,marginBottom:20}}>
         <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:14}}>What is covered</div>
         <ul style={{listStyle:'none',padding:0,margin:0}}>
@@ -531,19 +535,16 @@ function ServiceDetail({service,onClose,onProceed,onWizard}){
           </li>)}
         </ul>
       </div>
-
       <div style={{display:'flex',alignItems:'center',gap:12,padding:'12px 16px',background:'rgba(10,31,18,.04)',borderRadius:8,marginBottom:20}}>
         <i className="fas fa-clock" style={{color:'#8A6828',fontSize:14}}></i>
         <div><div style={{fontSize:10.5,letterSpacing:'.12em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.5)',marginBottom:2}}>Typical timeline</div><div style={{fontSize:13.5,color:'#0A1F12',fontWeight:600}}>{s.timeline}</div></div>
       </div>
-
       {(sf||og)&&<div className="feebox">
         <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:10}}>Fee structure</div>
         {sf&&<div className="row"><span className="l">{sf.label}<br/><em style={{fontStyle:'italic',fontWeight:500,color:'#888',fontSize:11}}>One-time — preparation and submission</em></span><span className="v">{sf.zm}</span></div>}
         {og&&<div className="row"><span className="l">{og.label}<br/><em style={{fontStyle:'italic',fontWeight:500,color:'#888',fontSize:11}}>Monthly — filing, tracking, coordination</em></span><span className="v">{og.zm}<span style={{fontSize:11,fontWeight:600,color:'#888',marginLeft:4}}>/mo</span></span></div>}
         <div style={{marginTop:14,paddingTop:12,borderTop:'1px solid #E0D08A',fontSize:11.5,color:'rgba(10,31,18,.6)',lineHeight:1.55,fontStyle:'italic'}}>Fees are for StartEasy administrative work only and are separate from any government or regulator fee.</div>
       </div>}
-
       <div style={{display:'flex',flexWrap:'wrap',gap:12,marginTop:22}}>
         {!s.wizardEntry&&<button onClick={()=>onProceed(s)} style={{flex:'1 1 220px',padding:'15px 24px',background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:9}}><i className="fas fa-file-signature"></i> Proceed to engagement proposal</button>}
         <a href={waUrl('Hello StartEasy — I would like to ask about '+s.code+' '+s.title+'.')} target="_blank" rel="noopener noreferrer" style={{flex:'1 1 220px',padding:'15px 24px',background:'#25D366',color:'#fff',borderRadius:8,fontSize:14,fontWeight:700,display:'inline-flex',alignItems:'center',justifyContent:'center',gap:9,textDecoration:'none'}}><i className="fab fa-whatsapp"></i> Ask a question first</a>
@@ -552,7 +553,6 @@ function ServiceDetail({service,onClose,onProceed,onWizard}){
   </Modal>;
 }
 
-/* Engagement proposal */
 function Engagement({service,onClose,onAgreed}){
   const [client,setClient]=useState({name:'',business:'',email:'',phone:''});
   const [agreed,setAgreed]=useState(false);
@@ -646,7 +646,6 @@ function Engagement({service,onClose,onAgreed}){
   </Modal>;
 }
 
-/* Payment */
 function Payment({service,client,onClose,onDone}){
   const s=service;
   const desk=getDesk(s.desk);
@@ -759,7 +758,7 @@ function Payment({service,client,onClose,onDone}){
 }
 
 /* ============================================================
-   WIZARD
+   WIZARD — the star
    ============================================================ */
 function Wizard({initialScope,onExit,onOrderFormal}){
   const [step,setStep]=useState(0);
@@ -769,15 +768,20 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const [secondaryActivities,setSecondaryActivities]=useState([]);
   const [industry,setIndustry]=useState(null);
   const [descriptor,setDescriptor]=useState('');
+  const [customDescriptor,setCustomDescriptor]=useState('');
   const [structure,setStructure]=useState(null);
   const [distinctive,setDistinctive]=useState('');
-  const [customDescriptor,setCustomDescriptor]=useState('');
 
   const toggleSecondary=a=>setSecondaryActivities(prev=>prev.includes(a)?prev.filter(x=>x!==a):[...prev,a]);
 
-  useEffect(()=>{if(industry&&!descriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0])}},[industry]);
-  useEffect(()=>{if(industry&&!structure&&scope!=='names'){setStructure('ltd')}},[industry,scope]);
+  // Auto-set default descriptor and structure when industry picked
+  useEffect(()=>{if(industry&&!descriptor&&!customDescriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0])}},[industry,descriptor,customDescriptor]);
+  useEffect(()=>{if(industry&&!structure&&scope!=='names'){setStructure('ltd')}},[industry,scope,structure]);
 
+  // Effective descriptor — used across names, readiness, report, engagement
+  const effectiveDescriptor=useMemo(()=>customDescriptor.trim()||descriptor,[customDescriptor,descriptor]);
+
+  // Step list depends on scope
   const stepsArr=useMemo(()=>{
     if(!scope)return['scope'];
     const s=['scope','idea','activity','secondary'];
@@ -792,17 +796,19 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const structureData=structure?STRUCTURES.find(x=>x.key===structure):null;
   const analysis=useMemo(()=>analyseName(distinctive),[distinctive]);
 
+  // Build three names
   const names=useMemo(()=>{
-    if(!distinctive.trim()||!descriptor||!industryData)return[];
+    if(!distinctive.trim()||!effectiveDescriptor||!industryData)return[];
     const distinct=distinctive.trim().toUpperCase();
-    const desc=descriptor.toUpperCase();
+    const desc=effectiveDescriptor.toUpperCase();
     const ending=structureData&&structureData.endings.length?structureData.endings[0]:'LIMITED';
     const out=[`${distinct} ${desc} ${ending}`.trim()];
     const alts=industryData.descriptors.filter(d=>d.toUpperCase()!==desc).slice(0,2);
     alts.forEach(a=>out.push(`${distinct} ${a.toUpperCase()} ${ending}`.trim()));
     return out.filter(Boolean);
-  },[distinctive,descriptor,industryData,structureData]);
+  },[distinctive,effectiveDescriptor,industryData,structureData]);
 
+  // Readiness
   const readiness=useMemo(()=>{
     let t=0;
     if(idea.trim().length>=20)t+=15;
@@ -810,11 +816,11 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     if(secondaryActivities.length>0)t+=5;
     if(industry)t+=15;
     if(structure)t+=15;
-    if(descriptor)t+=15;
+    if(effectiveDescriptor)t+=15;
     if(analysis.score>=80)t+=25;else if(analysis.score>=60)t+=18;else if(analysis.score>=40)t+=10;
     if(industryData?.flag)t-=5;
     return Math.max(0,Math.min(100,t));
-  },[idea,primaryActivity,secondaryActivities,industry,structure,descriptor,analysis,industryData]);
+  },[idea,primaryActivity,secondaryActivities,industry,structure,effectiveDescriptor,analysis,industryData]);
 
   useEffect(()=>{if(step>=stepsArr.length)setStep(stepsArr.length-1)},[stepsArr.length,step]);
   useEffect(()=>{window.scrollTo({top:120,behavior:'smooth'})},[step]);
@@ -828,7 +834,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     if(current==='secondary')return true;
     if(current==='industry')return!!industry;
     if(current==='structure')return!!structure;
-    if(current==='descriptor')return!!descriptor;
+    if(current==='descriptor')return !!effectiveDescriptor && effectiveDescriptor.length>=3;
     if(current==='distinctive')return distinctive.trim().length>=3;
     return true;
   };
@@ -843,7 +849,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     if(industryData)lines.push('*Industry:* '+industryData.label+' (ISIC '+industryData.isic+')');
     if(structureData)lines.push('*Structure:* '+structureData.label);
     if(distinctive)lines.push('*Distinctive:* '+distinctive.toUpperCase());
-    if(descriptor)lines.push('*Descriptor:* '+descriptor.toUpperCase());
+    if(effectiveDescriptor)lines.push('*Descriptor:* '+effectiveDescriptor.toUpperCase());
     if(names.length){lines.push('','*Three-name proposal:*',...names.map((n,i)=>(i+1)+'. '+n))}
     if(analysis.score)lines.push('','*Name score:* '+analysis.score+'/100 · '+label(analysis.score));
     lines.push('*Readiness:* '+readiness+'%');
@@ -858,7 +864,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
       whatsCovered:['Wizard answers captured and reviewed','Industry classification','Legal structure recommendation'+(scope!=='structure'?' and three-name proposal':''),'Name distinctiveness scoring and flags','Formal StartEasy-branded report','Delivered within 1 hour'],
       service:'micro',
       timeline:'Delivered within 1 hour',
-      _wizardData:{scope,idea,primaryActivity,secondaryActivities,industry:industryData,structure:structureData,descriptor,distinctive,names,analysis,readiness}
+      _wizardData:{scope,idea,primaryActivity,secondaryActivities,industry:industryData,structure:structureData,descriptor:effectiveDescriptor,distinctive,names,analysis,readiness}
     });
   };
 
@@ -901,7 +907,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
           {current==='industry'&&<WIndustry industry={industry} setIndustry={setIndustry}/>}
           {current==='descriptor'&&<WDescriptor industry={industry} descriptor={descriptor} setDescriptor={setDescriptor} customDescriptor={customDescriptor} setCustomDescriptor={setCustomDescriptor}/>}
           {current==='distinctive'&&<WDistinctive distinctive={distinctive} setDistinctive={setDistinctive} analysis={analysis}/>}
-          {current==='report'&&<WReport scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={descriptor} names={names} analysis={analysis} readiness={readiness} onPrint={print} onWhatsapp={sendWa} onOrderFormal={orderFormal}/>}
+          {current==='report'&&<WReport scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness} onPrint={print} onWhatsapp={sendWa} onOrderFormal={orderFormal}/>}
           {current!=='report'&&<div style={{display:'flex',gap:12,marginTop:32,paddingTop:24,borderTop:'1px solid rgba(10,31,18,.06)',flexWrap:'wrap'}}>
             {step>0&&<button onClick={back} style={{padding:'13px 22px',background:'#fff',border:'1px solid rgba(10,31,18,.15)',borderRadius:8,fontSize:13.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit',color:'#0A1F12'}}>← Back</button>}
             <button onClick={next} disabled={!can()} style={{flex:1,minWidth:200,padding:'13px 24px',background:can()?'linear-gradient(135deg,#E8730F,#F5A623)':'rgba(10,31,18,.1)',color:can()?'#fff':'rgba(10,31,18,.4)',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:can()?'pointer':'not-allowed',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:10}}>
@@ -909,7 +915,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
             </button>
           </div>}
         </div>
-        <WizardSidebar scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={descriptor} names={names} analysis={analysis} readiness={readiness}/>
+        <WizardSidebar scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness}/>
       </div>
     </section>
 
@@ -917,6 +923,9 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   </div>;
 }
 
+/* ============================================================
+   WIZARD STEPS
+   ============================================================ */
 function WScope({scope,setScope}){
   const opts=[
     {v:'structure',icon:'fa-layer-group',t:'Help me choose the right structure',d:'Business Name vs Private Company vs Company Limited by Guarantee.',time:'~5 min · K25'},
@@ -1025,35 +1034,105 @@ function WIndustry({industry,setIndustry}){
   </div>;
 }
 
+/* ---------- IMPROVED DESCRIPTOR STEP ---------- */
 function WDescriptor({industry,descriptor,setDescriptor,customDescriptor,setCustomDescriptor}){
   const ind=INDUSTRIES.find(i=>i.key===industry);
+  const [mode,setMode]=useState(customDescriptor?'custom':'library');
   if(!ind)return null;
-  const finalDescriptor=customDescriptor||descriptor;
+
+  const finalDescriptor=mode==='custom'?customDescriptor.trim():descriptor;
+  const trimmed=customDescriptor.trim();
+  const words=trimmed?trimmed.split(/\s+/).length:0;
+  const hasAmpOrOf=/\b(of|&|and)\b/i.test(customDescriptor);
+  const isTooLong=words>3;
+  const isTooShort=trimmed.length>0&&trimmed.length<3;
+
   return <div>
     <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 7 · Descriptive word library</div>
     <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Choose your preferred descriptive word.</h2>
-    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>The <strong>descriptive word</strong> communicates the nature of the business. Pick one from the StartEasy Descriptive Word Library — filtered to your industry — or type your own.</p>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>The <strong>descriptive word</strong> communicates the nature of the business. Pick one from the StartEasy Descriptive Word Library — filtered to your industry — or write your own.</p>
+
     {ind.flag&&<div style={{background:'#FFF4E5',borderLeft:'4px solid #E8730F',borderRadius:8,padding:'14px 18px',marginBottom:24,display:'flex',gap:12}}>
       <i className="fas fa-info-circle" style={{color:'#E8730F',fontSize:16,flexShrink:0,marginTop:2}}></i>
       <div><div style={{fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#7A5C10',marginBottom:6}}>{ind.flag.title}</div><p style={{fontSize:12.5,lineHeight:1.6,color:'#7A5C10',margin:0}}>{ind.flag.body}</p></div>
     </div>}
-    <div style={{maxWidth:600,marginBottom:20}}>
-      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>StartEasy Descriptive Word Library · filtered for <strong>{ind.label}</strong></label>
-      <select value={customDescriptor?'':descriptor} onChange={e=>{setDescriptor(e.target.value);setCustomDescriptor('')}} className="inp-select">
-        <option value="">— Choose from the library —</option>
-        {ind.descriptors.map(d=><option key={d} value={d}>{d}</option>)}
-      </select>
+
+    <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
+      <button onClick={()=>setMode('library')} style={{display:'inline-flex',alignItems:'center',gap:9,padding:'11px 18px',borderRadius:99,border:mode==='library'?'none':'1.5px solid rgba(10,31,18,.15)',background:mode==='library'?'#0A1F12':'#fff',color:mode==='library'?'#fff':'rgba(10,31,18,.7)',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit',transition:'all .2s'}}>
+        <i className="fas fa-book"></i> From the library
+        {descriptor&&<span style={{fontSize:10,background:'rgba(255,255,255,.2)',padding:'2px 7px',borderRadius:99,fontWeight:800}}>1</span>}
+      </button>
+      <button onClick={()=>setMode('custom')} style={{display:'inline-flex',alignItems:'center',gap:9,padding:'11px 18px',borderRadius:99,border:mode==='custom'?'none':'1.5px solid rgba(10,31,18,.15)',background:mode==='custom'?'#0A1F12':'#fff',color:mode==='custom'?'#fff':'rgba(10,31,18,.7)',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit',transition:'all .2s'}}>
+        <i className="fas fa-pen"></i> Write my own
+        {trimmed&&<span style={{fontSize:10,background:'rgba(255,255,255,.2)',padding:'2px 7px',borderRadius:99,fontWeight:800}}>1</span>}
+      </button>
     </div>
-    <div style={{maxWidth:600,marginBottom:20}}>
-      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Or type your own descriptive word</label>
-      <input value={customDescriptor} onChange={e=>setCustomDescriptor(e.target.value)} placeholder="e.g. Ventures, Group, Holdings, Collective" style={{width:'100%',background:'#fff',border:'2px solid '+(customDescriptor?'#E8730F':'rgba(10,31,18,.12)'),borderRadius:12,padding:'16px 20px',fontSize:14.5,color:'#0A1F12',fontFamily:'inherit'}}/>
-      {customDescriptor&&<div style={{marginTop:8,fontSize:11.5,color:'rgba(10,31,18,.55)',fontStyle:'italic'}}>You are using a custom descriptor: <strong style={{fontFamily:'Consolas,monospace',color:'#0A1F12'}}>{customDescriptor.toUpperCase()}</strong></div>}
-    </div>
-    {finalDescriptor&&<div style={{background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:'18px 22px',color:'#fff'}}>
+
+    {mode==='library'&&<>
+      <div style={{maxWidth:640,marginBottom:20}}>
+        <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>StartEasy Descriptive Word Library · <span style={{color:ind.color}}>filtered for {ind.label}</span></label>
+        <select value={descriptor} onChange={e=>{setDescriptor(e.target.value);setCustomDescriptor('')}} className="inp-select">
+          <option value="">— Choose from the library —</option>
+          {ind.descriptors.map(d=><option key={d} value={d}>{d}</option>)}
+        </select>
+      </div>
+      <div style={{maxWidth:640,marginBottom:20}}>
+        <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:10}}>Quick pick</div>
+        <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+          {ind.descriptors.slice(0,10).map(d=><button key={d} onClick={()=>{setDescriptor(d);setCustomDescriptor('')}} className={`dchip ${descriptor===d&&!customDescriptor?'on':''}`}>{d}</button>)}
+        </div>
+      </div>
+      <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:10,padding:18,marginBottom:20,maxWidth:640}}>
+        <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:10}}>Real examples in this family</div>
+        <ul style={{listStyle:'none',padding:0,margin:0}}>{ind.examples.map((e,i)=><li key={i} style={{fontFamily:'Consolas,monospace',fontSize:12.5,color:'rgba(10,31,18,.7)',padding:'6px 0',borderBottom:i<ind.examples.length-1?'1px dashed rgba(10,31,18,.06)':'none'}}>{e}</li>)}</ul>
+      </div>
+    </>}
+
+    {mode==='custom'&&<>
+      <div style={{maxWidth:640,marginBottom:16}}>
+        <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Type your descriptive word</label>
+        <input value={customDescriptor} onChange={e=>{setCustomDescriptor(e.target.value);if(e.target.value.trim())setDescriptor('')}} placeholder="e.g. Ventures, Holdings, Group, Collective, Institute" style={{width:'100%',background:'#fff',border:'2px solid '+(trimmed?(isTooLong||isTooShort||hasAmpOrOf?'#E8730F':'#1E7B3C'):'rgba(10,31,18,.12)'),borderRadius:12,padding:'16px 20px',fontSize:14.5,color:'#0A1F12',fontFamily:'inherit',transition:'all .2s'}}/>
+        <div style={{display:'flex',justifyContent:'space-between',gap:12,marginTop:8,fontSize:11,color:'rgba(10,31,18,.5)'}}>
+          <span>{words>0?words+' word'+(words===1?'':'s'):'—'}</span>
+          <span>{trimmed.length} characters</span>
+        </div>
+      </div>
+
+      {trimmed&&(isTooLong||hasAmpOrOf)&&<div style={{maxWidth:640,marginBottom:16,padding:'12px 16px',background:'#FFF4E5',borderLeft:'3px solid #E8730F',borderRadius:8,fontSize:12.5,color:'#7A5C10',lineHeight:1.6,display:'flex',gap:10}}>
+        <i className="fas fa-lightbulb" style={{color:'#E8730F',fontSize:14,flexShrink:0,marginTop:2}}></i>
+        <div>
+          <strong style={{color:'#8A6828',display:'block',marginBottom:4}}>Tip — a descriptor works best as 1–3 words.</strong>
+          Words like <em>of</em>, <em>&amp;</em> or <em>and</em> usually signal a full name, not a descriptor. If you want a longer business name, keep the descriptor short here (e.g. <strong>Institute</strong> or <strong>Academy</strong>) — you can add the rest as part of your distinctive element or in the business activities description. <strong>You can still continue.</strong>
+        </div>
+      </div>}
+
+      {trimmed&&isTooShort&&<div style={{maxWidth:640,marginBottom:16,padding:'12px 16px',background:'#FFE8E5',borderLeft:'3px solid #B8564F',borderRadius:8,fontSize:12.5,color:'#7C2318',lineHeight:1.6,display:'flex',gap:10}}>
+        <i className="fas fa-exclamation-circle" style={{color:'#B8564F',fontSize:14,flexShrink:0,marginTop:2}}></i>
+        <div>The descriptor is very short. Use at least 3 characters.</div>
+      </div>}
+
+      {trimmed&&!isTooLong&&!isTooShort&&!hasAmpOrOf&&<div style={{maxWidth:640,marginBottom:16,padding:'12px 16px',background:'#EAF7EE',borderLeft:'3px solid #1E7B3C',borderRadius:8,fontSize:12.5,color:'#0F5C2A',lineHeight:1.6,display:'flex',gap:10}}>
+        <i className="fas fa-check-circle" style={{color:'#1E7B3C',fontSize:14,flexShrink:0,marginTop:2}}></i>
+        <div><strong>Looks good.</strong> This is a strong descriptor for the name architecture.</div>
+      </div>}
+
+      <div style={{maxWidth:640,marginBottom:20}}>
+        <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:10}}>Or start from a library word</div>
+        <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+          {ind.descriptors.slice(0,8).map(d=><button key={d} onClick={()=>{setCustomDescriptor(d);setDescriptor(d)}} className="dchip">{d}</button>)}
+        </div>
+      </div>
+    </>}
+
+    {finalDescriptor&&<div style={{background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:'20px 24px',color:'#fff',maxWidth:640}}>
       <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:10}}>Your chosen descriptive word</div>
-      <div className="serif" style={{fontSize:24,fontWeight:800,color:'#F5A623',fontFamily:'Consolas,monospace'}}>{finalDescriptor.toUpperCase()}</div>
+      <div className="serif" style={{fontSize:'clamp(1.2rem,2.8vw,1.7rem)',fontWeight:800,color:'#F5A623',fontFamily:'Consolas,monospace',wordBreak:'break-word',lineHeight:1.25}}>{finalDescriptor.toUpperCase()}</div>
+      <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid rgba(255,255,255,.15)',fontSize:12,color:'rgba(255,255,255,.6)',fontFamily:'Consolas,monospace'}}>
+        → [distinctive] <span style={{color:'#F5A623'}}>{finalDescriptor.toUpperCase()}</span> [legal ending]
+      </div>
     </div>}
-    {!finalDescriptor&&<div style={{marginTop:20,padding:'16px 20px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:8,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic'}}>Choose from the library above or type your own to continue.</div>}
+
+    {!finalDescriptor&&<div style={{padding:'16px 20px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:8,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic',maxWidth:640}}>Choose from the library above or type your own to continue.</div>}
   </div>;
 }
 
@@ -1243,14 +1322,6 @@ function ServiceCard({serviceKey,onClick}){
 /* ============================================================
    PAGES
    ============================================================ */
-function Head({eyebrow,title,sub,light,className=''}){
-  return <div className={className}>
-    {eyebrow&&<div style={{display:'flex',alignItems:'center',gap:16,marginBottom:20}}><span className={`micro ${light?'':'text-[#0A1F12]/50'}`} style={{color:light?'#F5A623':'rgba(10,31,18,.5)'}}>{eyebrow}</span></div>}
-    <h2 className="serif" style={{fontSize:'clamp(1.8rem,4.2vw,2.7rem)',lineHeight:1.1,color:light?'#fff':'#0A1F12'}}>{title}</h2>
-    {sub&&<p style={{marginTop:20,fontSize:15.5,lineHeight:1.6,maxWidth:'42rem',color:light?'rgba(255,255,255,.5)':'rgba(10,31,18,.55)'}}>{sub}</p>}
-  </div>;
-}
-
 function Home({go}){
   const orientation=[
     {icon:'fa-compass',title:'Business Structure & Name',desc:'Self-service wizard — K25, done within 1 hour.',route:'wizard'},
@@ -1276,8 +1347,8 @@ function Home({go}){
     </section>
     <section style={{maxWidth:1240,margin:'0 auto',padding:'40px 24px 0'}}><NotReg/></section>
     <section style={{maxWidth:1240,margin:'0 auto',padding:'56px 24px'}}>
-      <Head eyebrow="Start here" title="What brings you to StartEasy today?" sub="Pick the closest match. We will show only what applies to you." className="mb-10" style={{maxWidth:'42rem'}}/>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{marginTop:40}}>
+      <Head eyebrow="Start here" title="What brings you to StartEasy today?" sub="Pick the closest match. We will show only what applies to you." style={{marginBottom:40,maxWidth:'42rem'}}/>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {orientation.map((o,i)=><button key={i} onClick={()=>o.route==='desk'?go('desk',o.arg):go(o.route)} className="gtile">
           <span className="ico"><i className={`fas ${o.icon}`}></i></span>
           <h3>{o.title}</h3><p>{o.desc}</p>
@@ -1286,8 +1357,8 @@ function Home({go}){
     </section>
     <section style={{background:'#fff'}}>
       <div style={{maxWidth:1240,margin:'0 auto',padding:'56px 24px'}}>
-        <Head eyebrow="Or explore by desk" title="Eight specialist desks." sub="Each desk handles a defined set of administrative services with the relevant authority." className="mb-10" style={{maxWidth:'42rem'}}/>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{marginTop:40}}>
+        <Head eyebrow="Or explore by desk" title="Eight specialist desks." sub="Each desk handles a defined set of administrative services with the relevant authority." style={{marginBottom:40,maxWidth:'42rem'}}/>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {Object.values(DESKS).map(g=>{const count=ALL_SERVICES.filter(s=>s.desk===g.id).length;return <button key={g.id} onClick={()=>go('desk',g.id)} className="gtile">
             <span className="ico" style={{background:g.color+'18',color:g.color}}><i className={`fas ${g.icon}`}></i></span>
             <h3>{g.title}</h3><p>{g.subtitle}</p>
@@ -1298,8 +1369,8 @@ function Home({go}){
     </section>
     <section style={{background:'#0A1F12',color:'#fff'}}>
       <div style={{maxWidth:1240,margin:'0 auto',padding:'64px 24px'}}>
-        <Head light eyebrow="How engagement works" title="Three steps from question to delivery." className="mb-12" style={{maxWidth:'42rem'}}/>
-        <div className="grid sm:grid-cols-3" style={{gap:1,background:'rgba(255,255,255,.1)',borderRadius:6,overflow:'hidden',marginTop:48}}>
+        <Head light eyebrow="How engagement works" title="Three steps from question to delivery." style={{marginBottom:48,maxWidth:'42rem'}}/>
+        <div className="grid sm:grid-cols-3" style={{gap:1,background:'rgba(255,255,255,.1)',borderRadius:6,overflow:'hidden'}}>
           {[{n:'01',t:'Explore',d:'Pick a desk. Answer one question. We show only what applies to you.'},{n:'02',t:'Engagement proposal',d:'We prepare a formal engagement letter with scope, fees and terms. You read, agree, and proceed.'},{n:'03',t:'Delivery',d:'On payment verification, we begin. You track progress. We act on your behalf.'}].map((x,i)=><div key={i} style={{background:'#0A1F12',padding:32}}>
             <span className="serif" style={{fontSize:13,color:'#F5A623',fontWeight:700,display:'block',marginBottom:16}}>{x.n}</span>
             <h3 className="serif" style={{fontSize:20,color:'#fff',marginBottom:12}}>{x.t}</h3>
@@ -1484,7 +1555,7 @@ function EngagementPage({go}){
 function PricingPage({go}){
   return <div className="fadein" style={{background:'#F5FAF6'}}>
     <section style={{maxWidth:1240,margin:'0 auto',padding:'56px 24px'}}>
-      <Head eyebrow="Fee structure" title="Service fees and ongoing fees — clear from the start." sub="Every service has a published StartEasy service fee. Service fees cover preparation and submission. Ongoing fees cover filing, tracking, renewal and coordination." className="mb-8" style={{maxWidth:'48rem'}}/>
+      <Head eyebrow="Fee structure" title="Service fees and ongoing fees — clear from the start." sub="Every service has a published StartEasy service fee. Service fees cover preparation and submission. Ongoing fees cover filing, tracking, renewal and coordination." style={{marginBottom:32,maxWidth:'48rem'}}/>
       <div style={{marginBottom:32}}><NotReg/></div>
       <div style={{marginBottom:48}}>
         <div style={{display:'flex',alignItems:'baseline',gap:16,marginBottom:20,flexWrap:'wrap'}}>
