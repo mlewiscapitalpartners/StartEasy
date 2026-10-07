@@ -916,7 +916,6 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   };
 
   useEffect(()=>{if(industry&&!descriptor&&!customDescriptor){const ind=INDUSTRIES.find(i=>i.key===industry);if(ind)setDescriptor(ind.descriptors[0])}},[industry]);
-  useEffect(()=>{if(industry&&!structure&&scope!=='names'){setStructure('ltd')}},[industry,scope]);
   /* Keep the legal ending aligned whenever a fixed-ending structure is chosen */
   useEffect(()=>{
     const sd=structure?STRUCTURES.find(x=>x.key===structure):null;
@@ -927,8 +926,9 @@ function Wizard({initialScope,onExit,onOrderFormal}){
 
   const stepsArr=useMemo(()=>{
     if(!scope)return['scope'];
-    const s=['scope','idea','activity','secondary'];
-    if(scope==='structure'||scope==='both')s.push('structure');
+    /* Legal structure & name clearance now always appears — right after the idea,
+       before primary activity. Every applicant needs a legal ending for clearance. */
+    const s=['scope','idea','structure','activity','secondary'];
     if(scope==='names'||scope==='both'){s.push('industry');s.push('descriptor');s.push('distinctive');}
     else{s.push('industry');}
     s.push('report');
@@ -967,10 +967,10 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const can=()=>{
     if(current==='scope')return!!scope;
     if(current==='idea')return idea.trim().length>=15;
+    if(current==='structure')return!!structure;
     if(current==='activity')return!!primaryActivity;
     if(current==='secondary')return true;
     if(current==='industry')return!!industry;
-    if(current==='structure')return!!structure;
     if(current==='descriptor')return !!effectiveDescriptor && effectiveDescriptor.length>=3;
     if(current==='distinctive')return distinctive.trim().length>=3;
     return true;
@@ -1039,7 +1039,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
       <div style={{maxWidth:1240,margin:'0 auto',padding:'16px 24px',display:'flex',gap:8,overflowX:'auto'}}>
         {stepsArr.map((s,i)=>{
           const state=i<step?'done':(i===step?'active':'');
-          const labels={scope:'Scope',idea:'Business idea',activity:'Primary activity',secondary:'Secondary',structure:'Legal structure',industry:'Industry',descriptor:'Descriptor',distinctive:'Core name',report:'Report'};
+          const labels={scope:'Scope',idea:'Business idea',structure:'Legal structure',activity:'Primary activity',secondary:'Secondary',industry:'Industry',descriptor:'Descriptor',distinctive:'Core name',report:'Report'};
           return <button key={s} onClick={()=>goStep(i)} className={`step ${state}`} style={{cursor:i<=step?'pointer':'default'}}>
             <span className="n">{i<step?'✓':String(i+1)}</span><span>{labels[s]}</span>
           </button>;
@@ -1052,9 +1052,9 @@ function Wizard({initialScope,onExit,onOrderFormal}){
         <div className="fadein" key={current}>
           {current==='scope'&&<WScope scope={scope} setScope={setScope}/>}
           {current==='idea'&&<WIdea idea={idea} setIdea={setIdea}/>}
+          {current==='structure'&&<WStructure structure={structure} setStructure={setStructure} legalEnding={legalEnding} setLegalEnding={setLegalEnding} idea={idea} distinctive={distinctive} descriptor={effectiveDescriptor}/>}
           {current==='activity'&&<WActivity primaryActivity={primaryActivity} setPrimaryActivity={setPrimaryActivity}/>}
           {current==='secondary'&&<WSecondary secondaryActivities={secondaryActivities} toggleSecondary={toggleSecondary} setSecondaryActivities={setSecondaryActivities}/>}
-          {current==='structure'&&<WStructure structure={structure} setStructure={setStructure} legalEnding={legalEnding} setLegalEnding={setLegalEnding} industryKey={industry} distinctive={distinctive} descriptor={effectiveDescriptor}/>}
           {current==='industry'&&<WIndustry industry={industry} setIndustry={setIndustry}/>}
           {current==='descriptor'&&<WDescriptor industry={industry} descriptor={descriptor} setDescriptor={setDescriptor} customDescriptor={customDescriptor} setCustomDescriptor={setCustomDescriptor}/>}
           {current==='distinctive'&&<WDistinctive distinctive={distinctive} setDistinctive={setDistinctive} analysis={analysis}/>}
@@ -1107,58 +1107,25 @@ function WIdea({idea,setIdea}){
   </div>;
 }
 
-function WActivity({primaryActivity,setPrimaryActivity}){
-  return <div>
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 3 · Primary activity</div>
-    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>What is the primary activity of the business?</h2>
-    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>Choose the single best descriptor of what the business actually does. This drives the industry classification and the descriptive word family.</p>
-    <div style={{maxWidth:520}}>
-      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Primary activity</label>
-      <select value={primaryActivity} onChange={e=>setPrimaryActivity(e.target.value)} className="inp-select">
-        <option value="">— Choose the primary activity —</option>
-        {PRIMARY_ACTIVITIES.map(a=><option key={a} value={a}>{a}</option>)}
-      </select>
-      {primaryActivity&&<div style={{marginTop:14,padding:'12px 16px',background:'rgba(46,156,74,.08)',border:'1px solid rgba(46,156,74,.25)',borderRadius:8,fontSize:12.5,color:'#0F5C2A',display:'flex',alignItems:'center',gap:10}}>
-        <i className="fas fa-check-circle" style={{color:'#1E7B3C'}}></i>
-        <span>Primary activity set: <strong>{primaryActivity}</strong></span>
-      </div>}
-    </div>
-  </div>;
-}
-
-function WSecondary({secondaryActivities,toggleSecondary,setSecondaryActivities}){
-  return <div>
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 4 · Secondary activities</div>
-    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Are there any secondary activities?</h2>
-    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>Tick everything that also applies. These will be captured on your assessment report and, where relevant, added to your business activities description for the PACRA submission.</p>
-    <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
-      {SECONDARY_ACTIVITIES.map(a=>{const on=secondaryActivities.includes(a);return <button key={a} onClick={()=>toggleSecondary(a)} className={`dchip ${on?'on':''}`}>{on&&<i className="fas fa-check" style={{fontSize:10}}></i>}{a}</button>})}
-    </div>
-    {secondaryActivities.length>0&&<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,padding:'12px 16px',background:'rgba(232,115,15,.06)',border:'1px solid rgba(232,115,15,.2)',borderRadius:8,fontSize:12.5,color:'#8A6828',flexWrap:'wrap'}}>
-      <span><strong>{secondaryActivities.length}</strong> secondary activit{secondaryActivities.length===1?'y':'ies'} selected</span>
-      <button onClick={()=>setSecondaryActivities([])} style={{background:'none',border:'none',color:'#E8730F',fontWeight:700,cursor:'pointer',fontFamily:'inherit',fontSize:12,textDecoration:'underline'}}>Clear all</button>
-    </div>}
-    {secondaryActivities.length===0&&<div style={{padding:'14px 18px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:8,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic'}}>Optional — you can skip this step if there are no secondary activities.</div>}
-  </div>;
-}
-
-function WStructure({structure,setStructure,legalEnding,setLegalEnding,industryKey,distinctive,descriptor}){
+function WStructure({structure,setStructure,legalEnding,setLegalEnding,idea,distinctive,descriptor}){
+  /* Idea-driven recommendation — industry isn't chosen yet at this stage,
+     so we infer the likely structure from keywords in the business idea. */
   const recommend=useMemo(()=>{
-    if(!industryKey)return['ltd'];
-    if(['financial','health'].includes(industryKey))return['ltd'];
-    if(['education'].includes(industryKey))return['ltd','ltdg'];
-    if(industryKey==='other')return['ltd','ltdg','bn'];
-    return['ltd','bn'];
-  },[industryKey]);
+    const t=(idea||'').toLowerCase();
+    if(/\b(public|listed|listing|ipo|stock exchange|offer shares|shares to the public|pre-ipo)\b/.test(t))return['plc'];
+    if(/\b(non[- ]?profit|nonprofit|charity|charitable|association|club|society|ngo|foundation|welfare|community|membership|church|mosque|cooperative|co-op)\b/.test(t))return['ltdg'];
+    if(/\b(sole trader|sole proprietor|freelance|one[- ]person|individual trader|informal|small shop|tuck shop|market stall)\b/.test(t))return['bn','ltd'];
+    return['ltd'];
+  },[idea]);
 
   const sel=structure?STRUCTURES.find(s=>s.key===structure):null;
   const resolved=resolveLegalEnding(sel,legalEnding);
   const preview=[distinctive?distinctive.toUpperCase():'[DISTINCTIVE]',descriptor?descriptor.toUpperCase():'[DESCRIPTOR]',resolved||'(no legal ending)'].join(' ');
 
   return <div>
-    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 5 · Legal structure &amp; name clearance</div>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 3 · Legal structure &amp; name clearance</div>
     <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Which structure should the name be cleared under?</h2>
-    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:660}}>PACRA name clearance depends on the <strong>type of entity</strong> you are registering — because the <strong>legal ending</strong> forms part of the name itself. Choose the structure that matches what you are building. We recommend based on your industry and situation, and you can change this at any time.</p>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:660}}>Before we build your names, PACRA needs to know <strong>what kind of entity you are registering</strong> — because the <strong>legal ending</strong> (LIMITED, PLC, or none) forms part of the name itself. Choose the structure that matches what you are building. We recommend based on your business idea, and you can change this at any time.</p>
 
     <div style={{display:'flex',flexDirection:'column',gap:12}}>
       {STRUCTURES.map(s=>{const on=structure===s.key;const isRec=recommend.includes(s.key)&&s.key!=='unsure';return <button key={s.key} onClick={()=>setStructure(s.key)} className={`stile ${on?'sel':''}`}>
@@ -1196,6 +1163,41 @@ function WStructure({structure,setStructure,legalEnding,setLegalEnding,industryK
     </div>}
 
     {!sel&&<div style={{marginTop:22,padding:'16px 20px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:10,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic'}}>Choose a structure above to see the legal ending and the name clearance format.</div>}
+  </div>;
+}
+
+function WActivity({primaryActivity,setPrimaryActivity}){
+  return <div>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 4 · Primary activity</div>
+    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>What is the primary activity of the business?</h2>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>Choose the single best descriptor of what the business actually does. This drives the industry classification and the descriptive word family.</p>
+    <div style={{maxWidth:520}}>
+      <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Primary activity</label>
+      <select value={primaryActivity} onChange={e=>setPrimaryActivity(e.target.value)} className="inp-select">
+        <option value="">— Choose the primary activity —</option>
+        {PRIMARY_ACTIVITIES.map(a=><option key={a} value={a}>{a}</option>)}
+      </select>
+      {primaryActivity&&<div style={{marginTop:14,padding:'12px 16px',background:'rgba(46,156,74,.08)',border:'1px solid rgba(46,156,74,.25)',borderRadius:8,fontSize:12.5,color:'#0F5C2A',display:'flex',alignItems:'center',gap:10}}>
+        <i className="fas fa-check-circle" style={{color:'#1E7B3C'}}></i>
+        <span>Primary activity set: <strong>{primaryActivity}</strong></span>
+      </div>}
+    </div>
+  </div>;
+}
+
+function WSecondary({secondaryActivities,toggleSecondary,setSecondaryActivities}){
+  return <div>
+    <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:12}}>Step 5 · Secondary activities</div>
+    <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.4vw,2rem)',lineHeight:1.15,color:'#0A1F12',marginBottom:12}}>Are there any secondary activities?</h2>
+    <p style={{fontSize:14,lineHeight:1.65,color:'rgba(10,31,18,.6)',marginBottom:24,maxWidth:640}}>Tick everything that also applies. These will be captured on your assessment report and, where relevant, added to your business activities description for the PACRA submission.</p>
+    <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
+      {SECONDARY_ACTIVITIES.map(a=>{const on=secondaryActivities.includes(a);return <button key={a} onClick={()=>toggleSecondary(a)} className={`dchip ${on?'on':''}`}>{on&&<i className="fas fa-check" style={{fontSize:10}}></i>}{a}</button>})}
+    </div>
+    {secondaryActivities.length>0&&<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,padding:'12px 16px',background:'rgba(232,115,15,.06)',border:'1px solid rgba(232,115,15,.2)',borderRadius:8,fontSize:12.5,color:'#8A6828',flexWrap:'wrap'}}>
+      <span><strong>{secondaryActivities.length}</strong> secondary activit{secondaryActivities.length===1?'y':'ies'} selected</span>
+      <button onClick={()=>setSecondaryActivities([])} style={{background:'none',border:'none',color:'#E8730F',fontWeight:700,cursor:'pointer',fontFamily:'inherit',fontSize:12,textDecoration:'underline'}}>Clear all</button>
+    </div>}
+    {secondaryActivities.length===0&&<div style={{padding:'14px 18px',background:'rgba(10,31,18,.03)',border:'1px dashed rgba(10,31,18,.12)',borderRadius:8,fontSize:12.5,color:'rgba(10,31,18,.5)',fontStyle:'italic'}}>Optional — you can skip this step if there are no secondary activities.</div>}
   </div>;
 }
 
@@ -1407,11 +1409,11 @@ function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryD
       <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:14}}>Live preview</div>
       <SideRow label="Scope" value={scope?{structure:'Structure',names:'Names',both:'Full advisory'}[scope]:'—'} done={!!scope}/>
       <SideRow label="Idea" value={idea?(idea.length>40?idea.slice(0,40)+'…':idea):'—'} done={!!idea}/>
+      {scope!=='names'&&<SideRow label="Structure" value={structureData?structureData.label:'—'} done={!!structureData}/>}
+      {scope!=='names'&&<SideRow label="Legal ending" value={structureData?(legalEnding||'(none)'):'—'} done={!!structureData}/>}
       <SideRow label="Primary activity" value={primaryActivity||'—'} done={!!primaryActivity}/>
       <SideRow label="Secondary" value={secondaryActivities.length>0?secondaryActivities.length+' selected':'—'} done={secondaryActivities.length>0}/>
       {scope!=='structure'&&<SideRow label="Industry" value={industryData?industryData.label:'—'} done={!!industryData} color={industryData?.color}/>}
-      {scope!=='names'&&<SideRow label="Structure" value={structureData?structureData.label:'—'} done={!!structureData}/>}
-      {scope!=='names'&&<SideRow label="Legal ending" value={structureData?(legalEnding||'(none)'):'—'} done={!!structureData}/>}
       {scope!=='structure'&&<>
         <SideRow label="Descriptor" value={descriptor?descriptor.toUpperCase():'—'} done={!!descriptor}/>
         <SideRow label="Distinctive" value={distinctive?distinctive.toUpperCase():'—'} done={!!distinctive} color={distinctive?color(analysis.score):null}/>
