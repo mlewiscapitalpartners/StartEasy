@@ -99,6 +99,10 @@ input:focus,select:focus,textarea:focus{outline:none}
 .rpt ol.names li{display:flex;gap:12px;padding:9px 0;font-size:12.5px;counter-increment:rn;border-bottom:1px dashed #EEE}
 .rpt ol.names li:last-child{border-bottom:none}
 .rpt ol.names li::before{content:counter(rn);width:22px;height:22px;border-radius:50%;background:#0A1F12;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Playfair Display',Georgia,serif}
+.rpt ol.names li.pref li::before,
+.rpt ol.names li:nth-child(1)::before,
+.rpt ol.names li:nth-child(2)::before,
+.rpt ol.names li:nth-child(3)::before{background:#E8730F}
 .rpt ol.names li .nm{font-family:Consolas,monospace;font-weight:700;color:#0A1F12;letter-spacing:.03em}
 .rpt .flag{border-radius:6px;padding:12px 14px;margin:10px 0;font-size:11.5px;line-height:1.6;display:flex;gap:10px;align-items:flex-start}
 .rpt .flag.warn{background:#FFF4E5;border-left:3px solid #E8730F;color:#7A5C10}
@@ -312,6 +316,42 @@ function validateCustomDescriptor(text,industry){
   return {state:'valid',message:'Accepted — you may proceed. Confirm this word is not already reserved by another business.'};
 }
 
+/* ---- SIX-NAME GENERATOR ---- */
+function buildSixNames(distinctive,effectiveDescriptor,industryData,structureData){
+  if(!distinctive||!distinctive.trim()||!effectiveDescriptor||!industryData)return[];
+  const distinct=distinctive.trim().toUpperCase();
+  const desc=effectiveDescriptor.toUpperCase().trim();
+  const descLower=desc.toLowerCase();
+  const ending=structureData&&structureData.endings.length?structureData.endings[0]:'LIMITED';
+  const out=[];
+
+  // Proposal 1 — the user's own custom descriptor, in full
+  out.push(`${distinct} ${desc} ${ending}`.trim());
+
+  // Track used descriptors to avoid duplicates
+  const used=new Set([desc]);
+  const tryAdd=(candidate)=>{
+    if(out.length>=6)return;
+    if(!candidate)return;
+    const u=candidate.toUpperCase();
+    if(used.has(u))return;
+    used.add(u);
+    out.push(`${distinct} ${u} ${ending}`.trim());
+  };
+
+  // Proposals 2+ — embedded library words first (short forms detected inside the custom phrase)
+  const embedded=findEmbeddedLibraryWords(desc,industryData);
+  embedded.forEach(lib=>tryAdd(lib));
+
+  // Fill the rest in industry order
+  for(const lib of industryData.descriptors){
+    if(out.length>=6)break;
+    tryAdd(lib);
+  }
+
+  return out.filter(Boolean);
+}
+
 function Btn({children,onClick,variant='primary',size='md',className='',type='button',disabled}){
   const base='inline-flex items-center justify-center gap-2.5 transition-all duration-300 tracking-wide disabled:opacity-30 disabled:cursor-not-allowed rounded-sm font-semibold';
   const sizes={sm:'text-[12px] px-4 py-2.5',md:'text-[13px] px-6 py-3.5',lg:'text-[13.5px] px-8 py-4'};
@@ -415,7 +455,7 @@ const DESKS={
 
 const S={
   p_structure:{code:'P0',desk:'pacra',title:'Business Structure Advisory',clientDesc:'Self-service wizard. Tell us about your business idea. Our platform recommends the right legal structure — Business Name, Private Company Limited by Shares, Company Limited by Guarantee, or another form — based on your activity and situation.',whatsCovered:['Guided question flow — no long forms','Industry classification against ISIC-aligned sectors','Primary and secondary activity capture','Legal structure recommendation with reasons','Referral to a qualified professional where legal advice is required','Instant assessment report','Formal StartEasy-branded report delivered within 1 hour'],service:'micro',timeline:'Done within 1 hour',wizardEntry:true,wizardScope:'structure',popular:true},
-  p_name:{code:'P1',desk:'pacra',title:'Name Preparation & Clearance',clientDesc:'Self-service wizard. Our platform develops three fully-constructed candidate names aligned with your business activity, legal structure and PACRA naming requirements — with a name distinctiveness score for each. Then we prepare the clearance application, submit on your behalf and track the case through to outcome.',whatsCovered:['Descriptive word library dropdown','Three-name proposal in preference order','Real-time name distinctiveness score','Common pattern and protected-term detection','Consistency check across all names','Submission information pack','Submission on your behalf','Case tracking','Plain-language explanation of any query'],service:'micro',timeline:'Done within 1 hour',wizardEntry:true,wizardScope:'names',popular:true},
+  p_name:{code:'P1',desk:'pacra',title:'Name Preparation & Clearance',clientDesc:'Self-service wizard. Our platform develops six fully-constructed candidate names aligned with your business activity, legal structure and PACRA naming requirements — with a name distinctiveness score for each. Six candidates give you fallback options if PACRA reverts any of the first three. Then we prepare the clearance application, submit on your behalf and track the case through to outcome.',whatsCovered:['Descriptive word library dropdown','Six-name proposal in preference order','Real-time name distinctiveness score','Common pattern and protected-term detection','Consistency check across all names','Submission information pack','Submission on your behalf','Case tracking','Plain-language explanation of any query'],service:'micro',timeline:'Done within 1 hour',wizardEntry:true,wizardScope:'names',popular:true},
   p_inc:{code:'P2',desk:'pacra',title:'Company Incorporation',clientDesc:'Full administrative preparation of a private limited company incorporation — directors, shareholders, share capital, registered office — with a pre-submission quality check and submission on your behalf.',whatsCovered:['Company information compiled','Director and shareholder particulars','Shareholding structure and share capital','Registered office evidence','Business activities description','Supporting declarations','Pre-submission quality check','Submission on your behalf','Certificate of Incorporation','Share capital certificate'],service:'complex',timeline:'3–14 working days after name clearance',popular:true},
   p_bn:{code:'P3',desk:'pacra',title:'Business Name Registration',clientDesc:'Administrative preparation and submission support for business-name registration, including PACRA BN Form III.',whatsCovered:['Application preparation','Supporting document check','Submission on your behalf','Reference tracking','Certificate processing'],service:'standard',timeline:'2–7 working days after clearance'},
   p_amend:{code:'P4',desk:'pacra',title:'Company Amendments',clientDesc:'Administrative preparation of amendment filings — directors, shareholders, company secretary, registered office, company name, activities, shareholding.',whatsCovered:['Amendment type confirmed','Correct form identified','Resolution preparation support','Consistency check across documents','Submission on your behalf','Cross-desk notification (ZRA, NAPSA, council)'],service:'standard',timeline:'3–10 working days'},
@@ -579,7 +619,7 @@ function Engagement({service,onClose,onAgreed}){
         {s._wizardData.structure&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Legal structure</span><span style={{color:'#0A1F12',fontWeight:700}}>{s._wizardData.structure.label}</span></div>}
         {s._wizardData.distinctive&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Distinctive name</span><span style={{color:'#0A1F12',fontWeight:700,fontFamily:'Consolas,monospace'}}>{s._wizardData.distinctive.toUpperCase()}</span></div>}
         {s._wizardData.descriptor&&<div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'6px 0',fontSize:12.5,borderBottom:'1px dashed #E8EEF3'}}><span style={{color:'#666',fontWeight:600}}>Descriptive word</span><span style={{color:'#0A1F12',fontWeight:700,fontFamily:'Consolas,monospace'}}>{s._wizardData.descriptor.toUpperCase()}</span></div>}
-        {s._wizardData.names&&s._wizardData.names.length>0&&<div style={{padding:'8px 0 4px'}}><div style={{fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Three-name proposal</div><ol style={{paddingLeft:20,margin:0}}>{s._wizardData.names.map((n,i)=><li key={i} style={{fontSize:12.5,fontFamily:'Consolas,monospace',color:'#0A1F12',fontWeight:700,marginBottom:4}}>{n}</li>)}</ol></div>}
+        {s._wizardData.names&&s._wizardData.names.length>0&&<div style={{padding:'8px 0 4px'}}><div style={{fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Six-name proposal</div><ol style={{paddingLeft:20,margin:0}}>{s._wizardData.names.map((n,i)=><li key={i} style={{fontSize:12.5,fontFamily:'Consolas,monospace',color:'#0A1F12',fontWeight:700,marginBottom:4}}>{n}</li>)}</ol></div>}
       </div></>}
 
       <h4>{s._wizardData?'3':'2'}. What we will deliver</h4>
@@ -781,37 +821,8 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   const structureData=structure?STRUCTURES.find(x=>x.key===structure):null;
   const analysis=useMemo(()=>analyseName(distinctive),[distinctive]);
 
-  /* ---------- IMPROVED NAMES GENERATOR ---------- */
-  const names=useMemo(()=>{
-    if(!distinctive.trim()||!effectiveDescriptor||!industryData)return[];
-    const distinct=distinctive.trim().toUpperCase();
-    const desc=effectiveDescriptor.toUpperCase().trim();
-    const descLower=desc.toLowerCase();
-    const ending=structureData&&structureData.endings.length?structureData.endings[0]:'LIMITED';
-    const out=[`${distinct} ${desc} ${ending}`.trim()];
-
-    // 1. Find library words embedded inside the custom descriptor (word-boundary aware)
-    const embedded=industryData.descriptors.filter(lib=>{
-      const libLower=lib.toLowerCase();
-      return new RegExp(`\\b${escapeRegex(libLower)}\\b`,'i').test(descLower);
-    });
-
-    // 2. Assemble two alternates — embedded library words first, then library order
-    const used=new Set([desc]);
-    const candidates=[];
-    embedded.forEach(lib=>{
-      const u=lib.toUpperCase();
-      if(!used.has(u)){candidates.push(lib);used.add(u)}
-    });
-    for(const lib of industryData.descriptors){
-      if(candidates.length>=2)break;
-      const u=lib.toUpperCase();
-      if(!used.has(u)){candidates.push(lib);used.add(u)}
-    }
-    candidates.slice(0,2).forEach(c=>out.push(`${distinct} ${c.toUpperCase()} ${ending}`.trim()));
-    return out.filter(Boolean);
-  },[distinctive,effectiveDescriptor,industryData,structureData]);
-
+  /* ---------- SIX-NAME PROPOSAL ---------- */
+  const names=useMemo(()=>buildSixNames(distinctive,effectiveDescriptor,industryData,structureData),[distinctive,effectiveDescriptor,industryData,structureData]);
   const embeddedLibraryWords=useMemo(()=>findEmbeddedLibraryWords(effectiveDescriptor,industryData),[effectiveDescriptor,industryData]);
 
   const readiness=useMemo(()=>{
@@ -845,7 +856,6 @@ function Wizard({initialScope,onExit,onOrderFormal}){
   };
   const goStep=i=>{if(i<=step)setStep(i)};
 
-  const print=()=>{document.body.classList.add('pr');setTimeout(()=>{window.print();setTimeout(()=>document.body.classList.remove('pr'),200)},100)};
   const sendWa=()=>{
     const lines=['*STARTEASY — STRUCTURE & NAME ASSESSMENT*',''];
     if(idea)lines.push('*Idea:* '+idea,'');
@@ -855,7 +865,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     if(structureData)lines.push('*Structure:* '+structureData.label);
     if(distinctive)lines.push('*Distinctive:* '+distinctive.toUpperCase());
     if(effectiveDescriptor)lines.push('*Descriptor:* '+effectiveDescriptor.toUpperCase());
-    if(names.length){lines.push('','*Three-name proposal:*',...names.map((n,i)=>(i+1)+'. '+n))}
+    if(names.length){lines.push('','*Six-name proposal:*',...names.map((n,i)=>(i+1)+'. '+n))}
     if(analysis.score)lines.push('','*Name score:* '+analysis.score+'/100 · '+label(analysis.score));
     lines.push('*Readiness:* '+readiness+'%');
     lines.push('','_I would like StartEasy to review and proceed with the K25 formal report._');
@@ -866,7 +876,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
     onOrderFormal({
       code:'ADV',desk:'pacra',title,
       clientDesc:'Self-service wizard completed. Formal StartEasy-branded report, reviewed by an officer, delivered within 1 hour. Ready to attach to your PACRA submission.',
-      whatsCovered:['Wizard answers captured and reviewed','Industry classification','Legal structure recommendation'+(scope!=='structure'?' and three-name proposal':''),'Name distinctiveness scoring and flags','Formal StartEasy-branded report','Delivered within 1 hour'],
+      whatsCovered:['Wizard answers captured and reviewed','Industry classification','Legal structure recommendation'+(scope!=='structure'?' and six-name proposal':''),'Name distinctiveness scoring and flags','Formal StartEasy-branded report','Delivered within 1 hour'],
       service:'micro',
       timeline:'Delivered within 1 hour',
       _wizardData:{scope,idea,primaryActivity,secondaryActivities,industry:industryData,structure:structureData,descriptor:effectiveDescriptor,distinctive,names,analysis,readiness}
@@ -880,7 +890,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
         <button onClick={onExit} style={{background:'none',border:'none',color:'rgba(255,255,255,.5)',fontSize:11.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:700,cursor:'pointer',fontFamily:'inherit',marginBottom:20,display:'inline-flex',alignItems:'center',gap:8}}><i className="fas fa-arrow-left"></i> Back to platform</button>
         <span className="micro" style={{color:'#F5A623',display:'block',marginBottom:16}}>Self-service · Directory · Q&amp;A · Assessment</span>
         <h1 className="serif" style={{fontSize:'clamp(1.9rem,4.6vw,2.9rem)',lineHeight:1.08,marginBottom:16,maxWidth:800}}>Business Structure &amp; Name Advisory</h1>
-        <p style={{fontSize:15.5,lineHeight:1.7,color:'rgba(255,255,255,.65)',maxWidth:720,marginBottom:24}}>Answer a few guided questions. Our platform generates your assessment live — business activity, industry classification, recommended structure, descriptive word family and three fully-constructed name proposals aligned with PACRA naming requirements.</p>
+        <p style={{fontSize:15.5,lineHeight:1.7,color:'rgba(255,255,255,.65)',maxWidth:720,marginBottom:24}}>Answer a few guided questions. Our platform generates your assessment live — business activity, industry classification, recommended structure, descriptive word family and <strong style={{color:'#F5A623'}}>six fully-constructed name proposals</strong> aligned with PACRA naming requirements.</p>
         <div style={{display:'inline-flex',alignItems:'center',gap:16,padding:'14px 22px',background:'rgba(245,166,35,.12)',border:'1px solid rgba(245,166,35,.35)',borderRadius:12,flexWrap:'wrap'}}>
           <div><div style={{fontSize:10,letterSpacing:'.16em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:4}}>Assessment Report Fee</div><div className="serif" style={{fontSize:24,fontWeight:800,color:'#fff',lineHeight:1}}>K25<span style={{fontSize:13,fontWeight:600,color:'rgba(255,255,255,.6)',marginLeft:8}}>~ $1.49</span></div></div>
           <div style={{width:1,height:40,background:'rgba(255,255,255,.2)'}}/>
@@ -912,7 +922,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
           {current==='industry'&&<WIndustry industry={industry} setIndustry={setIndustry}/>}
           {current==='descriptor'&&<WDescriptor industry={industry} descriptor={descriptor} setDescriptor={setDescriptor} customDescriptor={customDescriptor} setCustomDescriptor={setCustomDescriptor}/>}
           {current==='distinctive'&&<WDistinctive distinctive={distinctive} setDistinctive={setDistinctive} analysis={analysis}/>}
-          {current==='report'&&<WReport scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness} onPrint={print} onWhatsapp={sendWa} onOrderFormal={orderFormal}/>}
+          {current==='report'&&<WReport scope={scope} idea={idea} primaryActivity={primaryActivity} secondaryActivities={secondaryActivities} industryData={industryData} structureData={structureData} distinctive={distinctive} descriptor={effectiveDescriptor} names={names} analysis={analysis} readiness={readiness} onWhatsapp={sendWa} onOrderFormal={orderFormal}/>}
           {current!=='report'&&<div style={{display:'flex',gap:12,marginTop:32,paddingTop:24,borderTop:'1px solid rgba(10,31,18,.06)',flexWrap:'wrap'}}>
             {step>0&&<button onClick={back} style={{padding:'13px 22px',background:'#fff',border:'1px solid rgba(10,31,18,.15)',borderRadius:8,fontSize:13.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit',color:'#0A1F12'}}>← Back</button>}
             <button onClick={next} disabled={!can()} style={{flex:1,minWidth:200,padding:'13px 24px',background:can()?'linear-gradient(135deg,#E8730F,#F5A623)':'rgba(10,31,18,.1)',color:can()?'#fff':'rgba(10,31,18,.4)',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:can()?'pointer':'not-allowed',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:10}}>
@@ -931,7 +941,7 @@ function Wizard({initialScope,onExit,onOrderFormal}){
 function WScope({scope,setScope}){
   const opts=[
     {v:'structure',icon:'fa-layer-group',t:'Help me choose the right structure',d:'Business Name vs Private Company vs Company Limited by Guarantee.',time:'~5 min · K25'},
-    {v:'names',icon:'fa-wand-magic-sparkles',t:'Help me prepare names for clearance',d:'Three fully-constructed names aligned with PACRA naming requirements.',time:'~5 min · K25'},
+    {v:'names',icon:'fa-wand-magic-sparkles',t:'Help me prepare names for clearance',d:'Six fully-constructed names aligned with PACRA naming requirements.',time:'~5 min · K25'},
     {v:'both',icon:'fa-rocket',t:'Both — full structure & name advisory',d:'Recommended. Structure first, then names that fit the structure.',time:'~8 min · K25'}
   ];
   return <div>
@@ -1149,28 +1159,22 @@ function WReport({scope,idea,primaryActivity,secondaryActivities,industryData,st
         {industryData&&<><div className="row"><span className="k">Industry</span><span className="v">{industryData.label}</span></div><div className="row"><span className="k">ISIC classification</span><span className="v">{industryData.isic}</span></div></>}
         {structureData&&<><div className="row"><span className="k">Recommended structure</span><span className="v">{structureData.label}</span></div>{structureData.endings.length>0&&<div className="row"><span className="k">Legal ending</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{structureData.endings.join(' / ')}</span></div>}</>}
         {(descriptor||distinctive)&&<><h5>2. Name architecture</h5>{distinctive&&<div className="row"><span className="k">Distinctive element</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{distinctive.toUpperCase()}</span></div>}{descriptor&&<div className="row"><span className="k">Descriptive word</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{descriptor.toUpperCase()}</span></div>}{structureData&&structureData.endings.length>0&&<div className="row"><span className="k">Legal ending</span><span className="v" style={{fontFamily:'Consolas,monospace'}}>{structureData.endings[0]}</span></div>}</>}
-        {names.length>0&&<><h5>3. Three-name proposal (preference order)</h5><ol className="names">{names.map((n,i)=><li key={i}><span className="nm">{n}</span></li>)}</ol></>}
+        {names.length>0&&<>
+          <h5>3. Six-name proposal (preference order)</h5>
+          <p style={{fontSize:11.5,color:'#666',lineHeight:1.6,margin:'0 0 10px',fontStyle:'italic'}}>Six candidates give you room to resubmit if PACRA reverts any of the first three. The top three are the strongest options based on your answers — the remaining three are fallbacks in the same descriptive family.</p>
+          <ol className="names">
+            {names.map((n,i)=><li key={i}><span className="nm">{n}</span>{i<3&&<span style={{marginLeft:8,fontSize:9.5,letterSpacing:'.1em',textTransform:'uppercase',fontWeight:800,color:'#E8730F'}}>· Preferred</span>}{i>=3&&<span style={{marginLeft:8,fontSize:9.5,letterSpacing:'.1em',textTransform:'uppercase',fontWeight:800,color:'#888'}}>· Fallback</span>}</li>)}
+          </ol>
+        </>}
         {industryData?.flag&&<><h5>4. Regulatory flag</h5><div className={'flag '+industryData.flag.level}><i className={'fas '+(industryData.flag.level==='warn'?'fa-info-circle':'fa-exclamation-triangle')+' ic'}></i><div><strong>{industryData.flag.title}.</strong> {industryData.flag.body}</div></div></>}
         {distinctive&&<><h5>{industryData?.flag?'5':'4'}. Name distinctiveness score</h5><div className="row"><span className="k">Score</span><span className="v" style={{color:color(analysis.score)}}>{analysis.score}/100 · {label(analysis.score)}</span></div>{analysis.issues.map((iss,i)=><div key={i} className={'flag '+(iss.level==='crit'?'crit':'warn')}><i className={'fas '+(iss.level==='crit'?'fa-times-circle':'fa-info-circle')+' ic'}></i><div>{iss.text}</div></div>)}{analysis.issues.length===0&&<div className="flag ok"><i className="fas fa-check-circle ic" style={{color:'#1E7B3C'}}></i><div>No critical issues detected. Ready for PACRA name-clearance submission.</div></div>}</>}
         <h5>{industryData?.flag?(distinctive?'6':'5'):(distinctive?'5':'4')}. Readiness</h5>
         <div className="row"><span className="k">Overall readiness</span><span className="v" style={{color:color(readiness),fontSize:14}}>{readiness}% · {label(readiness)}</span></div>
         <div className="foot"><strong>Prepared by StartEasy Administrative Services Desk</strong> · Lusaka, Zambia · {CONTACT_EMAIL} · +260 768 526 191<br/><span style={{fontStyle:'italic',display:'block',marginTop:8}}>This preview is generated by the StartEasy platform from your answers. It is designed to reduce avoidable name-clearance and registration errors. PACRA itself warns that name-clearance criteria are not exhaustive and has issued a public notice titled "AVOID PAYING FOR REVERTED CASES." StartEasy is not a government authority or regulator. Where a matter requires legal, tax, audit or other regulated professional advice, we refer you to a qualified professional.</span></div>
       </div>
-      {/* Subtle watermark overlay — communicates preview status, does not block reading */}
-      <div style={{
-        position:'absolute',top:0,left:0,right:0,bottom:0,
-        display:'flex',alignItems:'center',justifyContent:'center',
-        pointerEvents:'none',overflow:'hidden'
-      }}>
-        <div style={{
-          fontFamily:"'Playfair Display',Georgia,serif",
-          fontSize:'clamp(3rem,10vw,5rem)',fontWeight:800,
-          color:'rgba(232,115,15,.06)',
-          transform:'rotate(-22deg)',
-          letterSpacing:'.15em',
-          whiteSpace:'nowrap',
-          userSelect:'none'
-        }}>PREVIEW</div>
+      {/* Watermark overlay — communicates preview status, does not block reading */}
+      <div style={{position:'absolute',top:0,left:0,right:0,bottom:0,display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'none',overflow:'hidden'}}>
+        <div style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:'clamp(3rem,10vw,5rem)',fontWeight:800,color:'rgba(232,115,15,.06)',transform:'rotate(-22deg)',letterSpacing:'.15em',whiteSpace:'nowrap',userSelect:'none'}}>PREVIEW</div>
       </div>
     </div>
 
@@ -1198,7 +1202,7 @@ function WReport({scope,idea,primaryActivity,secondaryActivities,industryData,st
     </div>
 
     <p style={{marginTop:14,fontSize:11.5,color:'rgba(10,31,18,.5)',lineHeight:1.6,fontStyle:'italic',textAlign:'center'}}>
-      Officer review · formal StartEasy-branded PDF · delivered by email within 1 hour of payment verification.
+      Officer review · formal StartEasy-branded PDF with six candidate names · delivered by email within 1 hour of payment verification.
     </p>
   </div>;
 }
@@ -1237,14 +1241,15 @@ function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryD
       </>}
     </div>
     {names.length>0&&<div style={{background:'linear-gradient(135deg,#0A1F12,#123A1F)',borderRadius:12,padding:22,color:'#fff',marginBottom:20}}>
-      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:14}}>Three-name proposal</div>
+      <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#F5A623',marginBottom:6}}>Six-name proposal</div>
+      <p style={{fontSize:10.5,color:'rgba(255,255,255,.55)',lineHeight:1.5,marginBottom:14}}>Top 3 preferred · 3 fallbacks in case PACRA reverts any of the first three.</p>
       <ol style={{listStyle:'none',padding:0,margin:0}}>
         {names.map((n,i)=><li key={i} style={{display:'flex',gap:12,padding:'10px 0',borderBottom:i<names.length-1?'1px dashed rgba(255,255,255,.12)':'none'}}>
-          <span style={{width:22,height:22,borderRadius:'50%',background:i===0?'#F5A623':'rgba(255,255,255,.15)',color:i===0?'#0A1F12':'#fff',fontSize:10,fontWeight:800,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontFamily:"'Playfair Display',Georgia,serif"}}>{i+1}</span>
-          <span style={{fontFamily:'Consolas,monospace',fontSize:12.5,fontWeight:700,lineHeight:1.45,color:i===0?'#fff':'rgba(255,255,255,.85)'}}>{n}</span>
+          <span style={{width:22,height:22,borderRadius:'50%',background:i<3?'#F5A623':'rgba(255,255,255,.15)',color:i<3?'#0A1F12':'#fff',fontSize:10,fontWeight:800,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontFamily:"'Playfair Display',Georgia,serif"}}>{i+1}</span>
+          <span style={{fontFamily:'Consolas,monospace',fontSize:12,fontWeight:700,lineHeight:1.45,color:i<3?'#fff':'rgba(255,255,255,.75)'}}>{n}</span>
         </li>)}
       </ol>
-      {embedded.length>0&&<div style={{marginTop:14,paddingTop:12,borderTop:'1px solid rgba(255,255,255,.15)',fontSize:11.5,lineHeight:1.55,color:'rgba(255,255,255,.7)'}}>
+      {embedded.length>0&&<div style={{marginTop:14,paddingTop:12,borderTop:'1px solid rgba(255,255,255,.15)',fontSize:11,lineHeight:1.55,color:'rgba(255,255,255,.7)'}}>
         <i className="fas fa-lightbulb" style={{color:'#F5A623',marginRight:6}}></i>
         The word <strong style={{color:'#F5A623'}}>{embedded[0]}</strong> inside your custom descriptor is also a StartEasy library word — so proposal 2 offers that short form as an alternative.
       </div>}
