@@ -212,7 +212,7 @@ const SE_EVENTS   = 'se_events';
 const SE_ADMINS   = 'se_admins';
 
 /* ============================================================
-   LOCAL PERSISTENCE (per-device only)
+   LOCAL PERSISTENCE
    ============================================================ */
 const LS_KEY='starteasy.session.v1';
 const VISITOR_KEY='starteasy.visitor.v1';
@@ -336,9 +336,7 @@ async function clearAllEvents(){
 }
 
 /* ============================================================
-   FIREBASE AUTH  — sign in with email/password only.
-   The admin check happens against the Firestore `se_admins`
-   collection — see checkIsAdmin() inside AdminPortal.
+   FIREBASE AUTH
    ============================================================ */
 async function adminSignIn(email, pw){
   if(!firebaseReady) return { ok:false, error:'Authentication service unavailable.' };
@@ -1306,7 +1304,7 @@ function TrackSubmission({go}){
 function RowKV({k,v,mono}){return <div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'8px 0',borderBottom:'1px dashed rgba(10,31,18,.06)'}}><span style={{fontSize:12,color:'rgba(10,31,18,.5)',fontWeight:600}}>{k}</span><span style={{fontSize:13,color:'#0A1F12',fontWeight:700,textAlign:'right',fontFamily:mono?'Consolas,monospace':'inherit'}}>{v}</span></div>;}
 
 /* ============================================================
-   ADMIN PORTAL — Firebase Auth + Firestore se_admins check
+   ADMIN PORTAL
    ============================================================ */
 function MiniBarChart({data,height=140}){
   const max=Math.max(1,...data.map(d=>d.value));
@@ -1354,7 +1352,6 @@ function AdminPortal({onExit}){
   const [loading,setLoading]=useState(true);
   const [visitor]=useState(()=>readVisitor());
 
-  /* Reusable admin check — reads the se_admins document for a given user */
   const checkIsAdmin = useCallback(async (user) => {
     if(!user || !firebaseReady) return false;
     try {
@@ -1367,7 +1364,6 @@ function AdminPortal({onExit}){
     }
   },[]);
 
-  /* Auth state listener */
   useEffect(()=>{
     if(!firebaseReady){setAuthChecked(true);return}
     const unsub = auth.onAuthStateChanged(async user => {
@@ -1382,7 +1378,6 @@ function AdminPortal({onExit}){
     return unsub;
   },[checkIsAdmin]);
 
-  /* Live payment listener */
   useEffect(()=>{
     if(!authed || !firebaseReady) return;
     const unsub = db.collection(SE_PAYMENTS).orderBy('submittedAt','desc').limit(500)
@@ -1396,7 +1391,6 @@ function AdminPortal({onExit}){
     return unsub;
   },[authed]);
 
-  /* Live events listener */
   useEffect(()=>{
     if(!authed || !firebaseReady) return;
     const unsub = db.collection(SE_EVENTS).orderBy('at','desc').limit(2000)
@@ -1406,7 +1400,6 @@ function AdminPortal({onExit}){
     return unsub;
   },[authed]);
 
-  /* Sign in: verify password, then check the se_admins document directly */
   const handleSignIn = async () => {
     setPwErr('');
     if(!email.trim() || !pw){ setPwErr('Enter your email and password.'); return; }
@@ -2036,7 +2029,7 @@ function DeskDetail({deskId,go,onServiceClick,onWizard}){
         <p style={{fontSize:13.5,color:'rgba(10,31,18,.55)',lineHeight:1.6,maxWidth:'40rem'}}>Pick the closest match. We will show only what applies to you.</p>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {desk.options.map(o=><button key={o.v} onClick={()=>setChoice(o.v)} className={`gtile ${choice===o.v?'sel':''}`}>
+        {desk.options.map(o=><button key={o.v} onClick={()=>{if(o.wizard){onWizard(o.wizard)}else{setChoice(o.v)}}} className={`gtile ${choice===o.v?'sel':''}`}>
           <span className="ico">{o.wizard&&<i className="fas fa-wand-magic-sparkles"></i>}{!o.wizard&&<i className={`fas ${o.icon}`}></i>}</span>
           <h3>{o.t}</h3><p>{o.d}</p>
         </button>)}
