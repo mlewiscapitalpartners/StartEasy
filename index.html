@@ -347,31 +347,33 @@ async function clearAllEvents(){
    FIREBASE AUTH — admin login with custom claim
    ============================================================ */
 async function adminSignIn(email, pw){
-  if(!firebaseReady) return { ok:false, error:'Authentication service unavailable.' };
+  alert('A. adminSignIn entered');
+  if(!firebaseReady) { alert('B. firebaseReady is FALSE'); return { ok:false, error:'Authentication service unavailable.' }; }
+  alert('C. firebaseReady OK — calling Firebase Auth');
   try {
-    /* Race the sign-in against a 15s timeout so the button can never hang forever */
     const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('__timeout__')), 15000));
     await Promise.race([
       auth.signInWithEmailAndPassword(email.trim(), pw),
       timeout
     ]);
+    alert('D. Firebase Auth succeeded');
     return { ok:true };
   } catch(e) {
+    alert('E. Firebase Auth error: ' + ((e && e.code) || (e && e.message) || 'unknown'));
     const code = e && e.code ? e.code : '';
     const msg  = e && e.message ? e.message : '';
-    console.warn('[StartEasy] adminSignIn failed:', code || msg);
     if(msg === '__timeout__') return { ok:false, error:'Sign-in timed out. Check your internet connection and try again.' };
     if(code === 'auth/wrong-password')       return { ok:false, error:'Incorrect password.' };
     if(code === 'auth/user-not-found')       return { ok:false, error:'No account with that email.' };
     if(code === 'auth/invalid-credential')   return { ok:false, error:'Incorrect email or password.' };
     if(code === 'auth/invalid-email')        return { ok:false, error:'That email address is not valid.' };
-    if(code === 'auth/operation-not-allowed')return { ok:false, error:'Email/password sign-in is NOT enabled. Enable it in Firebase Console → Authentication → Sign-in method.' };
-    if(code === 'auth/unauthorized-domain')  return { ok:false, error:'This domain is not authorised. Add it in Firebase Console → Authentication → Settings → Authorized domains.' };
-    if(code === 'auth/too-many-requests')    return { ok:false, error:'Too many attempts. Wait a few minutes and try again.' };
-    if(code === 'auth/network-request-failed') return { ok:false, error:'Network error. Check your connection and try again.' };
+    if(code === 'auth/operation-not-allowed')return { ok:false, error:'Email/password sign-in is NOT enabled.' };
+    if(code === 'auth/unauthorized-domain')  return { ok:false, error:'This domain is not authorised.' };
+    if(code === 'auth/too-many-requests')    return { ok:false, error:'Too many attempts. Wait a few minutes.' };
+    if(code === 'auth/network-request-failed') return { ok:false, error:'Network error. Check your connection.' };
     return { ok:false, error: 'Sign-in failed: ' + (code || msg || 'unknown error') };
   }
-}
+   }
 
 async function adminSignOut(){
   try { await auth.signOut(); } catch(e) {}
@@ -1400,16 +1402,21 @@ setAuthed(snap.exists);
   },[authed]);
 
   const handleSignIn = async () => {
+  alert('1. Button clicked');
   setPwErr('');
   if(!email.trim() || !pw){ setPwErr('Enter your email and password.'); return; }
   setSigningIn(true);
+  alert('2. Calling adminSignIn with: ' + email.trim());
   try {
     const res = await adminSignIn(email, pw);
+    alert('3. adminSignIn returned: ' + JSON.stringify(res));
     if(!res.ok) setPwErr(res.error || 'Sign-in failed.');
+    else alert('4. Login success — waiting for auth state change');
   } catch(e) {
+    alert('5. Exception: ' + (e && e.message ? e.message : String(e)));
     setPwErr('Unexpected error: ' + ((e && e.message) || 'unknown'));
   } finally {
-    /* This ALWAYS runs — the button can never get stuck again */
+    alert('6. Finally block running');
     setSigningIn(false);
   }
 };
