@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<!-- Firebase compat SDKs (shared with ML Gateway project) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -182,7 +181,7 @@ function isMobile(){return typeof navigator!=='undefined'&&/android|iphone|ipad|
 function waUrl(msg,p){const phone=p||ADMIN_WHATSAPP;const e=encodeURIComponent(msg);return isMobile()?'whatsapp://send?phone='+phone+'&text='+e:'https://wa.me/'+phone+'?text='+e;}
 
 /* ============================================================
-   FIREBASE — same project as ML Gateway
+   FIREBASE — shared with ML Gateway project
    ============================================================ */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyC_M_jDVBN19aXKkMjxWdw502QZttzsP3A",
@@ -202,7 +201,6 @@ try {
   db = firebase.firestore();
   auth = firebase.auth();
   firebaseReady = true;
-  /* Silent anonymous identity for every visitor */
   auth.signInAnonymously().catch(e => console.warn('[StartEasy] anon auth:', e && e.message));
   console.log('[StartEasy] ✅ Firebase ready — project:', FIREBASE_CONFIG.projectId);
 } catch (e) {
@@ -211,9 +209,10 @@ try {
 
 const SE_PAYMENTS = 'se_payments';
 const SE_EVENTS   = 'se_events';
+const SE_ADMINS   = 'se_admins';
 
 /* ============================================================
-   LOCAL PERSISTENCE (per-device, non-shared)
+   LOCAL PERSISTENCE (per-device only)
    ============================================================ */
 const LS_KEY='starteasy.session.v1';
 const VISITOR_KEY='starteasy.visitor.v1';
@@ -239,10 +238,9 @@ function rememberMyRef(ref){try{const l=JSON.parse(localStorage.getItem(MY_REFS_
 function readMyRefs(){try{return JSON.parse(localStorage.getItem(MY_REFS_KEY)||'[]')}catch(e){return []}}
 
 /* ============================================================
-   FIRESTORE — shared, live, multi-device
+   FIRESTORE HELPERS
    ============================================================ */
 
-/* Save a payment record. Uses ref as document ID for direct lookups. */
 async function addPayment(rec){
   if(!firebaseReady) return null;
   const record = {
@@ -253,7 +251,7 @@ async function addPayment(rec){
   };
   try {
     await db.collection(SE_PAYMENTS).doc(rec.ref).set(record);
-    console.log('[StartEasy] ✅ Payment saved to Firestore:', rec.ref);
+    console.log('[StartEasy] ✅ Payment saved:', rec.ref);
     return record;
   } catch(e) {
     console.error('[StartEasy] ❌ addPayment failed:', e && e.code, e && e.message);
@@ -261,7 +259,6 @@ async function addPayment(rec){
   }
 }
 
-/* Read the full payment queue — requires admin claim (enforced by rules). */
 async function readPayments(){
   if(!firebaseReady) return [];
   try {
@@ -273,7 +270,6 @@ async function readPayments(){
   }
 }
 
-/* Fetch a single payment by exact reference — public read allowed by rules. */
 async function findPaymentByRef(ref){
   if(!firebaseReady || !ref) return null;
   try {
@@ -286,7 +282,6 @@ async function findPaymentByRef(ref){
   }
 }
 
-/* Update payment status — requires admin claim. */
 async function updatePaymentStatus(ref, status, note){
   if(!firebaseReady) return null;
   try {
@@ -303,7 +298,6 @@ async function updatePaymentStatus(ref, status, note){
   }
 }
 
-/* Fire-and-forget analytics — never blocks the UI. */
 function trackEvent(type, payload){
   if(!firebaseReady) return;
   try {
@@ -313,10 +307,9 @@ function trackEvent(type, payload){
       visitorId: visitor ? visitor.id : null,
       ...(payload || {})
     }).catch(()=>{});
-  } catch(e) { /* silent */ }
+  } catch(e) {}
 }
 
-/* Read events — requires admin claim. */
 async function readEvents(){
   if(!firebaseReady) return [];
   try {
@@ -328,7 +321,6 @@ async function readEvents(){
   }
 }
 
-/* Clear events (admin-only) */
 async function clearAllEvents(){
   if(!firebaseReady) return false;
   try {
@@ -344,7 +336,9 @@ async function clearAllEvents(){
 }
 
 /* ============================================================
-   FIREBASE AUTH — admin login with custom claim
+   FIREBASE AUTH  — sign in with email/password only.
+   The admin check happens against the Firestore `se_admins`
+   collection — see checkIsAdmin() inside AdminPortal.
    ============================================================ */
 async function adminSignIn(email, pw){
   if(!firebaseReady) return { ok:false, error:'Authentication service unavailable.' };
@@ -364,10 +358,10 @@ async function adminSignIn(email, pw){
     if(code === 'auth/user-not-found')       return { ok:false, error:'No account with that email.' };
     if(code === 'auth/invalid-credential')   return { ok:false, error:'Incorrect email or password.' };
     if(code === 'auth/invalid-email')        return { ok:false, error:'That email address is not valid.' };
-    if(code === 'auth/operation-not-allowed')return { ok:false, error:'Email/password sign-in is NOT enabled.' };
-    if(code === 'auth/unauthorized-domain')  return { ok:false, error:'This domain is not authorised.' };
-    if(code === 'auth/too-many-requests')    return { ok:false, error:'Too many attempts. Wait a few minutes.' };
-    if(code === 'auth/network-request-failed') return { ok:false, error:'Network error. Check your connection.' };
+    if(code === 'auth/operation-not-allowed')return { ok:false, error:'Email/password sign-in is NOT enabled. Enable it in Firebase Console → Authentication → Sign-in method.' };
+    if(code === 'auth/unauthorized-domain')  return { ok:false, error:'This domain is not authorised. Add it in Firebase Console → Authentication → Settings → Authorized domains.' };
+    if(code === 'auth/too-many-requests')    return { ok:false, error:'Too many attempts. Wait a few minutes and try again.' };
+    if(code === 'auth/network-request-failed') return { ok:false, error:'Network error. Check your connection and try again.' };
     return { ok:false, error: 'Sign-in failed: ' + (code || msg || 'unknown error') };
   }
 }
@@ -879,7 +873,7 @@ function Payment({service,client,onClose,onDone}){
 }
 
 /* ============================================================
-   WIZARD (unchanged internals, uses Firestore for events)
+   WIZARD
    ============================================================ */
 function Wizard({initialScope,onExit,onOrderFormal}){
   const boot=useMemo(()=>{
@@ -1138,7 +1132,7 @@ function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryD
 function SideRow({label,value,done,color:c}){return <div style={{display:'flex',justifyContent:'space-between',gap:12,padding:'10px 0',borderBottom:'1px dashed rgba(10,31,18,.06)',alignItems:'flex-start'}}><span style={{fontSize:11.5,color:'rgba(10,31,18,.45)',fontWeight:600,flexShrink:0}}>{label}</span><span style={{fontSize:11.5,color:done?(c||'#0A1F12'):'rgba(10,31,18,.3)',fontWeight:done?700:400,textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'65%'}}>{value}</span></div>;}
 
 /* ============================================================
-   TRACK SUBMISSION PAGE — async, real-time listener
+   TRACK SUBMISSION PAGE
    ============================================================ */
 const STATUS_META={
   under_review:{label:'Under Review',pill:'review',icon:'fa-clock',color:'#8A6828',userLine:'Your payment reference has been received and is queued for officer verification.'},
@@ -1162,7 +1156,6 @@ function TrackSubmission({go}){
 
   useEffect(()=>{trackEvent('page_view',{route:'track'});},[]);
 
-  /* Real-time listener on the tracked reference */
   useEffect(()=>{
     if(!trackedRef || !firebaseReady) return;
     const unsub = db.collection(SE_PAYMENTS).doc(trackedRef).onSnapshot(
@@ -1309,7 +1302,7 @@ function TrackSubmission({go}){
 function RowKV({k,v,mono}){return <div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'8px 0',borderBottom:'1px dashed rgba(10,31,18,.06)'}}><span style={{fontSize:12,color:'rgba(10,31,18,.5)',fontWeight:600}}>{k}</span><span style={{fontSize:13,color:'#0A1F12',fontWeight:700,textAlign:'right',fontFamily:mono?'Consolas,monospace':'inherit'}}>{v}</span></div>;}
 
 /* ============================================================
-   ADMIN PORTAL — Firebase Auth + Firestore live reads
+   ADMIN PORTAL — Firebase Auth + Firestore se_admins check
    ============================================================ */
 function MiniBarChart({data,height=140}){
   const max=Math.max(1,...data.map(d=>d.value));
@@ -1357,20 +1350,20 @@ function AdminPortal({onExit}){
   const [loading,setLoading]=useState(true);
   const [visitor]=useState(()=>readVisitor());
 
-  /* Auth state listener — reads the custom claim */
-    /* Reusable admin check — reads the se_admins doc for a given user */
-  const checkIsAdmin = async (user) => {
-    if(!user) return false;
+  /* Reusable admin check — reads the se_admins document for a given user */
+  const checkIsAdmin = useCallback(async (user) => {
+    if(!user || !firebaseReady) return false;
     try {
-      const snap = await db.collection('se_admins').doc(user.uid).get();
+      const snap = await db.collection(SE_ADMINS).doc(user.uid).get();
       console.log('[StartEasy] admin check for', user.uid, '→', snap.exists ? 'GRANTED' : 'NOT FOUND in se_admins');
       return snap.exists;
     } catch(e) {
       console.error('[StartEasy] admin check FAILED for', user.uid, ':', e && e.code, e && e.message);
       return false;
     }
-  };
+  },[]);
 
+  /* Auth state listener */
   useEffect(()=>{
     if(!firebaseReady){setAuthChecked(true);return}
     const unsub = auth.onAuthStateChanged(async user => {
@@ -1383,7 +1376,7 @@ function AdminPortal({onExit}){
       setAuthChecked(true);
     });
     return unsub;
-  },[]);
+  },[checkIsAdmin]);
 
   /* Live payment listener */
   useEffect(()=>{
@@ -1409,7 +1402,8 @@ function AdminPortal({onExit}){
     return unsub;
   },[authed]);
 
-    const handleSignIn = async () => {
+  /* Sign in: verify password, then check the se_admins document directly */
+  const handleSignIn = async () => {
     setPwErr('');
     if(!email.trim() || !pw){ setPwErr('Enter your email and password.'); return; }
     setSigningIn(true);
@@ -1419,7 +1413,6 @@ function AdminPortal({onExit}){
         setPwErr(res.error || 'Sign-in failed.');
         return;
       }
-      /* Sign-in worked — now check the se_admins document RIGHT HERE */
       const user = auth.currentUser;
       if(!user){
         setPwErr('Signed in but no session. Please try again.');
@@ -1428,7 +1421,7 @@ function AdminPortal({onExit}){
       const isAdmin = await checkIsAdmin(user);
       if(!isAdmin){
         await auth.signOut();
-        setPwErr('This account is not listed as an admin. Add a document to se_admins with this user\\'s UID.');
+        setPwErr('This account is not listed as an admin. Add a document to se_admins with this user\'s UID.');
         return;
       }
       setAuthed(true);
@@ -1486,7 +1479,6 @@ function AdminPortal({onExit}){
     const updated=await updatePaymentStatus(review.ref,status,note||'');
     if(updated){
       trackEvent('payment_reviewed',{ref:review.ref,status});
-      /* The live listener will refresh the list. */
     }
     setReview(null);setNote('');
   };
@@ -1509,15 +1501,15 @@ function AdminPortal({onExit}){
         </div>
         <p style={{fontSize:13,lineHeight:1.6,color:'rgba(10,31,18,.65)',marginBottom:22}}>Restricted access. Sign in with your Firebase admin account.</p>
         <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:8}}>Admin email</label>
-        <input type="email" value={email} onChange={e=>{setEmail(e.target.value);setPwErr('')}} placeholder="admin@starteasy.zm" style={{width:'100%',background:'#fff',border:'2px solid rgba(10,31,18,.12)',borderRadius:10,padding:'14px 18px',fontSize:15,color:'#0A1F12',fontFamily:'inherit',marginBottom:14}}/>
+        <input type="email" value={email} onChange={e=>{setEmail(e.target.value);setPwErr('')}} placeholder="admin@mlewisgroup.com" autoComplete="username" style={{width:'100%',background:'#fff',border:'2px solid rgba(10,31,18,.12)',borderRadius:10,padding:'14px 18px',fontSize:15,color:'#0A1F12',fontFamily:'inherit',marginBottom:14}}/>
         <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:8}}>Password</label>
-        <input type="password" value={pw} onChange={e=>{setPw(e.target.value);setPwErr('')}} onKeyDown={e=>{if(e.key==='Enter')handleSignIn()}} placeholder="••••••••••" style={{width:'100%',background:'#fff',border:'2px solid rgba(10,31,18,.12)',borderRadius:10,padding:'14px 18px',fontSize:15,color:'#0A1F12',fontFamily:'inherit'}}/>
-        {pwErr&&<div style={{marginTop:10,fontSize:12.5,color:'#B8564F',display:'flex',alignItems:'center',gap:6}}><i className="fas fa-circle-exclamation"></i> {pwErr}</div>}
+        <input type="password" value={pw} onChange={e=>{setPw(e.target.value);setPwErr('')}} onKeyDown={e=>{if(e.key==='Enter')handleSignIn()}} placeholder="••••••••••" autoComplete="current-password" style={{width:'100%',background:'#fff',border:'2px solid rgba(10,31,18,.12)',borderRadius:10,padding:'14px 18px',fontSize:15,color:'#0A1F12',fontFamily:'inherit'}}/>
+        {pwErr&&<div style={{marginTop:10,fontSize:12.5,color:'#B8564F',display:'flex',alignItems:'center',gap:6,lineHeight:1.5}}><i className="fas fa-circle-exclamation" style={{flexShrink:0}}></i> {pwErr}</div>}
         <div style={{display:'flex',gap:10,marginTop:20}}>
           <button onClick={handleSignIn} disabled={signingIn} style={{flex:1,padding:'14px 22px',background:signingIn?'rgba(10,31,18,.15)':'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:10,fontSize:14,fontWeight:700,cursor:signingIn?'wait':'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8}}><i className={`fas ${signingIn?'fa-spinner fa-spin':'fa-unlock'}`}></i> {signingIn?'Signing in…':'Sign in'}</button>
           <button onClick={onExit} style={{padding:'14px 20px',background:'#fff',border:'1px solid rgba(10,31,18,.15)',borderRadius:10,fontSize:13.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit',color:'#0A1F12'}}>Cancel</button>
         </div>
-        <p style={{marginTop:22,fontSize:11,color:'rgba(10,31,18,.45)',lineHeight:1.6,textAlign:'center'}}>Access is verified against Firebase Authentication. Only accounts holding the <code style={{fontFamily:'Consolas,monospace',background:'rgba(10,31,18,.06)',padding:'2px 6px',borderRadius:4,fontSize:11}}>admin: true</code> custom claim can read submissions.</p>
+        <p style={{marginTop:22,fontSize:11,color:'rgba(10,31,18,.45)',lineHeight:1.6,textAlign:'center'}}>Access is verified against Firebase Authentication, then against a Firestore <code style={{fontFamily:'Consolas,monospace',background:'rgba(10,31,18,.06)',padding:'2px 6px',borderRadius:4,fontSize:11}}>se_admins</code> document matching your user ID.</p>
       </div>
     </div>;
   }
@@ -1728,7 +1720,7 @@ function AdminPortal({onExit}){
         </div>
         <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:'22px 24px',marginBottom:16}}>
           <div style={{fontSize:12.5,fontWeight:800,color:'#0A1F12',marginBottom:10}}>Authentication</div>
-          <p style={{fontSize:13,lineHeight:1.7,color:'rgba(10,31,18,.7)',margin:0}}>This portal is gated by Firebase Authentication. Only accounts holding the custom claim <code style={{fontFamily:'Consolas,monospace',background:'rgba(10,31,18,.06)',padding:'2px 6px',borderRadius:4,fontSize:12}}>{"{"} admin: true {"}"}</code> can read submissions. Manage your admin users in the Firebase Console under Authentication → Users.</p>
+          <p style={{fontSize:13,lineHeight:1.7,color:'rgba(10,31,18,.7)',margin:0}}>This portal is gated by Firebase Authentication, then by a Firestore document in the <code style={{fontFamily:'Consolas,monospace',background:'rgba(10,31,18,.06)',padding:'2px 6px',borderRadius:4,fontSize:12}}>se_admins</code> collection whose ID matches your user ID. To add a new admin: create the account in Firebase Console → Authentication → Users, then create a matching document in Firestore → se_admins with the new user's UID as the document ID and an <code style={{fontFamily:'Consolas,monospace',background:'rgba(10,31,18,.06)',padding:'2px 6px',borderRadius:4,fontSize:12}}>email</code> field.</p>
         </div>
         <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:'22px 24px',marginBottom:16}}>
           <div style={{fontSize:12.5,fontWeight:800,color:'#0A1F12',marginBottom:10}}>Cloud data</div>
@@ -1736,15 +1728,15 @@ function AdminPortal({onExit}){
             <RowKV k="Analytics events" v={events.length+' in Firestore'}/>
             <RowKV k="Payment records" v={payments.length+' in Firestore'}/>
             <RowKV k="Firestore project" v={FIREBASE_CONFIG.projectId} mono/>
-            <RowKV k="Collections" v="se_payments · se_events" mono/>
+            <RowKV k="Collections" v="se_payments · se_events · se_admins" mono/>
           </div>
           <div style={{display:'flex',gap:10,marginTop:16,flexWrap:'wrap'}}>
-            <button onClick={async()=>{if(confirm('Delete up to 500 of the newest analytics events from Firestore? This cannot be undone.')){const ok=await clearAllEvents();if(ok)alert('Cleared. Refreshing…');else alert('Could not clear events — check rules and try again.');}}} style={{padding:'10px 18px',background:'#fff',border:'1px solid rgba(184,86,79,.3)',color:'#B8564F',borderRadius:8,fontSize:12.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}><i className="fas fa-trash"></i> Clear recent analytics</button>
+            <button onClick={async()=>{if(confirm('Delete up to 500 of the newest analytics events from Firestore? This cannot be undone.')){const ok=await clearAllEvents();if(ok)alert('Cleared.');else alert('Could not clear events — check rules and try again.');}}} style={{padding:'10px 18px',background:'#fff',border:'1px solid rgba(184,86,79,.3)',color:'#B8564F',borderRadius:8,fontSize:12.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}><i className="fas fa-trash"></i> Clear recent analytics</button>
           </div>
         </div>
         <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:'22px 24px'}}>
           <div style={{fontSize:12.5,fontWeight:800,color:'#0A1F12',marginBottom:10}}>Sharing the ML Gateway project</div>
-          <p style={{fontSize:13,lineHeight:1.7,color:'rgba(10,31,18,.7)',margin:0}}>This StartEasy instance shares the same Firestore database as ML Gateway (<span style={{fontFamily:'Consolas,monospace'}}>mlewiscapitalpartners-bee5d</span>), but writes only to the <span style={{fontFamily:'Consolas,monospace'}}>se_payments</span> and <span style={{fontFamily:'Consolas,monospace'}}>se_events</span> collections. ML Gateway's <span style={{fontFamily:'Consolas,monospace'}}>receipts</span>, <span style={{fontFamily:'Consolas,monospace'}}>submissions</span> and other collections are untouched.</p>
+          <p style={{fontSize:13,lineHeight:1.7,color:'rgba(10,31,18,.7)',margin:0}}>This StartEasy instance shares the same Firestore database as ML Gateway (<span style={{fontFamily:'Consolas,monospace'}}>mlewiscapitalpartners-bee5d</span>), but writes only to the <span style={{fontFamily:'Consolas,monospace'}}>se_payments</span>, <span style={{fontFamily:'Consolas,monospace'}}>se_events</span> and <span style={{fontFamily:'Consolas,monospace'}}>se_admins</span> collections. ML Gateway's <span style={{fontFamily:'Consolas,monospace'}}>receipts</span>, <span style={{fontFamily:'Consolas,monospace'}}>submissions</span> and other collections are untouched.</p>
         </div>
       </div>}
       </>}
@@ -2260,10 +2252,8 @@ function App(){
   const [engagementClient,setEngagementClient]=useState(null);
   const [paymentOpen,setPaymentOpen]=useState(false);
 
-  /* On first mount, record the visit + log the initial page view. */
   useEffect(()=>{
     getVisitor();
-    /* Delay slightly so anonymous auth can resolve before the write hits rules */
     const t = setTimeout(()=>{ trackEvent('visit',{ua:(navigator.userAgent||'').slice(0,120)}); }, 1200);
     return ()=>clearTimeout(t);
   },[]);
