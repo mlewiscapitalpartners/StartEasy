@@ -1353,8 +1353,8 @@ function AdminPortal({onExit}){
     const unsub = auth.onAuthStateChanged(async user => {
       if(user){
         try{
-          const token = await user.getIdTokenResult();
-          setAuthed(!!token.claims.admin);
+          const snap = await db.collection('se_admins').doc(user.uid).get();
+setAuthed(snap.exists);
         }catch(e){setAuthed(false)}
       }else{
         setAuthed(false);
