@@ -349,12 +349,7 @@ async function clearAllEvents(){
 async function adminSignIn(email, pw){
   if(!firebaseReady) return { ok:false, error:'Authentication service unavailable.' };
   try {
-    const cred = await auth.signInWithEmailAndPassword(email.trim(), pw);
-    const token = await cred.user.getIdTokenResult(true);
-    if(!token.claims.admin){
-      await auth.signOut();
-      return { ok:false, error:'This account does not have admin access.' };
-    }
+    await auth.signInWithEmailAndPassword(email.trim(), pw);
     return { ok:true };
   } catch(e) {
     console.warn('[StartEasy] adminSignIn failed:', e && e.code);
