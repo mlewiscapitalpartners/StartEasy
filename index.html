@@ -347,21 +347,18 @@ async function clearAllEvents(){
    FIREBASE AUTH — admin login with custom claim
    ============================================================ */
 async function adminSignIn(email, pw){
-  alert('A. adminSignIn entered');
-  if(!firebaseReady) { alert('B. firebaseReady is FALSE'); return { ok:false, error:'Authentication service unavailable.' }; }
-  alert('C. firebaseReady OK — calling Firebase Auth');
+  if(!firebaseReady) return { ok:false, error:'Authentication service unavailable.' };
   try {
     const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('__timeout__')), 15000));
     await Promise.race([
       auth.signInWithEmailAndPassword(email.trim(), pw),
       timeout
     ]);
-    alert('D. Firebase Auth succeeded');
     return { ok:true };
   } catch(e) {
-    alert('E. Firebase Auth error: ' + ((e && e.code) || (e && e.message) || 'unknown'));
     const code = e && e.code ? e.code : '';
     const msg  = e && e.message ? e.message : '';
+    console.warn('[StartEasy] adminSignIn failed:', code || msg);
     if(msg === '__timeout__') return { ok:false, error:'Sign-in timed out. Check your internet connection and try again.' };
     if(code === 'auth/wrong-password')       return { ok:false, error:'Incorrect password.' };
     if(code === 'auth/user-not-found')       return { ok:false, error:'No account with that email.' };
@@ -373,7 +370,7 @@ async function adminSignIn(email, pw){
     if(code === 'auth/network-request-failed') return { ok:false, error:'Network error. Check your connection.' };
     return { ok:false, error: 'Sign-in failed: ' + (code || msg || 'unknown error') };
   }
-   }
+}
 
 async function adminSignOut(){
   try { await auth.signOut(); } catch(e) {}
@@ -1361,15 +1358,26 @@ function AdminPortal({onExit}){
   const [visitor]=useState(()=>readVisitor());
 
   /* Auth state listener — reads the custom claim */
+    /* Reusable admin check — reads the se_admins doc for a given user */
+  const checkIsAdmin = async (user) => {
+    if(!user) return false;
+    try {
+      const snap = await db.collection('se_admins').doc(user.uid).get();
+      console.log('[StartEasy] admin check for', user.uid, '→', snap.exists ? 'GRANTED' : 'NOT FOUND in se_admins');
+      return snap.exists;
+    } catch(e) {
+      console.error('[StartEasy] admin check FAILED for', user.uid, ':', e && e.code, e && e.message);
+      return false;
+    }
+  };
+
   useEffect(()=>{
     if(!firebaseReady){setAuthChecked(true);return}
     const unsub = auth.onAuthStateChanged(async user => {
       if(user){
-        try{
-          const snap = await db.collection('se_admins').doc(user.uid).get();
-setAuthed(snap.exists);
-        }catch(e){setAuthed(false)}
-      }else{
+        const isAdmin = await checkIsAdmin(user);
+        setAuthed(isAdmin);
+      } else {
         setAuthed(false);
       }
       setAuthChecked(true);
@@ -1401,25 +1409,35 @@ setAuthed(snap.exists);
     return unsub;
   },[authed]);
 
-  const handleSignIn = async () => {
-  alert('1. Button clicked');
-  setPwErr('');
-  if(!email.trim() || !pw){ setPwErr('Enter your email and password.'); return; }
-  setSigningIn(true);
-  alert('2. Calling adminSignIn with: ' + email.trim());
-  try {
-    const res = await adminSignIn(email, pw);
-    alert('3. adminSignIn returned: ' + JSON.stringify(res));
-    if(!res.ok) setPwErr(res.error || 'Sign-in failed.');
-    else alert('4. Login success — waiting for auth state change');
-  } catch(e) {
-    alert('5. Exception: ' + (e && e.message ? e.message : String(e)));
-    setPwErr('Unexpected error: ' + ((e && e.message) || 'unknown'));
-  } finally {
-    alert('6. Finally block running');
-    setSigningIn(false);
-  }
-};
+    const handleSignIn = async () => {
+    setPwErr('');
+    if(!email.trim() || !pw){ setPwErr('Enter your email and password.'); return; }
+    setSigningIn(true);
+    try {
+      const res = await adminSignIn(email, pw);
+      if(!res.ok){
+        setPwErr(res.error || 'Sign-in failed.');
+        return;
+      }
+      /* Sign-in worked — now check the se_admins document RIGHT HERE */
+      const user = auth.currentUser;
+      if(!user){
+        setPwErr('Signed in but no session. Please try again.');
+        return;
+      }
+      const isAdmin = await checkIsAdmin(user);
+      if(!isAdmin){
+        await auth.signOut();
+        setPwErr('This account is not listed as an admin. Add a document to se_admins with this user\\'s UID.');
+        return;
+      }
+      setAuthed(true);
+    } catch(e) {
+      setPwErr('Unexpected error: ' + ((e && e.message) || 'unknown'));
+    } finally {
+      setSigningIn(false);
+    }
+  };
 
   const handleSignOut = async () => {
     await adminSignOut();
