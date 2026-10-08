@@ -9,6 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Firebase compat SDKs (shared with ML Gateway project) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <style>
 :root{--forest:#0A1F12;--forest-2:#123A1F;--green:#1E7B3C;--orange:#E8730F;--orange-2:#F5A623;--light:#F5FAF6;--red:#B8564F;--purple:#7A4FA3;--blue:#1B6CA8;--teal:#0E7C7B}
 html{overflow-x:hidden;-webkit-text-size-adjust:100%}
@@ -154,7 +158,6 @@ input:focus,select:focus,textarea:focus{outline:none}
 .tl .tt{font-size:14px;font-weight:700;color:#FFFFFF;margin-bottom:4px}
 .tl .td{font-size:12.5px;color:rgba(255,255,255,.78);line-height:1.6;margin-bottom:8px}
 .tl .tw{display:inline-block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:#F5A623;background:rgba(245,166,35,.2);padding:4px 12px;border-radius:99px;border:1px solid rgba(245,166,35,.35)}
-/* Status pills */
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
 .pill.review{background:rgba(245,166,35,.15);color:#8A6828;border:1px solid rgba(245,166,35,.35)}
 .pill.approved{background:rgba(30,123,60,.12);color:#0F5C2A;border:1px solid rgba(30,123,60,.3)}
@@ -174,15 +177,47 @@ const { useState, useEffect, useMemo, useCallback, useRef } = React;
 const ADMIN_WHATSAPP='260768526191';
 const CONTACT_EMAIL='engagements@starteasy.zm';
 const SIGNATORY_NAME='MWABA LEWIS';
-const ADMIN_PASSWORD='StartEasy@2026';
-const ADMIN_SESSION_KEY='starteasy.admin.session';
+
 function isMobile(){return typeof navigator!=='undefined'&&/android|iphone|ipad|ipod|mobile/i.test((navigator.userAgent||'').toLowerCase());}
 function waUrl(msg,p){const phone=p||ADMIN_WHATSAPP;const e=encodeURIComponent(msg);return isMobile()?'whatsapp://send?phone='+phone+'&text='+e:'https://wa.me/'+phone+'?text='+e;}
 
 /* ============================================================
-   LOCAL PERSISTENCE
+   FIREBASE — same project as ML Gateway
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC_M_jDVBN19aXKkMjxWdw502QZttzsP3A",
+  authDomain: "mlewiscapitalpartners-bee5d.firebaseapp.com",
+  projectId: "mlewiscapitalpartners-bee5d",
+  storageBucket: "mlewiscapitalpartners-bee5d.firebasestorage.app",
+  messagingSenderId: "523217241209",
+  appId: "1:523217241209:web:174672286c9a4df15740a8",
+  measurementId: "G-GBYCKPXPH5"
+};
+
+let db = null;
+let auth = null;
+let firebaseReady = false;
+try {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.firestore();
+  auth = firebase.auth();
+  firebaseReady = true;
+  /* Silent anonymous identity for every visitor */
+  auth.signInAnonymously().catch(e => console.warn('[StartEasy] anon auth:', e && e.message));
+  console.log('[StartEasy] ✅ Firebase ready — project:', FIREBASE_CONFIG.projectId);
+} catch (e) {
+  console.error('[StartEasy] ❌ Firebase init failed:', e);
+}
+
+const SE_PAYMENTS = 'se_payments';
+const SE_EVENTS   = 'se_events';
+
+/* ============================================================
+   LOCAL PERSISTENCE (per-device, non-shared)
    ============================================================ */
 const LS_KEY='starteasy.session.v1';
+const VISITOR_KEY='starteasy.visitor.v1';
+const MY_REFS_KEY='starteasy.myrefs.v1';
 
 function readSnapshot(){try{const raw=localStorage.getItem(LS_KEY);if(!raw)return null;const d=JSON.parse(raw);return (d&&typeof d==='object')?d:null;}catch(e){return null}}
 function writeSnapshot(patch){try{const cur=readSnapshot()||{};const next={...cur,...patch,v:1,savedAt:Date.now()};localStorage.setItem(LS_KEY,JSON.stringify(next));return next;}catch(e){return null}}
@@ -190,75 +225,150 @@ function clearSnapshot(){try{localStorage.removeItem(LS_KEY)}catch(e){}}
 function hasResumableWizard(snap){if(!snap||!snap.wizard)return false;const w=snap.wizard;return !!(w.scope||(w.idea&&String(w.idea).trim().length>0)||w.distinctive||w.industry||w.primaryActivity||w.structure);}
 function timeAgo(ts){if(!ts)return '';const s=Math.max(0,Math.floor((Date.now()-ts)/1000));if(s<60)return 'just now';if(s<3600)return Math.floor(s/60)+' min ago';if(s<86400)return Math.floor(s/3600)+' hr ago';const d=Math.floor(s/86400);return d+' day'+(d>1?'s':'')+' ago';}
 
-/* ============================================================
-   ANALYTICS  — silent event log kept on the device
-   ============================================================ */
-const ANALYTICS_KEY='starteasy.analytics.v1';
-const VISITOR_KEY='starteasy.visitor.v1';
-const MAX_EVENTS=3000;
-
 function getVisitor(){
   try{
     let v=JSON.parse(localStorage.getItem(VISITOR_KEY)||'null');
-    if(!v){
-      v={id:'v_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),firstSeen:Date.now(),visits:0,lastSeen:Date.now()};
-    }
-    v.visits=(v.visits||0)+1;
-    v.lastSeen=Date.now();
+    if(!v){v={id:'v_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),firstSeen:Date.now(),visits:0,lastSeen:Date.now()};}
+    v.visits=(v.visits||0)+1;v.lastSeen=Date.now();
     localStorage.setItem(VISITOR_KEY,JSON.stringify(v));
     return v;
   }catch(e){return {id:'anon_'+Date.now().toString(36),firstSeen:Date.now(),visits:1,lastSeen:Date.now()}}
 }
 function readVisitor(){try{return JSON.parse(localStorage.getItem(VISITOR_KEY)||'null')}catch(e){return null}}
-function trackEvent(type,payload){
-  try{
-    const list=JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]');
-    const v=readVisitor();
-    const ev={id:'ev_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),type,at:Date.now(),visitorId:v?v.id:null,...(payload||{})};
-    list.push(ev);
-    while(list.length>MAX_EVENTS)list.shift();
-    localStorage.setItem(ANALYTICS_KEY,JSON.stringify(list));
-    return ev;
-  }catch(e){return null}
-}
-function readEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch(e){return []}}
-function clearEvents(){try{localStorage.removeItem(ANALYTICS_KEY)}catch(e){}}
-
-/* ============================================================
-   PAYMENTS STORE  — every submitted payment reference
-   ============================================================ */
-const PAYMENTS_KEY='starteasy.payments.v1';
-const MY_REFS_KEY='starteasy.myrefs.v1';
-
-function readPayments(){try{return JSON.parse(localStorage.getItem(PAYMENTS_KEY)||'[]')}catch(e){return []}}
-function writePayments(list){try{localStorage.setItem(PAYMENTS_KEY,JSON.stringify(list))}catch(e){}}
-function addPayment(rec){
-  const list=readPayments();
-  const existing=list.find(p=>p.ref===rec.ref);
-  if(existing)return existing;
-  const record={...rec,status:'under_review',submittedAt:Date.now(),history:[{status:'under_review',at:Date.now(),note:'Payment reference received. Awaiting officer verification.'}]};
-  list.unshift(record);
-  writePayments(list);
-  return record;
-}
-function findPaymentByRef(ref){const k=(ref||'').toUpperCase().trim();return readPayments().find(p=>(p.ref||'').toUpperCase()===k)}
-function updatePaymentStatus(ref,status,note){
-  const list=readPayments();
-  const idx=list.findIndex(p=>p.ref===ref);
-  if(idx<0)return null;
-  list[idx].status=status;
-  list[idx].reviewedAt=Date.now();
-  list[idx].adminNote=note||'';
-  list[idx].history=list[idx].history||[];
-  list[idx].history.push({status,at:Date.now(),note:note||''});
-  writePayments(list);
-  return list[idx];
-}
 function rememberMyRef(ref){try{const l=JSON.parse(localStorage.getItem(MY_REFS_KEY)||'[]');if(!l.includes(ref)){l.unshift(ref);localStorage.setItem(MY_REFS_KEY,JSON.stringify(l.slice(0,20)));}}catch(e){}}
 function readMyRefs(){try{return JSON.parse(localStorage.getItem(MY_REFS_KEY)||'[]')}catch(e){return []}}
-function isAdmin(){try{return sessionStorage.getItem(ADMIN_SESSION_KEY)==='1'}catch(e){return false}}
-function setAdmin(v){try{v?sessionStorage.setItem(ADMIN_SESSION_KEY,'1'):sessionStorage.removeItem(ADMIN_SESSION_KEY)}catch(e){}}
 
+/* ============================================================
+   FIRESTORE — shared, live, multi-device
+   ============================================================ */
+
+/* Save a payment record. Uses ref as document ID for direct lookups. */
+async function addPayment(rec){
+  if(!firebaseReady) return null;
+  const record = {
+    ...rec,
+    status: 'under_review',
+    submittedAt: Date.now(),
+    history: [{ status: 'under_review', at: Date.now(), note: 'Payment reference received. Awaiting officer verification.' }]
+  };
+  try {
+    await db.collection(SE_PAYMENTS).doc(rec.ref).set(record);
+    console.log('[StartEasy] ✅ Payment saved to Firestore:', rec.ref);
+    return record;
+  } catch(e) {
+    console.error('[StartEasy] ❌ addPayment failed:', e && e.code, e && e.message);
+    return null;
+  }
+}
+
+/* Read the full payment queue — requires admin claim (enforced by rules). */
+async function readPayments(){
+  if(!firebaseReady) return [];
+  try {
+    const snap = await db.collection(SE_PAYMENTS).orderBy('submittedAt','desc').limit(500).get();
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) {
+    console.error('[StartEasy] ❌ readPayments failed:', e && e.code, e && e.message);
+    return [];
+  }
+}
+
+/* Fetch a single payment by exact reference — public read allowed by rules. */
+async function findPaymentByRef(ref){
+  if(!firebaseReady || !ref) return null;
+  try {
+    const key = ref.toUpperCase().trim();
+    const snap = await db.collection(SE_PAYMENTS).doc(key).get();
+    return snap.exists ? { id: snap.id, ...snap.data() } : null;
+  } catch(e) {
+    console.error('[StartEasy] ❌ findPaymentByRef failed:', e && e.code, e && e.message);
+    return null;
+  }
+}
+
+/* Update payment status — requires admin claim. */
+async function updatePaymentStatus(ref, status, note){
+  if(!firebaseReady) return null;
+  try {
+    const docRef = db.collection(SE_PAYMENTS).doc(ref);
+    const snap = await docRef.get();
+    if(!snap.exists) return null;
+    const cur = snap.data();
+    const history = [...(cur.history||[]), { status, at: Date.now(), note: note||'' }];
+    await docRef.update({ status, adminNote: note||'', reviewedAt: Date.now(), history });
+    return { id: ref, ...cur, status, adminNote: note||'', history };
+  } catch(e) {
+    console.error('[StartEasy] ❌ updatePaymentStatus failed:', e && e.code, e && e.message);
+    return null;
+  }
+}
+
+/* Fire-and-forget analytics — never blocks the UI. */
+function trackEvent(type, payload){
+  if(!firebaseReady) return;
+  try {
+    const visitor = readVisitor();
+    db.collection(SE_EVENTS).add({
+      type, at: Date.now(),
+      visitorId: visitor ? visitor.id : null,
+      ...(payload || {})
+    }).catch(()=>{});
+  } catch(e) { /* silent */ }
+}
+
+/* Read events — requires admin claim. */
+async function readEvents(){
+  if(!firebaseReady) return [];
+  try {
+    const snap = await db.collection(SE_EVENTS).orderBy('at','desc').limit(2000).get();
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) {
+    console.error('[StartEasy] ❌ readEvents failed:', e && e.code, e && e.message);
+    return [];
+  }
+}
+
+/* Clear events (admin-only) */
+async function clearAllEvents(){
+  if(!firebaseReady) return false;
+  try {
+    const snap = await db.collection(SE_EVENTS).limit(500).get();
+    const batch = db.batch();
+    snap.docs.forEach(d => batch.delete(d.ref));
+    await batch.commit();
+    return true;
+  } catch(e) {
+    console.error('[StartEasy] ❌ clearAllEvents failed:', e && e.code, e && e.message);
+    return false;
+  }
+}
+
+/* ============================================================
+   FIREBASE AUTH — admin login with custom claim
+   ============================================================ */
+async function adminSignIn(email, pw){
+  if(!firebaseReady) return { ok:false, error:'Authentication service unavailable.' };
+  try {
+    const cred = await auth.signInWithEmailAndPassword(email.trim(), pw);
+    const token = await cred.user.getIdTokenResult(true);
+    if(!token.claims.admin){
+      await auth.signOut();
+      return { ok:false, error:'This account does not have admin access.' };
+    }
+    return { ok:true };
+  } catch(e) {
+    console.warn('[StartEasy] adminSignIn failed:', e && e.code);
+    return { ok:false, error: e && e.code === 'auth/wrong-password' ? 'Incorrect password.' : e && e.code === 'auth/user-not-found' ? 'No account with that email.' : 'Sign-in failed. Check your credentials.' };
+  }
+}
+
+async function adminSignOut(){
+  try { await auth.signOut(); } catch(e) {}
+}
+
+/* ============================================================
+   CONSTANTS
+   ============================================================ */
 const SF={
   micro:{zm:'K25',usd:'$1.49',label:'Service Fee · Micro'},
   basic:{zm:'K250',usd:'$25',label:'Service Fee · Basic'},
@@ -531,14 +641,9 @@ function ServiceDetail({service,onClose,onProceed,onWizard}){
   </Modal>;
 }
 
-/* ============================================================
-   ENGAGEMENT LETTER  — extracted so it can be reused for print
-   ============================================================ */
 function EngagementLetterBody({service,clientName,clientBusiness,clientEmail,wizardData,readOnly}){
-  const s=service;
-  const desk=getDesk(s.desk);
-  const sf=s.service?SF[s.service]:null;
-  const og=s.ongoing?ONGOING[s.ongoing]:null;
+  const s=service;const desk=getDesk(s.desk);
+  const sf=s.service?SF[s.service]:null;const og=s.ongoing?ONGOING[s.ongoing]:null;
   const wd=wizardData||s._wizardData;
   return <div className="el printable" id="engagementLetter">
     <div className="eh">
@@ -627,7 +732,7 @@ function Engagement({service,onClose,onAgreed}){
 }
 
 function Payment({service,client,onClose,onDone}){
-  const s=service;const desk=getDesk(s.desk);
+  const s=service;
   const sf=s.service?SF[s.service]:null;const og=s.ongoing?ONGOING[s.ongoing]:null;
   const amountDue=sf?sf.zm:og.zm;
   const receiptPrefix='SE-'+(s.code||'ADV');
@@ -638,23 +743,26 @@ function Payment({service,client,onClose,onDone}){
   const [agree,setAgree]=useState(false);
   const [errorMsg,setErrorMsg]=useState('');
   const [confirmed,setConfirmed]=useState(false);
+  const [saving,setSaving]=useState(false);
+  const [cloudSaved,setCloudSaved]=useState(null);
   const [receiptNo,setReceiptNo]=useState('');
   const [whatsappUrl,setWhatsappUrl]=useState('');
   const [whatsappSent,setWhatsappSent]=useState(false);
   const [copied,setCopied]=useState('');
   const copyTxt=(t,k)=>{const done=()=>{setCopied(k);setTimeout(()=>setCopied(''),1500)};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done).catch(done);else done()};
   const buildMsg=(r,dt)=>['*STARTEASY — ENGAGEMENT FEE*','','*Ref:* '+r,'*Date:* '+dt,'','*Client:* '+client.name,'*Business:* '+(client.business||'—'),'*Email:* '+client.email,'','*Engagement:*',(s.code||'ADV')+' — '+s.title,'','*Payment*','Method: '+(PAYMENT_METHODS[method]?PAYMENT_METHODS[method].label:'—'),'Amount: '+amountDue,'Sender: '+senderName,'Contact: '+senderContact,'TxID: '+userRef].join('\n');
-  const confirm=()=>{
+
+  const confirm=async()=>{
     setErrorMsg('');
     if(!method){setErrorMsg('Select a payment method.');return}
     if(!senderName.trim()){setErrorMsg('Enter the name on the payment.');return}
     if(!senderContact.trim()){setErrorMsg('Enter the phone or email used.');return}
     if(!userRef.trim()){setErrorMsg('Enter your transaction reference.');return}
     if(!agree){setErrorMsg('Tick the confirmation box.');return}
+    setSaving(true);
     const rcpt=receiptPrefix+'-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*90000)+10000);
     const dt=new Date().toLocaleString('en-GB',{year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-    /* Persist the payment record + remember on this device */
-    addPayment({
+    const record = {
       ref:rcpt,
       clientName:client.name,clientEmail:client.email,clientPhone:client.phone||'',clientBusiness:client.business||'',
       serviceCode:s.code||'ADV',serviceTitle:s.title,serviceDesk:s.desk||'pacra',
@@ -662,19 +770,28 @@ function Payment({service,client,onClose,onDone}){
       whatsCovered:s.whatsCovered||[],
       wizardData:s._wizardData||null,
       amount:amountDue,method:PAYMENT_METHODS[method]?.label||method,
-      senderName,senderContact,txRef:userRef
-    });
+      senderName,senderContact,txRef:userRef,
+      receiptDate:dt
+    };
+    const saved = await addPayment(record);
+    setCloudSaved(saved ? 'ok' : 'fail');
     rememberMyRef(rcpt);
     trackEvent('payment_submit',{ref:rcpt,serviceCode:s.code,amount:amountDue});
-    setReceiptNo(rcpt);setWhatsappUrl(waUrl(buildMsg(rcpt,dt)));setConfirmed(true);
+    setReceiptNo(rcpt);
+    setWhatsappUrl(waUrl(buildMsg(rcpt,dt)));
+    setConfirmed(true);
+    setSaving(false);
   };
+
   if(confirmed){
     return <div className="fadein">
       <div style={{background:'linear-gradient(135deg,#EAF7EE,#F0FBF4)',border:'2px solid #28A745',borderRadius:14,padding:'28px 24px',textAlign:'center'}}>
         <i className="fas fa-paper-plane" style={{fontSize:56,color:'#E8730F',marginBottom:12,display:'block'}}></i>
         <h4 className="serif" style={{fontSize:22,color:'#0A1F12',marginBottom:10}}>Service fee reference submitted</h4>
         <p style={{fontSize:13.5,color:'rgba(10,31,18,.7)',marginBottom:14}}>Reference: <strong>{receiptNo}</strong></p>
-        <p style={{fontSize:13,color:'rgba(10,31,18,.7)',lineHeight:1.65,maxWidth:'54ch',margin:'0 auto 18px'}}>Your submission is now <strong style={{color:'#8A6828'}}>Under Review</strong>. A StartEasy officer will verify your payment — usually within 4 working hours. You will receive confirmation on WhatsApp and/or email.</p>
+        {cloudSaved==='ok'&&<p style={{fontSize:12,color:'#1E7B3C',marginBottom:6,fontWeight:600}}><i className="fas fa-cloud-upload-alt" style={{marginRight:6}}></i>Synced to StartEasy records — the officer sees this now.</p>}
+        {cloudSaved==='fail'&&<p style={{fontSize:12,color:'#B8564F',marginBottom:6,fontWeight:600}}><i className="fas fa-triangle-exclamation" style={{marginRight:6}}></i>Cloud sync delayed — please send proof on WhatsApp below.</p>}
+        <p style={{fontSize:13,color:'rgba(10,31,18,.7)',lineHeight:1.65,maxWidth:'54ch',margin:'0 auto 18px'}}>Your submission is now <strong style={{color:'#8A6828'}}>Under Review</strong>. A StartEasy officer will verify your payment — usually within 4 working hours.</p>
         <div style={{display:'flex',gap:10,flexWrap:'wrap',justifyContent:'center',marginBottom:18}}>
           <a href="#/track" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'12px 20px',background:'#0A1F12',color:'#fff',borderRadius:8,fontSize:13.5,fontWeight:700,textDecoration:'none',fontFamily:'inherit'}}><i className="fas fa-magnifying-glass"></i> Check my status anytime</a>
         </div>
@@ -745,14 +862,14 @@ function Payment({service,client,onClose,onDone}){
         <span>I confirm I have sent <strong>{amountDue}</strong> to the account shown, and I understand an officer will verify it manually before work begins.</span>
       </label>
       {errorMsg&&<div style={{background:'rgba(220,53,69,.08)',border:'1px solid rgba(220,53,69,.3)',borderRadius:8,padding:'10px 14px',marginTop:12,color:'#B8564F',fontSize:12.5,display:'flex',alignItems:'center',gap:8}}><i className="fas fa-exclamation-circle"></i> {errorMsg}</div>}
-      <button type="button" onClick={confirm} style={{width:'100%',marginTop:16,padding:'14px 20px',background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:10}}><i className="fas fa-paper-plane"></i> Submit payment reference</button>
+      <button type="button" onClick={confirm} disabled={saving} style={{width:'100%',marginTop:16,padding:'14px 20px',background:saving?'rgba(10,31,18,.15)':'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:saving?'wait':'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:10}}><i className={`fas ${saving?'fa-spinner fa-spin':'fa-paper-plane'}`}></i>{saving?'Saving to server…':'Submit payment reference'}</button>
     </div>}
     {!m&&<p style={{textAlign:'center',fontSize:12.5,color:'rgba(10,31,18,.45)',marginTop:24,fontStyle:'italic'}}>Select a payment method above to see the account details.</p>}
   </div>;
 }
 
 /* ============================================================
-   WIZARD
+   WIZARD (unchanged internals, uses Firestore for events)
    ============================================================ */
 function Wizard({initialScope,onExit,onOrderFormal}){
   const boot=useMemo(()=>{
@@ -1011,17 +1128,13 @@ function WizardSidebar({scope,idea,primaryActivity,secondaryActivities,industryD
 function SideRow({label,value,done,color:c}){return <div style={{display:'flex',justifyContent:'space-between',gap:12,padding:'10px 0',borderBottom:'1px dashed rgba(10,31,18,.06)',alignItems:'flex-start'}}><span style={{fontSize:11.5,color:'rgba(10,31,18,.45)',fontWeight:600,flexShrink:0}}>{label}</span><span style={{fontSize:11.5,color:done?(c||'#0A1F12'):'rgba(10,31,18,.3)',fontWeight:done?700:400,textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'65%'}}>{value}</span></div>;}
 
 /* ============================================================
-   TRACK SUBMISSION PAGE
+   TRACK SUBMISSION PAGE — async, real-time listener
    ============================================================ */
 const STATUS_META={
-  under_review:{label:'Under Review',pill:'review',icon:'fa-clock',color:'#8A6828',
-    userLine:'Your payment reference has been received and is queued for officer verification.'},
-  approved:{label:'Approved',pill:'approved',icon:'fa-circle-check',color:'#1E7B3C',
-    userLine:'Your payment has been verified. Your engagement is now active and the formal engagement letter can be printed or downloaded.'},
-  reverted:{label:'Reverted — Action Needed',pill:'reverted',icon:'fa-rotate-left',color:'#7A4FA3',
-    userLine:'We need a small correction from you before we can proceed. See the officer note below.'},
-  declined:{label:'Declined',pill:'declined',icon:'fa-circle-xmark',color:'#B8564F',
-    userLine:'Your payment could not be verified and the engagement has been closed.'}
+  under_review:{label:'Under Review',pill:'review',icon:'fa-clock',color:'#8A6828',userLine:'Your payment reference has been received and is queued for officer verification.'},
+  approved:{label:'Approved',pill:'approved',icon:'fa-circle-check',color:'#1E7B3C',userLine:'Your payment has been verified. Your engagement is now active and the formal engagement letter can be printed or downloaded.'},
+  reverted:{label:'Reverted — Action Needed',pill:'reverted',icon:'fa-rotate-left',color:'#7A4FA3',userLine:'We need a small correction from you before we can proceed. See the officer note below.'},
+  declined:{label:'Declined',pill:'declined',icon:'fa-circle-xmark',color:'#B8564F',userLine:'Your payment could not be verified and the engagement has been closed.'}
 };
 function StatusPill({status}){
   const m=STATUS_META[status]||STATUS_META.under_review;
@@ -1031,39 +1144,55 @@ function StatusPill({status}){
 function TrackSubmission({go}){
   const [ref,setRef]=useState('');
   const [record,setRecord]=useState(null);
+  const [trackedRef,setTrackedRef]=useState(null);
   const [error,setError]=useState('');
+  const [looking,setLooking]=useState(false);
   const [showLetter,setShowLetter]=useState(false);
   const [myRefs,setMyRefs]=useState(()=>readMyRefs());
+
   useEffect(()=>{trackEvent('page_view',{route:'track'});},[]);
-  const lookup=r=>{
+
+  /* Real-time listener on the tracked reference */
+  useEffect(()=>{
+    if(!trackedRef || !firebaseReady) return;
+    const unsub = db.collection(SE_PAYMENTS).doc(trackedRef).onSnapshot(
+      snap => { if(snap.exists) setRecord({ id: snap.id, ...snap.data() }); },
+      err => console.warn('[StartEasy] track listener:', err && err.message)
+    );
+    return unsub;
+  },[trackedRef]);
+
+  const lookup=async(r)=>{
     setError('');
-    const found=findPaymentByRef(r);
-    if(!found){setRecord(null);setError('No submission found with that reference. Please check the spelling and try again.');return}
+    const k=(r||'').toUpperCase().trim();
+    if(!k){setError('Please enter your reference.');return}
+    setLooking(true);
+    const found=await findPaymentByRef(k);
+    setLooking(false);
+    if(!found){setRecord(null);setTrackedRef(null);setError('No submission found with that reference. Please check the spelling and try again.');return}
     setRecord(found);
+    setTrackedRef(k);
   };
-  const onSubmit=()=>{lookup(ref)};
-  const rebuildService=rec=>{
-    const base=findServiceByKey(null)||{};
-    return {
-      code:rec.serviceCode,desk:rec.serviceDesk,title:rec.serviceTitle,
-      clientDesc:rec.serviceClientDesc,timeline:rec.serviceTimeline,
-      whatsCovered:rec.whatsCovered||[],
-      service:rec.serviceCode==='ADV'?'micro':undefined,
-      _wizardData:rec.wizardData
-    };
-  };
+  const onSubmit=()=>lookup(ref);
+  const rebuildService=rec=>({
+    code:rec.serviceCode,desk:rec.serviceDesk,title:rec.serviceTitle,
+    clientDesc:rec.serviceClientDesc,timeline:rec.serviceTimeline,
+    whatsCovered:rec.whatsCovered||[],
+    service:rec.serviceCode==='ADV'?'micro':undefined,
+    _wizardData:rec.wizardData
+  });
   const meta=record?STATUS_META[record.status]||STATUS_META.under_review:null;
   return <div className="fadein" style={{background:'#F5FAF6',minHeight:'100vh',padding:'48px 24px 80px'}}>
     <div style={{maxWidth:760,margin:'0 auto'}}>
       <span className="micro" style={{color:'rgba(10,31,18,.5)',display:'block',marginBottom:16}}>Submission status</span>
       <h1 className="serif" style={{fontSize:'clamp(1.8rem,4.2vw,2.6rem)',lineHeight:1.1,color:'#0A1F12',marginBottom:12}}>Track your submission</h1>
-      <p style={{fontSize:14.5,lineHeight:1.7,color:'rgba(10,31,18,.65)',marginBottom:32,maxWidth:620}}>Enter the reference you received when you submitted your payment. You will see the current status, any officer note, and — once approved — be able to print or download your formal engagement letter.</p>
+      <p style={{fontSize:14.5,lineHeight:1.7,color:'rgba(10,31,18,.65)',marginBottom:32,maxWidth:620}}>Enter the reference you received when you submitted your payment. You will see the current status, any officer note, and — once approved — be able to print or download your formal engagement letter. This page updates live.</p>
 
       <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.1)',borderRadius:12,padding:'22px 24px',marginBottom:24}}>
         <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:10}}>Engagement reference</label>
         <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
           <input value={ref} onChange={e=>setRef(e.target.value.toUpperCase())} placeholder="SE-P1-2026-12345" style={{flex:'1 1 240px',background:'#fff',border:'2px solid rgba(10,31,18,.12)',borderRadius:10,padding:'14px 18px',fontSize:15,fontFamily:'Consolas,monospace',fontWeight:700,color:'#0A1F12'}} onKeyDown={e=>{if(e.key==='Enter')onSubmit()}}/>
-          <button onClick={onSubmit} style={{padding:'14px 24px',background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:10,fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8}}><i className="fas fa-magnifying-glass"></i> Check status</button>
+          <button onClick={onSubmit} disabled={looking} style={{padding:'14px 24px',background:looking?'rgba(10,31,18,.15)':'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:10,fontSize:14,fontWeight:700,cursor:looking?'wait':'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8}}><i className={`fas ${looking?'fa-spinner fa-spin':'fa-magnifying-glass'}`}></i> {looking?'Looking…':'Check status'}</button>
         </div>
         {myRefs.length>0&&<div style={{marginTop:16}}>
           <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:10}}>Your recent submissions</div>
@@ -1104,9 +1233,8 @@ function TrackSubmission({go}){
         <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.1)',borderRadius:12,padding:'22px 26px',marginBottom:20}}>
           <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'rgba(10,31,18,.45)',marginBottom:18}}>Progress</div>
           <ol className="tl" style={{color:'#0A1F12'}}>
-            {record.history.map((h,i)=>{
+            {(record.history||[]).map((h,i)=>{
               const hm=STATUS_META[h.status]||STATUS_META.under_review;
-              const isDarkPanel=false;
               return <li key={i} data-step={String(i+1)} style={{borderLeftColor:'rgba(10,31,18,.15)'}}>
                 <div className="tt" style={{color:'#0A1F12'}}>{hm.label}</div>
                 <div className="td" style={{color:'rgba(10,31,18,.65)'}}>{h.note||hm.userLine}</div>
@@ -1121,7 +1249,7 @@ function TrackSubmission({go}){
             <span style={{width:38,height:38,borderRadius:10,background:'rgba(245,166,35,.2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><i className="fas fa-circle-check" style={{color:'#F5A623',fontSize:16}}></i></span>
             <div className="serif" style={{fontSize:18,color:'#fff',fontWeight:700}}>Your formal engagement letter is unlocked</div>
           </div>
-          <p style={{fontSize:13.5,lineHeight:1.7,color:'rgba(255,255,255,.75)',marginBottom:18}}>The engagement letter is now signed by both parties and ready to print or save as a PDF. Keep a copy for your records.</p>
+          <p style={{fontSize:13.5,lineHeight:1.7,color:'rgba(255,255,255,.75)',marginBottom:18}}>The engagement letter is now signed by both parties and ready to print or save as a PDF.</p>
           <button onClick={()=>setShowLetter(true)} style={{padding:'13px 22px',background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:9}}><i className="fas fa-print"></i> Print / Save formal engagement letter</button>
         </div>:record.status==='under_review'?<div style={{background:'#FFF9E6',border:'1.5px solid #F0E0A0',borderRadius:12,padding:'22px 24px',marginBottom:20}}>
           <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
@@ -1171,7 +1299,7 @@ function TrackSubmission({go}){
 function RowKV({k,v,mono}){return <div style={{display:'flex',justifyContent:'space-between',gap:16,padding:'8px 0',borderBottom:'1px dashed rgba(10,31,18,.06)'}}><span style={{fontSize:12,color:'rgba(10,31,18,.5)',fontWeight:600}}>{k}</span><span style={{fontSize:13,color:'#0A1F12',fontWeight:700,textAlign:'right',fontFamily:mono?'Consolas,monospace':'inherit'}}>{v}</span></div>;}
 
 /* ============================================================
-   ADMIN PORTAL
+   ADMIN PORTAL — Firebase Auth + Firestore live reads
    ============================================================ */
 function MiniBarChart({data,height=140}){
   const max=Math.max(1,...data.map(d=>d.value));
@@ -1204,25 +1332,76 @@ function AdminKpi({label,value,sub,color='#E8730F',icon}){
 }
 
 function AdminPortal({onExit}){
-  const [authed,setAuthed]=useState(()=>isAdmin());
+  const [authed,setAuthed]=useState(false);
+  const [authChecked,setAuthChecked]=useState(false);
+  const [email,setEmail]=useState('');
   const [pw,setPw]=useState('');
+  const [signingIn,setSigningIn]=useState(false);
   const [pwErr,setPwErr]=useState('');
   const [tab,setTab]=useState('overview');
   const [review,setReview]=useState(null);
   const [filter,setFilter]=useState('all');
   const [note,setNote]=useState('');
-  const [tick,setTick]=useState(0);
+  const [payments,setPayments]=useState([]);
+  const [events,setEvents]=useState([]);
+  const [loading,setLoading]=useState(true);
+  const [visitor]=useState(()=>readVisitor());
 
-  useEffect(()=>{trackEvent('page_view',{route:'admin'});},[]);
+  /* Auth state listener — reads the custom claim */
+  useEffect(()=>{
+    if(!firebaseReady){setAuthChecked(true);return}
+    const unsub = auth.onAuthStateChanged(async user => {
+      if(user){
+        try{
+          const token = await user.getIdTokenResult();
+          setAuthed(!!token.claims.admin);
+        }catch(e){setAuthed(false)}
+      }else{
+        setAuthed(false);
+      }
+      setAuthChecked(true);
+    });
+    return unsub;
+  },[]);
 
-  const login=()=>{
-    if(pw===ADMIN_PASSWORD){setAdmin(true);setAuthed(true);setPw('');setPwErr('');}
-    else{setPwErr('Incorrect password.');}
+  /* Live payment listener */
+  useEffect(()=>{
+    if(!authed || !firebaseReady) return;
+    const unsub = db.collection(SE_PAYMENTS).orderBy('submittedAt','desc').limit(500)
+      .onSnapshot(snap=>{
+        setPayments(snap.docs.map(d=>({ id: d.id, ...d.data() })));
+        setLoading(false);
+      }, err=>{
+        console.warn('[StartEasy] payments listener:', err && err.message);
+        setLoading(false);
+      });
+    return unsub;
+  },[authed]);
+
+  /* Live events listener */
+  useEffect(()=>{
+    if(!authed || !firebaseReady) return;
+    const unsub = db.collection(SE_EVENTS).orderBy('at','desc').limit(2000)
+      .onSnapshot(snap=>{
+        setEvents(snap.docs.map(d=>({ id: d.id, ...d.data() })));
+      }, err=>console.warn('[StartEasy] events listener:', err && err.message));
+    return unsub;
+  },[authed]);
+
+  const handleSignIn = async () => {
+    setPwErr('');
+    if(!email.trim() || !pw){setPwErr('Enter your email and password.');return}
+    setSigningIn(true);
+    const res = await adminSignIn(email, pw);
+    setSigningIn(false);
+    if(!res.ok){setPwErr(res.error||'Sign-in failed.')}
   };
 
-  const events=useMemo(()=>readEvents(),[tick]);
-  const payments=useMemo(()=>readPayments(),[tick]);
-  const visitor=useMemo(()=>readVisitor(),[tick]);
+  const handleSignOut = async () => {
+    await adminSignOut();
+    setAuthed(false);
+    onExit();
+  };
 
   const stats=useMemo(()=>{
     const since=Date.now()-14*24*3600*1000;
@@ -1260,29 +1439,43 @@ function AdminPortal({onExit}){
 
   const recentActivity=useMemo(()=>[...events].sort((a,b)=>b.at-a.at).slice(0,25),[events]);
 
-  const setStatus=(status)=>{
+  const setStatus=async(status)=>{
     if(!review)return;
-    updatePaymentStatus(review.ref,status,note||'');
-    trackEvent('payment_reviewed',{ref:review.ref,status});
-    setReview(null);setNote('');setTick(t=>t+1);
+    const updated=await updatePaymentStatus(review.ref,status,note||'');
+    if(updated){
+      trackEvent('payment_reviewed',{ref:review.ref,status});
+      /* The live listener will refresh the list. */
+    }
+    setReview(null);setNote('');
   };
+
+  if(!authChecked){
+    return <div className="fadein" style={{minHeight:'100vh',background:'linear-gradient(135deg,#0A1F12,#123A1F)',display:'flex',alignItems:'center',justifyContent:'center',padding:'40px 20px'}}>
+      <div style={{textAlign:'center',color:'#fff'}}>
+        <i className="fas fa-spinner fa-spin" style={{fontSize:28,color:'#F5A623'}}></i>
+        <p style={{marginTop:14,fontSize:13,color:'rgba(255,255,255,.6)'}}>Loading admin portal…</p>
+      </div>
+    </div>;
+  }
 
   if(!authed){
     return <div className="fadein" style={{minHeight:'100vh',background:'linear-gradient(135deg,#0A1F12,#123A1F)',display:'flex',alignItems:'center',justifyContent:'center',padding:'40px 20px'}}>
-      <div style={{background:'#fff',borderRadius:14,padding:'34px 32px',maxWidth:420,width:'100%',boxShadow:'0 30px 80px rgba(0,0,0,.4)'}}>
+      <div style={{background:'#fff',borderRadius:14,padding:'34px 32px',maxWidth:440,width:'100%',boxShadow:'0 30px 80px rgba(0,0,0,.4)'}}>
         <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:22}}>
           <Mark size={42}/>
           <div><div style={{fontSize:9,letterSpacing:'.18em',textTransform:'uppercase',fontWeight:700,color:'rgba(10,31,18,.4)',marginBottom:2}}>Administrative Services Desk</div><div style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:20,fontWeight:800,color:'#0A1F12'}}>Admin Portal</div></div>
         </div>
-        <p style={{fontSize:13,lineHeight:1.6,color:'rgba(10,31,18,.65)',marginBottom:22}}>Restricted access. Enter the admin password to continue.</p>
-        <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:8}}>Admin password</label>
-        <input type="password" value={pw} onChange={e=>{setPw(e.target.value);setPwErr('')}} onKeyDown={e=>{if(e.key==='Enter')login()}} placeholder="••••••••••" autoFocus style={{width:'100%',background:'#fff',border:'2px solid rgba(10,31,18,.12)',borderRadius:10,padding:'14px 18px',fontSize:15,color:'#0A1F12',fontFamily:'inherit'}}/>
+        <p style={{fontSize:13,lineHeight:1.6,color:'rgba(10,31,18,.65)',marginBottom:22}}>Restricted access. Sign in with your Firebase admin account.</p>
+        <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:8}}>Admin email</label>
+        <input type="email" value={email} onChange={e=>{setEmail(e.target.value);setPwErr('')}} placeholder="admin@starteasy.zm" style={{width:'100%',background:'#fff',border:'2px solid rgba(10,31,18,.12)',borderRadius:10,padding:'14px 18px',fontSize:15,color:'#0A1F12',fontFamily:'inherit',marginBottom:14}}/>
+        <label style={{display:'block',fontSize:12.5,fontWeight:600,color:'#0A1F12',marginBottom:8}}>Password</label>
+        <input type="password" value={pw} onChange={e=>{setPw(e.target.value);setPwErr('')}} onKeyDown={e=>{if(e.key==='Enter')handleSignIn()}} placeholder="••••••••••" style={{width:'100%',background:'#fff',border:'2px solid rgba(10,31,18,.12)',borderRadius:10,padding:'14px 18px',fontSize:15,color:'#0A1F12',fontFamily:'inherit'}}/>
         {pwErr&&<div style={{marginTop:10,fontSize:12.5,color:'#B8564F',display:'flex',alignItems:'center',gap:6}}><i className="fas fa-circle-exclamation"></i> {pwErr}</div>}
         <div style={{display:'flex',gap:10,marginTop:20}}>
-          <button onClick={login} style={{flex:1,padding:'14px 22px',background:'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:10,fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8}}><i className="fas fa-unlock"></i> Sign in</button>
+          <button onClick={handleSignIn} disabled={signingIn} style={{flex:1,padding:'14px 22px',background:signingIn?'rgba(10,31,18,.15)':'linear-gradient(135deg,#E8730F,#F5A623)',color:'#fff',border:'none',borderRadius:10,fontSize:14,fontWeight:700,cursor:signingIn?'wait':'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8}}><i className={`fas ${signingIn?'fa-spinner fa-spin':'fa-unlock'}`}></i> {signingIn?'Signing in…':'Sign in'}</button>
           <button onClick={onExit} style={{padding:'14px 20px',background:'#fff',border:'1px solid rgba(10,31,18,.15)',borderRadius:10,fontSize:13.5,fontWeight:600,cursor:'pointer',fontFamily:'inherit',color:'#0A1F12'}}>Cancel</button>
         </div>
-        <p style={{marginTop:22,fontSize:11,color:'rgba(10,31,18,.45)',lineHeight:1.6,textAlign:'center'}}>This gate is <strong>client-side only</strong> — suitable for deterring accidental access, not real security. Change the password in the source code and use a server-side auth for production.</p>
+        <p style={{marginTop:22,fontSize:11,color:'rgba(10,31,18,.45)',lineHeight:1.6,textAlign:'center'}}>Access is verified against Firebase Authentication. Only accounts holding the <code style={{fontFamily:'Consolas,monospace',background:'rgba(10,31,18,.06)',padding:'2px 6px',borderRadius:4,fontSize:11}}>admin: true</code> custom claim can read submissions.</p>
       </div>
     </div>;
   }
@@ -1298,9 +1491,9 @@ function AdminPortal({onExit}){
               <div className="serif" style={{fontSize:24,fontWeight:800,color:'#fff',lineHeight:1.1}}>Admin Portal</div>
             </div>
           </div>
-          <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
-            <button onClick={()=>setTick(t=>t+1)} style={{padding:'10px 18px',background:'rgba(255,255,255,.08)',color:'#fff',border:'1px solid rgba(255,255,255,.15)',borderRadius:8,fontSize:12.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8}}><i className="fas fa-rotate"></i> Refresh</button>
-            <button onClick={()=>{setAdmin(false);setAuthed(false);onExit()}} style={{padding:'10px 18px',background:'rgba(184,86,79,.15)',color:'#FFB4A8',border:'1px solid rgba(184,86,79,.35)',borderRadius:8,fontSize:12.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8}}><i className="fas fa-right-from-bracket"></i> Sign out</button>
+          <div style={{display:'flex',gap:10,flexWrap:'wrap',alignItems:'center'}}>
+            <span style={{fontSize:11.5,color:'rgba(255,255,255,.55)',display:'inline-flex',alignItems:'center',gap:6}}><i className="fas fa-circle" style={{color:'#4CB050',fontSize:7}}></i> Live — real-time sync</span>
+            <button onClick={handleSignOut} style={{padding:'10px 18px',background:'rgba(184,86,79,.15)',color:'#FFB4A8',border:'1px solid rgba(184,86,79,.35)',borderRadius:8,fontSize:12.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:8}}><i className="fas fa-right-from-bracket"></i> Sign out</button>
           </div>
         </div>
       </div>
@@ -1317,14 +1510,18 @@ function AdminPortal({onExit}){
     </section>
 
     <section style={{maxWidth:1240,margin:'0 auto',padding:'32px 24px 60px'}}>
+      {loading?<div style={{textAlign:'center',padding:'80px 24px'}}>
+        <i className="fas fa-spinner fa-spin" style={{fontSize:28,color:'#E8730F'}}></i>
+        <p style={{marginTop:14,fontSize:13,color:'rgba(10,31,18,.55)'}}>Loading data from Firestore…</p>
+      </div>:<>
       {tab==='overview'&&<div className="fadein">
         <div style={{marginBottom:24}}>
-          <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Dashboard</div>
+          <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Dashboard · Live</div>
           <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.2vw,2rem)',color:'#0A1F12',lineHeight:1.15,marginBottom:6}}>Platform at a glance</h2>
-          <p style={{fontSize:13,color:'rgba(10,31,18,.55)',margin:0}}>Metrics reflect activity on this device's browser storage. For multi-device analytics, connect a backend later.</p>
+          <p style={{fontSize:13,color:'rgba(10,31,18,.55)',margin:0}}>Every payment and event from every visitor, synced from Firestore in real time.</p>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" style={{marginBottom:24}}>
-          <AdminKpi label="Visits (14d)" value={stats.visits} sub={`${stats.uniqueVisitors} unique device${stats.uniqueVisitors!==1?'s':''}`} icon="fa-eye"/>
+          <AdminKpi label="Visits (14d)" value={stats.visits} sub={`${stats.uniqueVisitors} unique visitor${stats.uniqueVisitors!==1?'s':''}`} icon="fa-eye"/>
           <AdminKpi label="Page views" value={stats.pageViews} sub="Last 14 days" icon="fa-compass" color="#1B6CA8"/>
           <AdminKpi label="Wizard starts" value={stats.wizardStarts} sub={`${stats.wizardCompletes} completed`} icon="fa-wand-magic-sparkles" color="#7A4FA3"/>
           <AdminKpi label="Service views" value={stats.serviceViews} sub="Detail modals opened" icon="fa-file" color="#0E7C7B"/>
@@ -1344,7 +1541,7 @@ function AdminPortal({onExit}){
         </div>
         <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:'22px 24px'}}>
           <div style={{fontSize:13,fontWeight:800,letterSpacing:'.06em',textTransform:'uppercase',color:'rgba(10,31,18,.65)',marginBottom:16}}>Recent activity</div>
-          {recentActivity.length===0?<p style={{fontSize:13,color:'rgba(10,31,18,.5)',fontStyle:'italic',margin:0}}>No events recorded yet. Activity will appear here as users browse.</p>:
+          {recentActivity.length===0?<p style={{fontSize:13,color:'rgba(10,31,18,.5)',fontStyle:'italic',margin:0}}>No events recorded yet.</p>:
             <div style={{display:'flex',flexDirection:'column',gap:0}}>
               {recentActivity.map((e,i)=>(
                 <div key={e.id||i} style={{display:'flex',gap:14,alignItems:'flex-start',padding:'12px 0',borderBottom:i<recentActivity.length-1?'1px dashed rgba(10,31,18,.08)':'none'}}>
@@ -1375,7 +1572,7 @@ function AdminPortal({onExit}){
       {tab==='payments'&&<div className="fadein">
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',gap:16,flexWrap:'wrap',marginBottom:20}}>
           <div>
-            <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Payment queue</div>
+            <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Payment queue · Live</div>
             <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.2vw,2rem)',color:'#0A1F12',lineHeight:1.15,marginBottom:6}}>Review and action submissions</h2>
             <p style={{fontSize:13,color:'rgba(10,31,18,.55)',margin:0}}>Approve to unlock the formal engagement letter for the client, or revert/decline with a note.</p>
           </div>
@@ -1418,7 +1615,6 @@ function AdminPortal({onExit}){
         <div style={{marginBottom:20}}>
           <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Wizard submissions</div>
           <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.2vw,2rem)',color:'#0A1F12',lineHeight:1.15,marginBottom:6}}>What users completed</h2>
-          <p style={{fontSize:13,color:'rgba(10,31,18,.55)',margin:0}}>Completed wizard orders include the assessment summary. Abandoned drafts show where users stopped.</p>
         </div>
         {payments.filter(p=>p.wizardData).length===0?<div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:10,padding:56,textAlign:'center'}}><p style={{fontSize:14,color:'rgba(10,31,18,.55)',margin:0}}>No wizard-based submissions yet.</p></div>:
           <div style={{display:'flex',flexDirection:'column',gap:14}}>
@@ -1450,7 +1646,7 @@ function AdminPortal({onExit}){
         <div style={{marginBottom:20}}>
           <div style={{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',fontWeight:800,color:'#8A6828',marginBottom:8}}>Visitor activity</div>
           <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.2vw,2rem)',color:'#0A1F12',lineHeight:1.15,marginBottom:6}}>Who has been on the platform</h2>
-          <p style={{fontSize:13,color:'rgba(10,31,18,.55)',margin:0}}>Grouped by device. This is local-only — for a shared ledger across visitors, connect a backend later.</p>
+          <p style={{fontSize:13,color:'rgba(10,31,18,.55)',margin:0}}>Grouped by device. Aggregated across all visitors using the platform.</p>
         </div>
         {(()=>{
           const byVisitor={};
@@ -1489,20 +1685,27 @@ function AdminPortal({onExit}){
           <h2 className="serif" style={{fontSize:'clamp(1.5rem,3.2vw,2rem)',color:'#0A1F12',lineHeight:1.15,marginBottom:6}}>Portal settings</h2>
         </div>
         <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:'22px 24px',marginBottom:16}}>
-          <div style={{fontSize:12.5,fontWeight:800,color:'#0A1F12',marginBottom:10}}>Security notice</div>
-          <p style={{fontSize:13,lineHeight:1.7,color:'rgba(10,31,18,.7)',margin:0}}>The admin password gate in this build is <strong>client-side only</strong> and is intended as a light deterrent. For real production use, move the admin gate behind server-side authentication and never store credentials in the browser bundle. To change the current password, edit the <code style={{fontFamily:'Consolas,monospace',background:'rgba(10,31,18,.06)',padding:'2px 6px',borderRadius:4,fontSize:12}}>ADMIN_PASSWORD</code> constant in the source.</p>
+          <div style={{fontSize:12.5,fontWeight:800,color:'#0A1F12',marginBottom:10}}>Authentication</div>
+          <p style={{fontSize:13,lineHeight:1.7,color:'rgba(10,31,18,.7)',margin:0}}>This portal is gated by Firebase Authentication. Only accounts holding the custom claim <code style={{fontFamily:'Consolas,monospace',background:'rgba(10,31,18,.06)',padding:'2px 6px',borderRadius:4,fontSize:12}}>{"{"} admin: true {"}"}</code> can read submissions. Manage your admin users in the Firebase Console under Authentication → Users.</p>
         </div>
         <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:'22px 24px',marginBottom:16}}>
-          <div style={{fontSize:12.5,fontWeight:800,color:'#0A1F12',marginBottom:10}}>Local data</div>
+          <div style={{fontSize:12.5,fontWeight:800,color:'#0A1F12',marginBottom:10}}>Cloud data</div>
           <div style={{display:'grid',gap:10}}>
-            <RowKV k="Analytics events" v={events.length+' stored'}/>
-            <RowKV k="Payment records" v={payments.length+' stored'}/>
+            <RowKV k="Analytics events" v={events.length+' in Firestore'}/>
+            <RowKV k="Payment records" v={payments.length+' in Firestore'}/>
+            <RowKV k="Firestore project" v={FIREBASE_CONFIG.projectId} mono/>
+            <RowKV k="Collections" v="se_payments · se_events" mono/>
           </div>
           <div style={{display:'flex',gap:10,marginTop:16,flexWrap:'wrap'}}>
-            <button onClick={()=>{if(confirm('Clear all analytics events? This cannot be undone.')){clearEvents();setTick(t=>t+1)}}} style={{padding:'10px 18px',background:'#fff',border:'1px solid rgba(184,86,79,.3)',color:'#B8564F',borderRadius:8,fontSize:12.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}><i className="fas fa-trash"></i> Clear analytics</button>
+            <button onClick={async()=>{if(confirm('Delete up to 500 of the newest analytics events from Firestore? This cannot be undone.')){const ok=await clearAllEvents();if(ok)alert('Cleared. Refreshing…');else alert('Could not clear events — check rules and try again.');}}} style={{padding:'10px 18px',background:'#fff',border:'1px solid rgba(184,86,79,.3)',color:'#B8564F',borderRadius:8,fontSize:12.5,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}><i className="fas fa-trash"></i> Clear recent analytics</button>
           </div>
         </div>
+        <div style={{background:'#fff',border:'1px solid rgba(10,31,18,.08)',borderRadius:12,padding:'22px 24px'}}>
+          <div style={{fontSize:12.5,fontWeight:800,color:'#0A1F12',marginBottom:10}}>Sharing the ML Gateway project</div>
+          <p style={{fontSize:13,lineHeight:1.7,color:'rgba(10,31,18,.7)',margin:0}}>This StartEasy instance shares the same Firestore database as ML Gateway (<span style={{fontFamily:'Consolas,monospace'}}>mlewiscapitalpartners-bee5d</span>), but writes only to the <span style={{fontFamily:'Consolas,monospace'}}>se_payments</span> and <span style={{fontFamily:'Consolas,monospace'}}>se_events</span> collections. ML Gateway's <span style={{fontFamily:'Consolas,monospace'}}>receipts</span>, <span style={{fontFamily:'Consolas,monospace'}}>submissions</span> and other collections are untouched.</p>
+        </div>
       </div>}
+      </>}
     </section>
 
     {review&&<Modal open={!!review} onClose={()=>{setReview(null);setNote('')}} eyebrow="Review submission" maxWidth="64rem">
@@ -1565,7 +1768,7 @@ function AdminPortal({onExit}){
           <button onClick={()=>setStatus('reverted')} style={{flex:'1 1 180px',padding:'14px 22px',background:'linear-gradient(135deg,#7A4FA3,#9A6BC0)',color:'#fff',border:'none',borderRadius:10,fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:9}}><i className="fas fa-rotate-left"></i> Revert for correction</button>
           <button onClick={()=>setStatus('declined')} style={{flex:'1 1 180px',padding:'14px 22px',background:'linear-gradient(135deg,#B8564F,#C86A5E)',color:'#fff',border:'none',borderRadius:10,fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:9}}><i className="fas fa-circle-xmark"></i> Decline</button>
         </div>
-        <div style={{fontSize:11.5,color:'rgba(10,31,18,.5)',textAlign:'center',lineHeight:1.6}}>The client is notified via the Track page. If they have provided a WhatsApp number, follow up there too.</div>
+        <div style={{fontSize:11.5,color:'rgba(10,31,18,.5)',textAlign:'center',lineHeight:1.6}}>The client's Track page updates instantly. If they have provided a WhatsApp number, follow up there too.</div>
       </div>
     </Modal>}
   </div>;
@@ -2016,7 +2219,12 @@ function App(){
   const [paymentOpen,setPaymentOpen]=useState(false);
 
   /* On first mount, record the visit + log the initial page view. */
-  useEffect(()=>{getVisitor();trackEvent('visit',{ua:(navigator.userAgent||'').slice(0,120)});},[]);
+  useEffect(()=>{
+    getVisitor();
+    /* Delay slightly so anonymous auth can resolve before the write hits rules */
+    const t = setTimeout(()=>{ trackEvent('visit',{ua:(navigator.userAgent||'').slice(0,120)}); }, 1200);
+    return ()=>clearTimeout(t);
+  },[]);
 
   useEffect(()=>{const raw=(location.hash||'').replace(/^#\/?/,'');const parts=raw.split('/').filter(Boolean);if(parts.length)setRoute(parts[0]);if(parts.length>1)setRouteArg(parts[1])},[]);
   const go=useCallback((r,arg)=>{setRoute(r);setRouteArg(arg||null);try{location.hash='#/'+r+(arg?'/'+arg:'')}catch(e){}window.scrollTo({top:0,behavior:'auto'});trackEvent('page_view',{route:r,arg:arg||null})},[]);
@@ -2044,7 +2252,6 @@ function App(){
     }
   };
 
-  /* Hide nav/footer chrome on the admin gate for a cleaner login screen */
   const hideChrome=route==='admin';
 
   return <div style={{minHeight:'100vh',background:'#F5FAF6',display:'flex',flexDirection:'column'}}>
